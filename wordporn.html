@@ -74,14 +74,14 @@
         <p>Analgrammit. Mitä nyt vittua taas.</p>
         <div class="scrambled-word" id="scrambledWord"></div>
         <input type="text" id="answer" placeholder="Kirjoita alkuperäinen sana">
-        <button onclick="checkAnswer()">Tarkista</button>
-        <div class="timer" id="timer">30</div>
+        <button onclick="checkAnswer()">Ratkaise</button>
+        <div class="timer" id="timer">90</div>
     </div>
     <script>
         let words = [];
         let currentWord = '';
         let timer;
-        let timeLeft = 30;
+        let timeLeft = 90;
 
         // Load the word list
         fetch('wordpornFI.csv')
@@ -114,10 +114,7 @@
                 document.getElementById('timer').innerText = timeLeft;
                 if (timeLeft <= 0) {
                     clearInterval(timer);
-                    document.body.innerHTML = '<p style="color: black; text-align: center; background-color: white;">That is an imperfect to this.</p>';
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 3000);
+                    window.location.href = 'index.html';
                 }
             }, 1000);
         }
@@ -125,11 +122,11 @@
         function checkAnswer() {
             const answer = document.getElementById('answer').value.toLowerCase();
             if (answer === currentWord.toLowerCase()) {
-                timeLeft = 30;
+                timeLeft = 90;
                 nextWord();
                 document.getElementById('answer').value = '';
             } else {
-                timeLeft = Math.max(timeLeft - 5, 1);
+                timeLeft = Math.max(timeLeft - 10, 1);
             }
         }
     </script>
