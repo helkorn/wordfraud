@@ -87,7 +87,8 @@
             download: true,
             complete: function(results) {
                 words = results.data.flat().map(word => word.trim()).filter(Boolean);
-                console.log('Sanat ladattu:', words);
+                console.log('Sanat ladattu:', words.length);
+                console.log(words.slice(0, 10)); // Näytetään 10 ensimmäistä sanaa
             }
         });
 
@@ -97,25 +98,33 @@
 
         function findPossibleWords(letters) {
             const possibleWords = new Set();
-            for (let i = 2; i <= letters.length; i++) {
-                permute(letters, i).forEach(combination => {
-                    if (isValidWord(combination)) {
-                        possibleWords.add(combination);
-                    }
-                });
-            }
+            permute(letters).forEach(combination => {
+                if (isValidWord(combination)) {
+                    possibleWords.add(combination);
+                }
+            });
+            console.log('Mahdolliset sanat:', possibleWords.size);
             return Array.from(possibleWords).sort((a, b) => b.length - a.length);
         }
 
-        function permute(letters, size) {
-            const results = [];
-            if (size === 1) return letters.split('');
-            letters.split('').forEach((letter, i) => {
-                const remaining = letters.slice(0, i) + letters.slice(i + 1);
-                permute(remaining, size - 1).forEach(permutation => {
-                    results.push(letter + permutation);
-                });
-            });
+        function permute(letters) {
+            let results = [];
+            let arr = letters.split('');
+            let len = arr.length;
+
+            function generate(n, arr) {
+                if (n === 1) {
+                    results.push(arr.join(''));
+                } else {
+                    for (let i = 0; i < n; i++) {
+                        generate(n - 1, arr);
+                        let j = n % 2 ? 0 : i;
+                        [arr[n - 1], arr[j]] = [arr[j], arr[n - 1]];
+                    }
+                }
+            }
+
+            generate(len, arr);
             return results;
         }
 
@@ -127,7 +136,9 @@
                 alert("Anna vähintään kaksi kirjainta.");
                 return;
             }
+            console.time('findPossibleWords');
             const possibleWords = findPossibleWords(letters);
+            console.timeEnd('findPossibleWords');
             if (possibleWords.length === 0) {
                 wordList.innerHTML = '<li>Ei löydettyjä sanoja.</li>';
             } else {
