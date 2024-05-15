@@ -87,7 +87,7 @@
             download: true,
             complete: function(results) {
                 results.data.flat().map(word => word.trim()).filter(Boolean).forEach(word => {
-                    words.add(word);
+                    words.add(word.toLowerCase()); // Varmista, että kaikki sanat ovat pieniä kirjaimia
                 });
                 console.log('Sanat ladattu:', words.size);
             }
@@ -97,28 +97,25 @@
             return words.has(word);
         }
 
-        function getPermutations(letters) {
+        function getAllCombinations(letters) {
             let results = new Set();
 
-            function permute(arr, memo = '') {
-                let cur, memoCopy;
-                for (let i = 0; i < arr.length; i++) {
-                    cur = arr.splice(i, 1);
-                    memoCopy = memo + cur;
-                    if (arr.length === 0 && isValidWord(memoCopy)) {
-                        results.add(memoCopy);
+            function combine(prefix, letters) {
+                for (let i = 0; i < letters.length; i++) {
+                    let newPrefix = prefix + letters[i];
+                    if (isValidWord(newPrefix)) {
+                        results.add(newPrefix);
                     }
-                    permute(arr.slice(), memoCopy);
-                    arr.splice(i, 0, cur);
+                    combine(newPrefix, letters.slice(0, i) + letters.slice(i + 1));
                 }
-                return results;
             }
 
-            return Array.from(permute(letters.split('')));
+            combine('', letters);
+            return Array.from(results);
         }
 
         function findWords() {
-            const letters = document.getElementById('letters').value;
+            const letters = document.getElementById('letters').value.toLowerCase();
             const wordList = document.getElementById('wordList');
             wordList.innerHTML = '';
             if (letters.length < 2 || letters.length > 7) {
@@ -126,7 +123,7 @@
                 return;
             }
             console.time('findPossibleWords');
-            const possibleWords = getPermutations(letters);
+            const possibleWords = getAllCombinations(letters);
             console.timeEnd('findPossibleWords');
             if (possibleWords.length === 0) {
                 wordList.innerHTML = '<li>Ei löydettyjä sanoja</li>';
