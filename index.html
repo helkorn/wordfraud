@@ -46,6 +46,9 @@
         input[type="text"]::placeholder {
             color: #333333;
         }
+        input[type="text"] {
+            autocomplete: off; /* Poistetaan syöttökentän automaattinen historia */
+        }
         button {
             padding: 10px 20px;
             font-size: 16px;
@@ -116,7 +119,7 @@
 <body>
     <div class="container" id="mainContainer">
         <h1>WordFraud 1.0</h1>
-        <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)">
+        <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off">
         <button id="fraudeloiButton" onclick="findWords()">Fraudeloi</button>
         <div class="result-title" id="resultTitle" style="display: none;"></div>
         <div class="columns">
@@ -212,6 +215,8 @@
             inputField.style.display = 'none';
             resetButton.style.display = 'block'; // Näytä reset-nappi
             mainContainer.style.width = '600px'; // Palautetaan alkuperäinen leveys
+
+            window.scrollTo(0, 0); // Vieritä ylös
         }
 
         function resetPage() {
