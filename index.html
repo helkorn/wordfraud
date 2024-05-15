@@ -183,11 +183,23 @@
         .hidden {
             display: none;
         }
+        .option-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+        .option-box {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body>
     <div class="link-box" id="whatIsThisLink">
-        <a href="javascript:void(0)" onclick="showOptions()">What is this?<img src="icon-link.ai" alt="link icon" style="width: 12px; height: 12px; margin-left: 5px;"></a>
+        <a href="javascript:void(0)" onclick="showOptions()">What is this?</a>
     </div>
     <div class="input-container" id="inputContainer">
         <h1>WordFraud 1.0</h1>
@@ -367,7 +379,7 @@
                         rabbitImage.style.display = 'none';
                         resultTitle.innerHTML = `Kysyit: ${letters}. <a href="https://youtu.be/0wHXcv4Q4Sk" style="color: black; text-decoration: underline;">Hei mikä toi on?</a>`;
                     }, 1500); // 1,5 sekuntia
-                }, 2000);
+                }, 1500); // 1,5 sekuntia
             }
 
             window.scrollTo(0, 0);
@@ -378,11 +390,13 @@
             document.getElementById('optionsContainer').classList.remove('hidden');
             document.getElementById('optionsContainer').innerHTML = `
                 <p>Did you mean..?</p>
-                <div class="link-box">
-                    <a href="javascript:void(0)" onclick="chooseOption('this')">WHAT IS THIS</a>
-                </div>
-                <div class="link-box">
-                    <a href="javascript:void(0)" onclick="chooseOption('that')">WHAT IS THAT</a>
+                <div class="option-container">
+                    <div class="option-box">
+                        <a href="javascript:void(0)" onclick="chooseOption('this')">WHAT IS THIS</a>
+                    </div>
+                    <div class="option-box">
+                        <a href="javascript:void(0)" onclick="chooseOption('that')">WHAT IS THAT</a>
+                    </div>
                 </div>
             `;
         }
@@ -392,21 +406,25 @@
             if (option === 'this') {
                 optionsContainer.innerHTML = `
                     <p>This is where you are.</p>
-                    <div class="link-box">
-                        <a href="javascript:void(0)" onclick="continueOption()">CONTINUE</a>
-                    </div>
-                    <div class="link-box">
-                        <a href="https://youtu.be/N2ICtCO8TCw">TAKE THAT</a>
+                    <div class="option-container">
+                        <div class="option-box">
+                            <a href="javascript:void(0)" onclick="continueOption()">CONTINUE</a>
+                        </div>
+                        <div class="option-box">
+                            <a href="https://youtu.be/N2ICtCO8TCw">TAKE THAT</a>
+                        </div>
                     </div>
                 `;
             } else if (option === 'that') {
                 optionsContainer.innerHTML = `
                     <p>That is kind of imperfect to this.</p>
-                    <div class="link-box">
-                        <a href="javascript:void(0)" onclick="lockInAnswer()">LUKITSEN VASTAUKSEN</a>
-                    </div>
-                    <div class="link-box">
-                        <a href="https://youtu.be/-crgQGdpZR0">TAKE A CHANGE</a>
+                    <div class="option-container">
+                        <div class="option-box">
+                            <a href="javascript:void(0)" onclick="lockInAnswer()">LUKITSEN VASTAUKSEN</a>
+                        </div>
+                        <div class="option-box">
+                            <a href="https://youtu.be/-crgQGdpZR0">TAKE A CHANGE</a>
+                        </div>
                     </div>
                 `;
             }
@@ -419,11 +437,13 @@
         function lockInAnswer() {
             document.getElementById('optionsContainer').innerHTML = `
                 <p>ARE YOU SURE (Y/N)</p>
-                <div class="link-box">
-                    <a href="javascript:void(0)" onclick="yesOption()">Y</a>
-                </div>
-                <div class="link-box">
-                    <a href="javascript:void(0)" onclick="noOption()">N</a>
+                <div class="option-container">
+                    <div class="option-box">
+                        <a href="javascript:void(0)" onclick="yesOption()">Y</a>
+                    </div>
+                    <div class="option-box">
+                        <a href="javascript:void(0)" onclick="noOption()">N</a>
+                    </div>
                 </div>
             `;
         }
