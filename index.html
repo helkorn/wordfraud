@@ -99,16 +99,21 @@
             background-color: #555555;
         }
         .result-title {
-            font-size: 1.5em;
+            font-size: 1em;
             margin-top: 20px;
             margin-bottom: 10px;
             text-transform: uppercase;
             color: #333333;
         }
+        .centered {
+            display: flex;
+            justify-content: center;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="mainContainer">
         <h1>WordFraud 1.0</h1>
         <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)">
         <button id="fraudeloiButton" onclick="findWords()">Fraudeloi</button>
@@ -117,7 +122,9 @@
             <div class="column" id="column1"></div>
             <div class="column" id="column2"></div>
         </div>
-        <button class="reset-button" id="resetButton" onclick="resetPage()">Uudelleen</button>
+        <div class="centered">
+            <button class="reset-button" id="resetButton" onclick="resetPage()">Uudelleen</button>
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
@@ -170,6 +177,8 @@
             const resultTitle = document.getElementById('resultTitle');
             const fraudeloiButton = document.getElementById('fraudeloiButton');
             const resetButton = document.getElementById('resetButton');
+            const mainContainer = document.getElementById('mainContainer');
+            const inputField = document.getElementById('letters');
             column1.innerHTML = '';
             column2.innerHTML = '';
             resultTitle.style.display = 'none';
@@ -183,6 +192,7 @@
             if (possibleWords.length === 0) {
                 const li = document.createElement('li');
                 li.textContent = 'Ei löydettyjä sanoja';
+                li.style.textTransform = 'capitalize'; // Muutetaan ensimmäinen kirjain isoksi
                 column1.appendChild(li);
             } else {
                 possibleWords.forEach((word, index) => {
@@ -195,10 +205,12 @@
                     }
                 });
             }
-            resultTitle.textContent = `Tulokset kirjaimille ${letters}`;
+            resultTitle.textContent = `Kysyit: ${letters}`;
             resultTitle.style.display = 'block';
             fraudeloiButton.style.display = 'none';
+            inputField.style.display = 'none';
             resetButton.style.display = 'block'; // Näytä reset-nappi
+            mainContainer.style.width = ''; // Palautetaan alkuperäinen leveys
         }
 
         function resetPage() {
@@ -207,7 +219,9 @@
             document.getElementById('column2').innerHTML = '';
             document.getElementById('resultTitle').style.display = 'none';
             document.getElementById('fraudeloiButton').style.display = 'block';
+            document.getElementById('letters').style.display = 'block';
             document.getElementById('resetButton').style.display = 'none'; // Piilota reset-nappi
+            document.getElementById('mainContainer').style.width = '600px'; // Palautetaan alkuperäinen leveys
         }
     </script>
 </body>
