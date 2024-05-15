@@ -15,6 +15,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            flex-direction: column;
         }
         .container {
             max-width: 600px;
@@ -24,6 +25,7 @@
             border-radius: 10px;
             background-color: #ffffff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
         }
         h1 {
             color: #333333;
@@ -48,17 +50,28 @@
             font-size: 16px;
             cursor: pointer;
             border: 1px solid #ccc;
-            border-radius: 5px;
+            border-radius: 50px; /* Pyöreä painike */
             background-color: #333333;
             color: #ffffff;
             transition: background-color 0.3s;
+            margin-top: 10px;
         }
         button:hover {
             background-color: #555555;
         }
+        .columns {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .column {
+            flex: 1;
+            padding: 10px;
+        }
         ul {
             list-style-type: none;
             padding: 0;
+            text-align: left;
         }
         li {
             background: #f9f9f9;
@@ -67,6 +80,7 @@
             border-radius: 4px;
             border: 1px solid #ccc;
             color: #333333;
+            text-transform: uppercase;
         }
     </style>
 </head>
@@ -75,8 +89,12 @@
         <h1>WordFraud 1.0</h1>
         <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)">
         <button onclick="findWords()">Fraudeloi</button>
-        <ul id="wordList"></ul>
+        <div class="columns">
+            <div class="column" id="column1"></div>
+            <div class="column" id="column2"></div>
+        </div>
     </div>
+    <button onclick="resetPage()">Uudelleen</button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script>
@@ -111,13 +129,15 @@
             }
 
             combine('', letters);
-            return Array.from(results);
+            return Array.from(results).sort(); // Aakkosjärjestys
         }
 
         function findWords() {
             const letters = document.getElementById('letters').value.toLowerCase();
-            const wordList = document.getElementById('wordList');
-            wordList.innerHTML = '';
+            const column1 = document.getElementById('column1');
+            const column2 = document.getElementById('column2');
+            column1.innerHTML = '';
+            column2.innerHTML = '';
             if (letters.length < 2 || letters.length > 7) {
                 alert("Anna 2-7 kirjainta.");
                 return;
@@ -126,14 +146,26 @@
             const possibleWords = getAllCombinations(letters);
             console.timeEnd('findPossibleWords');
             if (possibleWords.length === 0) {
-                wordList.innerHTML = '<li>Ei löydettyjä sanoja</li>';
+                const li = document.createElement('li');
+                li.textContent = 'Ei löydettyjä sanoja';
+                column1.appendChild(li);
             } else {
-                possibleWords.forEach(word => {
+                possibleWords.forEach((word, index) => {
                     const li = document.createElement('li');
                     li.textContent = word;
-                    wordList.appendChild(li);
+                    if (index % 2 === 0) {
+                        column1.appendChild(li);
+                    } else {
+                        column2.appendChild(li);
+                    }
                 });
             }
+        }
+
+        function resetPage() {
+            document.getElementById('letters').value = '';
+            document.getElementById('column1').innerHTML = '';
+            document.getElementById('column2').innerHTML = '';
         }
     </script>
 </body>
