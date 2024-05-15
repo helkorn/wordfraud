@@ -80,52 +80,88 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script>
-        let words = [];
+        class TrieNode {
+            constructor() {
+                this.children = {};
+                this.isWord = false;
+            }
+        }
+
+        class Trie {
+            constructor() {
+                this.root = new TrieNode();
+            }
+
+            insert(word) {
+                let node = this.root;
+                for (let char of word) {
+                    if (!node.children[char]) {
+                        node.children[char] = new TrieNode();
+                    }
+                    node = node.children[char];
+                }
+                node.isWord = true;
+            }
+
+            search(word) {
+                let node = this.root;
+                for (let char of word) {
+                    if (!node.children[char]) {
+                        return false;
+                    }
+                    node = node.children[char];
+                }
+                return node.isWord;
+            }
+
+            startsWith(prefix) {
+                let node = this.root;
+                for (let char of prefix) {
+                    if (!node.children[char]) {
+                        return false;
+                    }
+                    node = node.children[char];
+                }
+                return true;
+            }
+        }
+
+        let trie = new Trie();
 
         // Ladataan sanat CSV-tiedostosta
         Papa.parse('https://raw.githubusercontent.com/timosalonen/wordfraud/main/wordfraudFI.csv', {
             download: true,
             complete: function(results) {
-                words = results.data.flat().map(word => word.trim()).filter(Boolean);
-                console.log('Sanat ladattu:', words.length);
-                console.log(words.slice(0, 10)); // Näytetään 10 ensimmäistä sanaa
+                results.data.flat().map(word => word.trim()).filter(Boolean).forEach(word => {
+                    trie.insert(word);
+                });
+                console.log('Sanat ladattu:', results.data.length);
             }
         });
 
-        function isValidWord(word) {
-            return words.includes(word);
-        }
+        function findPossibleWords(letters, trie) {
+            const results = new Set();
+            const path = [];
 
-        function findPossibleWords(letters) {
-            const possibleWords = new Set();
-            permute(letters).forEach(combination => {
-                if (isValidWord(combination)) {
-                    possibleWords.add(combination);
-                }
-            });
-            console.log('Mahdolliset sanat:', possibleWords.size);
-            return Array.from(possibleWords).sort((a, b) => b.length - a.length);
-        }
+            function backtrack(start) {
+                if (start > letters.length) return;
 
-        function permute(letters) {
-            let results = [];
-            let arr = letters.split('');
-            let len = arr.length;
-
-            function generate(n, arr) {
-                if (n === 1) {
-                    results.push(arr.join(''));
-                } else {
-                    for (let i = 0; i < n; i++) {
-                        generate(n - 1, arr);
-                        let j = n % 2 ? 0 : i;
-                        [arr[n - 1], arr[j]] = [arr[j], arr[n - 1]];
+                for (let i = 0; i < letters.length; i++) {
+                    if (path.includes(i)) continue;
+                    path.push(i);
+                    const word = path.map(index => letters[index]).join('');
+                    if (trie.search(word)) {
+                        results.add(word);
                     }
+                    if (trie.startsWith(word)) {
+                        backtrack(start + 1);
+                    }
+                    path.pop();
                 }
             }
 
-            generate(len, arr);
-            return results;
+            backtrack(0);
+            return Array.from(results).sort((a, b) => b.length - a.length);
         }
 
         function findWords() {
@@ -137,7 +173,7 @@
                 return;
             }
             console.time('findPossibleWords');
-            const possibleWords = findPossibleWords(letters);
+            const possibleWords = findPossibleWords(letters, trie);
             console.timeEnd('findPossibleWords');
             if (possibleWords.length === 0) {
                 wordList.innerHTML = '<li>Ei löydettyjä sanoja.</li>';
