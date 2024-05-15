@@ -63,13 +63,14 @@
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
+            margin-bottom: 20px; /* Lisää marginaali alareunaan */
         }
         .column {
             flex: 1;
             padding: 10px;
         }
         ul {
-            list-style-type: none;
+            list-style-type: none; /* Poistaa mustat pisteet */
             padding: 0;
             text-align: left;
         }
@@ -91,9 +92,7 @@
             background-color: #333333;
             color: #ffffff;
             transition: background-color 0.3s;
-            margin-top: 20px;
-            position: relative;
-            top: 20px;
+            margin-top: 10px; /* Pienempi marginaali */
             display: none; /* Piilotetaan aluksi */
         }
         .reset-button:hover {
@@ -110,8 +109,8 @@
             <div class="column" id="column1"></div>
             <div class="column" id="column2"></div>
         </div>
+        <button class="reset-button" id="resetButton" onclick="resetPage()">Uudelleen</button>
     </div>
-    <button class="reset-button" id="resetButton" onclick="resetPage()">Uudelleen</button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script>
