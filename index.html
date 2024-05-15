@@ -13,10 +13,10 @@
             padding: 0;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Muutettu centeristä flex-startiksi */
-            min-height: 100vh; /* Muutettu height: 100vh -> min-height: 100vh */
+            align-items: flex-start;
+            min-height: 100vh;
             flex-direction: column;
-            overflow-y: auto; /* Varmistaa, että koko sisältö on näkyvissä */
+            overflow-y: auto;
         }
         .container {
             max-width: 600px;
@@ -26,7 +26,7 @@
             border-radius: 10px;
             background-color: #ffffff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin: 20px; /* Lisätty marginaali */
+            margin: 20px auto; /* Keskitetään vaakasuunnassa */
         }
         h1 {
             color: #333333;
@@ -42,7 +42,7 @@
             border-radius: 5px;
             background-color: #f9f9f9;
             color: #333333;
-            autocomplete: off; /* Poistaa syöttökentän automaattisen historian */
+            autocomplete: off;
         }
         input[type="text"]::placeholder {
             color: #333333;
@@ -52,7 +52,7 @@
             font-size: 16px;
             cursor: pointer;
             border: 1px solid #ccc;
-            border-radius: 50px; /* Pyöreä painike */
+            border-radius: 50px;
             background-color: #333333;
             color: #ffffff;
             transition: background-color 0.3s;
@@ -65,14 +65,14 @@
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            margin-bottom: 20px; /* Lisää marginaali alareunaan */
+            margin-bottom: 20px;
         }
         .column {
             flex: 1;
             padding: 10px;
         }
         ul {
-            list-style-type: none; /* Poistaa mustat pisteet */
+            list-style-type: none;
             padding: 0;
             text-align: left;
         }
@@ -84,22 +84,22 @@
             border: 1px solid #ccc;
             color: #333333;
             text-transform: uppercase;
-            cursor: pointer; /* Muuttaa osoittimen kursoriksi */
+            cursor: pointer;
         }
         li:hover {
-            background-color: #eee; /* Muuttaa taustavärin hoverilla */
+            background-color: #eee;
         }
         .reset-button {
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
             border: 1px solid #ccc;
-            border-radius: 50px; /* Pyöreä painike */
+            border-radius: 50px;
             background-color: #333333;
             color: #ffffff;
             transition: background-color 0.3s;
-            margin-top: 10px; /* Pienempi marginaali */
-            display: none; /* Piilotetaan aluksi */
+            margin-top: 10px;
+            display: none;
         }
         .reset-button:hover {
             background-color: #555555;
@@ -117,7 +117,7 @@
             text-align: center;
         }
         .no-results {
-            text-align: center; /* Keskitetään teksti */
+            text-align: center;
             margin: 5px 0;
             padding: 10px;
             border-radius: 4px;
@@ -153,7 +153,7 @@
             download: true,
             complete: function(results) {
                 results.data.flat().map(word => word.trim()).filter(Boolean).forEach(word => {
-                    words.add(word.toLowerCase()); // Varmista, että kaikki sanat ovat pieniä kirjaimia
+                    words.add(word.toLowerCase());
                 });
                 console.log('Sanat ladattu:', words.size);
                 isDataLoaded = true;
@@ -178,7 +178,7 @@
             }
 
             combine('', letters);
-            return Array.from(results).sort(); // Aakkosjärjestys
+            return Array.from(results).sort();
         }
 
         function findWords() {
@@ -193,7 +193,6 @@
             const resultTitle = document.getElementById('resultTitle');
             const fraudeloiButton = document.getElementById('fraudeloiButton');
             const resetButton = document.getElementById('resetButton');
-            const mainContainer = document.getElementById('mainContainer');
             const inputField = document.getElementById('letters');
             column1.innerHTML = '';
             column2.innerHTML = '';
@@ -214,7 +213,7 @@
                 possibleWords.forEach((word, index) => {
                     const li = document.createElement('li');
                     li.textContent = word.toUpperCase();
-                    li.onclick = () => findWordsForWord(word.toUpperCase()); // Lisätään klikkaustoiminto
+                    li.onclick = () => findWordsForWord(word.toUpperCase());
                     if (index % 2 === 0) {
                         column1.appendChild(li);
                     } else {
@@ -226,10 +225,9 @@
             resultTitle.style.display = 'block';
             fraudeloiButton.style.display = 'none';
             inputField.style.display = 'none';
-            resetButton.style.display = 'block'; // Näytä reset-nappi
-            mainContainer.style.width = '600px'; // Palautetaan alkuperäinen leveys
+            resetButton.style.display = 'block';
 
-            window.scrollTo(0, 0); // Vieritä ylös
+            window.scrollTo(0, 0);
         }
 
         function findWordsForWord(word) {
@@ -238,7 +236,7 @@
         }
 
         function resetPage() {
-            location.reload(); // Päivitetään sivu uudelleen
+            location.reload();
         }
     </script>
 </body>
