@@ -73,7 +73,7 @@
 <body>
     <div class="container">
         <h1>WordFraud 1.0</h1>
-        <input type="text" id="letters" placeholder="Syötä kirjaimet (max 7)">
+        <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)">
         <button onclick="findWords()">Fraudeloi</button>
         <ul id="wordList"></ul>
     </div>
@@ -98,15 +98,15 @@
         }
 
         function getPermutations(letters) {
-            let results = [];
+            let results = new Set();
 
             function permute(arr, memo = '') {
                 let cur, memoCopy;
                 for (let i = 0; i < arr.length; i++) {
                     cur = arr.splice(i, 1);
                     memoCopy = memo + cur;
-                    if (arr.length === 0) {
-                        results.push(memoCopy);
+                    if (arr.length === 0 && isValidWord(memoCopy)) {
+                        results.add(memoCopy);
                     }
                     permute(arr.slice(), memoCopy);
                     arr.splice(i, 0, cur);
@@ -114,7 +114,7 @@
                 return results;
             }
 
-            return permute(letters.split('')).filter(isValidWord);
+            return Array.from(permute(letters.split('')));
         }
 
         function findWords() {
@@ -129,7 +129,7 @@
             const possibleWords = getPermutations(letters);
             console.timeEnd('findPossibleWords');
             if (possibleWords.length === 0) {
-                wordList.innerHTML = '<li>Ei löydettyjä sanoja.</li>';
+                wordList.innerHTML = '<li>Ei löydettyjä sanoja</li>';
             } else {
                 possibleWords.forEach(word => {
                     const li = document.createElement('li');
