@@ -1,171 +1,13 @@
 <!DOCTYPE html>
-<html lang="fi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timin WordFraud</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            color: #333333;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            flex-direction: column;
-            overflow-y: auto;
-            position: relative;
-        }
-        .container {
-            max-width: 600px;
-            text-align: center;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #ffffff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin: 20px auto;
-        }
-        .input-container {
-            max-width: 650px;
-            text-align: center;
-            padding: 25px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #ffffff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin: 20px auto;
-        }
-        h1 {
-            color: #333333;
-            font-size: 2em;
-            margin-bottom: 20px;
-        }
-        input[type="text"] {
-            width: 80%;
-            padding: 10px;
-            font-size: 16px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-            color: #333333;
-            autocomplete: off;
-        }
-        input[type="text"]::placeholder {
-            color: #333333;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border: 1px solid #ccc;
-            border-radius: 50px;
-            background-color: #333333;
-            color: #ffffff;
-            transition: background-color 0.3s;
-            margin-top: 10px;
-        }
-        button:hover {
-            background-color: #555555;
-        }
-        .columns {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-        .column {
-            flex: 1;
-            min-width: 250px;
-            padding: 10px;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-            text-align: left;
-        }
-        li {
-            background: #f9f9f9;
-            margin: 5px 0;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            color: #333333;
-            text-transform: uppercase;
-            cursor: pointer;
-        }
-        li:hover {
-            background-color: #eee;
-        }
-        .reset-button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border: 1px solid #ccc;
-            border-radius: 50px;
-            background-color: #333333;
-            color: #ffffff;
-            transition: background-color 0.3s;
-            margin-top: 10px;
-            display: none;
-        }
-        .reset-button:hover {
-            background-color: #555555;
-        }
-        .result-title {
-            font-size: 1em;
-            margin-top: 20px;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            color: #333333;
-        }
-        .centered {
-            display: flex;
-            justify-content: center;
-            text-align: center;
-        }
-        .no-results {
-            text-align: center;
-            margin: 5px 0;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            background: #f9f9f9;
-            color: #333333;
-            text-transform: capitalize;
-        }
-        .highlight {
-            font-size: 1.2em;
-            margin-top: 5px;
-            color: #333;
-            font-weight: bold;
-        }
-        .super-highlight {
-            font-size: 1.5em;
-            margin-top: 5px;
-            color: red;
-            font-weight: bold;
-        }
-        .full-screen-image {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1000;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .full-screen-image img {
-            max-width: 100%;
-            max-height: 100%;
-        }
+        * { margin: 0; padding: 0; }
+        body { background: #000; overflow: hidden; }
+        canvas { display: block; }
         .link-box {
             position: fixed;
             top: 20px;
@@ -194,9 +36,17 @@
         .option-text:hover {
             text-decoration: underline;
         }
+        .right-corner {
+            position: fixed;
+            top: 40px;
+            right: 20px;
+            text-align: right;
+            color: white;
+        }
     </style>
 </head>
 <body>
+    <canvas></canvas>
     <div class="link-box" id="whatIsThisLink">
         <a href="javascript:void(0)" onclick="showOptions()">What is this?</a>
     </div>
@@ -224,7 +74,7 @@
         <img src="therabbit.png" alt="Jänis">
     </div>
 
-    <div class="link-box hidden" id="optionsContainer"></div> <!-- Piilotettu alussa -->
+    <div class="right-corner hidden" id="optionsContainer"></div> <!-- Piilotettu alussa -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0"></script>
@@ -360,7 +210,7 @@
                 resultTitle.textContent = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
             } else if (resultCount > medianThreshold) {
                 highlightMessage.style.display = 'block';
-                resultTitle.textContent = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
+                resultTitle.textContent = `Kysyit: ${letters}. ${letters.length kirjainta ja ${resultCount} sanaa`;
             } else {
                 resultTitle.textContent = `Kysyit: ${letters}`;
             }
@@ -390,10 +240,8 @@
             optionsContainer.classList.remove('hidden');
             optionsContainer.innerHTML = `
                 <p>Did you mean..?</p>
-                <div class="option-container">
-                    <a class="option-text" onclick="chooseOption('this')">What is this?</a><br>
-                    <a class="option-text" onclick="chooseOption('that')">Or What is that?</a>
-                </div>
+                <a class="option-text" onclick="chooseOption('this')">What is this?</a><br>
+                <a class="option-text" onclick="chooseOption('that')">Or What is that?</a>
             `;
         }
 
@@ -403,26 +251,132 @@
                 optionsContainer.innerHTML = `
                     <p>This is where you are.</p>
                     <div class="option-container">
-                        <a class="option-text" onclick="elsewhereOption()">Elsewhere</a><br>
-                        <a class="option-text" href="https://youtu.be/N2ICtCO8TCw">Take that</a>
+                        <a class="option-text" href="https://youtu.be/N2ICtCO8TCw">Take That</a><br>
+                        <a class="option-text" onclick="continueOption()">Continue</a>
                     </div>
                 `;
             } else if (option === 'that') {
                 optionsContainer.innerHTML = `
-                    <p>Are you sure?</p>
+                    <p>That is imperfect of this.</p>
                     <div class="option-container">
-                        <a class="option-text" onclick="lockInAnswer()">Lukitsen</a><br>
-                        <a class="option-text" href="https://youtu.be/-crgQGdpZR0">Take a change</a>
+                        <a class="option-text" onclick="lockInAnswer()">Sure Thing I Call.</a><br>
+                        <a class="option-text" href="https://youtu.be/-crgQGdpZR0">Or Take A Change</a>
                     </div>
                 `;
             }
         }
 
-        function elsewhereOption() {
-            window.location.href = 'pacman.html';
+        function continueOption() {
+            document.body.innerHTML = '<canvas></canvas>';
+            var canvas = document.querySelector('canvas');
+            var ctx = canvas.getContext('2d');
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            setTimeout(() => {
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = '#fff';
+                ctx.font = '30px fontC64';
+                ctx.fillText('...', 20, 30);
+
+                setTimeout(() => {
+                    ctx.fillText('..', 20, 30);
+                }, 500);
+
+                setTimeout(() => {
+                    ctx.fillText('.', 20, 30);
+                }, 1000);
+
+                setTimeout(() => {
+                    ctx.fillText('', 20, 30);
+                    ctx.fillRect(0, 40, canvas.width, 5);
+
+                    setTimeout(() => {
+                        ctx.fillStyle = '#000';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                        ctx.font = '20px fontC64';
+                        var lines = [
+                            'SYS 64738',
+                            'POKE 53280, 0',
+                            'READY.',
+                            '',
+                            '10 INPUT "CHOOSE YOUR PILL 1 or 2:", V',
+                            '20 IF V = 1 THEN GOTO 10',
+                            '30 IF V = 2 THEN GOTO 3000',
+                            '40 IF V <> 1 AND V <> 2 THEN GOSUB 3500',
+                            '50 END',
+                            '',
+                            '3010 LOAD "PACMAN",8,1',
+                            '3020 RUN',
+                            '',
+                            '3500 PRINT "You take the blue pill, the story ends. You wake up in your bed and believe whatever you want to believe. You take the red pill, you stay in Wonderland, and I show you how deep the rabbit hole goes."',
+                            '3510 END'
+                        ];
+                        var y = 30;
+                        var delay = 100;
+
+                        lines.forEach((line, index) => {
+                            setTimeout(() => {
+                                ctx.fillText(line, 20, y);
+                                y += 30;
+                            }, delay * index);
+                        });
+
+                        setTimeout(() => {
+                            document.body.innerHTML = '';
+                            var matrixCanvas = document.createElement('canvas');
+                            document.body.appendChild(matrixCanvas);
+                            var matrixCtx = matrixCanvas.getContext('2d');
+
+                            matrixCanvas.width = window.innerWidth;
+                            matrixCanvas.height = window.innerHeight;
+
+                            var letters = 'ABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZ';
+                            letters = letters.split('');
+
+                            var fontSize = 10;
+                            var columns = matrixCanvas.width / fontSize;
+
+                            var drops = [];
+                            for (var i = 0; i < columns; i++) {
+                                drops[i] = 1;
+                            }
+
+                            function drawMatrix() {
+                                matrixCtx.fillStyle = 'rgba(0, 0, 0, .1)';
+                                matrixCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+                                matrixCtx.font = fontSize + 'px arial';
+                                for (var i = 0; i < drops.length; i++) {
+                                    var text = letters[Math.floor(Math.random() * letters.length)];
+                                    matrixCtx.fillStyle = '#0f0';
+                                    matrixCtx.fillText(text, i * fontSize, drops[i] * fontSize);
+                                    drops[i]++;
+                                    if (drops[i] * fontSize > matrixCanvas.height && Math.random() > .95) {
+                                        drops[i] = 0;
+                                    }
+                                }
+                            }
+
+                            setInterval(drawMatrix, 33);
+
+                            setTimeout(() => {
+                                window.location.href = 'pacman.html';
+                            }, 3000);
+                        }, delay * lines.length + 3000);
+                    }, 1500);
+                }, 1500);
+            }, 500);
         }
 
         function lockInAnswer() {
+            // Tämä funktio ohjaa WordPorn-sivulle
             window.location.href = 'wordporn.html';
         }
 
