@@ -59,6 +59,15 @@
         button:hover {
             background-color: #555555;
         }
+        .columns {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .column {
+            flex: 1;
+            padding: 10px;
+        }
         ul {
             list-style-type: none;
             padding: 0;
@@ -85,6 +94,7 @@
             margin-top: 20px;
             position: relative;
             top: 20px;
+            display: none; /* Piilotetaan aluksi */
         }
         .reset-button:hover {
             background-color: #555555;
@@ -96,9 +106,12 @@
         <h1>WordFraud 1.0</h1>
         <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)">
         <button onclick="findWords()">Fraudeloi</button>
-        <ul id="wordList"></ul>
+        <div class="columns">
+            <div class="column" id="column1"></div>
+            <div class="column" id="column2"></div>
+        </div>
     </div>
-    <button class="reset-button" onclick="resetPage()">Uudelleen</button>
+    <button class="reset-button" id="resetButton" onclick="resetPage()">Uudelleen</button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script>
@@ -138,8 +151,11 @@
 
         function findWords() {
             const letters = document.getElementById('letters').value.toLowerCase();
-            const wordList = document.getElementById('wordList');
-            wordList.innerHTML = '';
+            const column1 = document.getElementById('column1');
+            const column2 = document.getElementById('column2');
+            const resetButton = document.getElementById('resetButton');
+            column1.innerHTML = '';
+            column2.innerHTML = '';
             if (letters.length < 2 || letters.length > 7) {
                 alert("Anna 2-7 kirjainta.");
                 return;
@@ -150,19 +166,26 @@
             if (possibleWords.length === 0) {
                 const li = document.createElement('li');
                 li.textContent = 'Ei löydettyjä sanoja';
-                wordList.appendChild(li);
+                column1.appendChild(li);
             } else {
-                possibleWords.forEach(word => {
+                possibleWords.forEach((word, index) => {
                     const li = document.createElement('li');
                     li.textContent = word;
-                    wordList.appendChild(li);
+                    if (index % 2 === 0) {
+                        column1.appendChild(li);
+                    } else {
+                        column2.appendChild(li);
+                    }
                 });
             }
+            resetButton.style.display = 'block'; // Näytä reset-nappi
         }
 
         function resetPage() {
             document.getElementById('letters').value = '';
-            document.getElementById('wordList').innerHTML = '';
+            document.getElementById('column1').innerHTML = '';
+            document.getElementById('column2').innerHTML = '';
+            document.getElementById('resetButton').style.display = 'none'; // Piilota reset-nappi
         }
     </script>
 </body>
