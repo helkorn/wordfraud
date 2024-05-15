@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timin WordFraud</title>
     <style>
+        @font-face {
+            font-family: 'C64';
+            src: url('fontC64.ttf') format('truetype');
+        }
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
@@ -17,7 +21,7 @@
             min-height: 100vh;
             flex-direction: column;
             overflow-y: auto;
-            position: relative; /* Lisätty */
+            position: relative;
         }
         .container {
             max-width: 600px;
@@ -30,9 +34,9 @@
             margin: 20px auto;
         }
         .input-container {
-            max-width: 650px; /* Suurennettu max-width */
+            max-width: 650px;
             text-align: center;
-            padding: 25px; /* Suurennettu padding */
+            padding: 25px;
             border: 1px solid #ccc;
             border-radius: 10px;
             background-color: #ffffff;
@@ -167,8 +171,8 @@
             max-height: 100%;
         }
         .link-box {
-            position: fixed; /* Muutettu */
-            top: 20px; /* Sijoitettu hieman irti kulmasta */
+            position: fixed;
+            top: 20px;
             right: 20px;
             font-size: 14px;
             color: #000000;
@@ -193,6 +197,26 @@
         }
         .option-text:hover {
             text-decoration: underline;
+        }
+        .basic-text {
+            font-family: 'C64';
+            color: #00FF00;
+            white-space: pre-wrap;
+        }
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background-color: #00FF00;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            from, to {
+                background-color: transparent;
+            }
+            50% {
+                background-color: #00FF00;
+            }
         }
     </style>
 </head>
@@ -324,7 +348,7 @@
             resultTitle.style.display = 'none';
             highlightMessage.style.display = 'none';
             superHighlightMessage.style.display = 'none';
-            if (letters.length < 2 || letters.length > 7) { // Muutettu maksimiarvo 7
+            if (letters.length < 2 || letters.length > 7) {
                 alert("Anna 2-7 kirjainta.");
                 return;
             }
@@ -332,7 +356,6 @@
             const possibleWords = getAllCombinations(letters.toLowerCase());
             console.timeEnd('findPossibleWords');
 
-            // Tarkistetaan, onko mukana rivoja sanoja
             const containsOffensive = possibleWords.some(word => isOffensiveWord(word.toLowerCase()));
 
             if (possibleWords.length === 0) {
@@ -353,7 +376,7 @@
                 });
             }
 
-            const resultCount = possibleWords.length - 1; // Vähennetään yksi, koska hakusana itse sisältyy tuloksiin
+            const resultCount = possibleWords.length - 1;
 
             if (resultCount > superThreshold) {
                 superHighlightMessage.style.display = 'block';
@@ -378,8 +401,8 @@
                     setTimeout(() => {
                         rabbitImage.style.display = 'none';
                         resultTitle.innerHTML = `Kysyit: ${letters}. <a href="https://youtu.be/0wHXcv4Q4Sk" style="color: black; text-decoration: underline;">Hei mikä toi on?</a>`;
-                    }, 1500); // 1,5 sekuntia
-                }, 1500); // 1,5 sekuntia
+                    }, 1500);
+                }, 1000);
             }
 
             window.scrollTo(0, 0);
@@ -389,13 +412,30 @@
             document.getElementById('whatIsThisLink').style.display = 'none';
             const optionsContainer = document.getElementById('optionsContainer');
             optionsContainer.classList.remove('hidden');
-            optionsContainer.innerHTML = `
-                <p>Did you mean..?</p>
-                <div class="option-container">
-                    <a class="option-text" onclick="chooseOption('this')">What is this</a><br>
-                    <a class="option-text" onclick="chooseOption('that')">What is that</a>
-                </div>
-            `;
+            printBasicText(`
+10 PRINT CHR$(29); CHR$(31)
+20 PRINT "Did you mean..?"
+30 PRINT "What is this? Or"
+40 PRINT "What is that?"
+50 INPUT "CHOOSE YOUR PILL 1 or 2:", V
+60 IF V = 1 THEN GOTO this
+70 IF V = 2 THEN GOTO that
+80 IF V <> 1 AND V <> 2 THEN GOSUB 3000
+90 END`, () => {
+                setTimeout(() => {
+                    printText("READY.");
+                    optionsContainer.innerHTML += `<div class="cursor"></div>`;
+                    setTimeout(() => {
+                        optionsContainer.innerHTML = `
+                            <p>Did you mean..?</p>
+                            <div class="option-container">
+                                <a class="option-text" onclick="chooseOption('this')">What is this?</a><br>
+                                <a class="option-text" onclick="chooseOption('that')">Or What is that?</a>
+                            </div>
+                        `;
+                    }, 500);
+                }, 500);
+            });
         }
 
         function chooseOption(option) {
@@ -404,7 +444,7 @@
                 optionsContainer.innerHTML = `
                     <p>This is where you are.</p>
                     <div class="option-container">
-                        <a class="option-text" onclick="continueOption()">Continue</a><br>
+                        <a class="option-text" onclick="elsewhereOption()">Elsewhere</a><br>
                         <a class="option-text" href="https://youtu.be/N2ICtCO8TCw">Take that</a>
                     </div>
                 `;
@@ -412,17 +452,41 @@
                 optionsContainer.innerHTML = `
                     <p>Are you sure?</p>
                     <div class="option-container">
-                        <a class="option-text" onclick="lockInAnswer()">Olen varma</a><br>
+                        <a class="option-text" onclick="lockInAnswer()">Lukitsen</a><br>
                         <a class="option-text" href="https://youtu.be/-crgQGdpZR0">Take a change</a>
                     </div>
                 `;
             }
         }
 
-        function continueOption() {
-            document.getElementById('optionsContainer').classList.add('hidden');
-            document.getElementById('inputContainer').style.display = 'block';
-            document.getElementById('mainContainer').style.display = 'none';
+        function elsewhereOption() {
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.classList.add('hidden');
+            printBasicText(`
+SYS 64738 (Y)
+POKE 53280, 6 (Z)
+LOAD "PACMAN",8,1 (Y)(Y)`, () => {
+                setTimeout(() => {
+                    window.location.href = 'pacman.html';
+                }, 1500);
+            });
+        }
+
+        function printBasicText(text, callback) {
+            const container = document.getElementById('optionsContainer');
+            container.classList.remove('hidden');
+            container.innerHTML = '<div class="basic-text" id="basicText"></div>';
+            const basicText = document.getElementById('basicText');
+            let i = 0;
+            const interval = setInterval(() => {
+                if (i < text.length) {
+                    basicText.innerHTML += text.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(interval);
+                    if (callback) callback();
+                }
+            }, 50);
         }
 
         function lockInAnswer() {
