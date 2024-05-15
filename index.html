@@ -168,8 +168,8 @@
         }
         .link-box {
             position: fixed; /* Muutettu */
-            top: 10px; /* Sijoitettu oikeaan yläkulmaan */
-            right: 10px;
+            top: 20px; /* Sijoitettu hieman irti kulmasta */
+            right: 20px;
             font-size: 14px;
             color: #000000;
         }
@@ -184,16 +184,15 @@
             display: none;
         }
         .option-container {
-            display: flex;
-            justify-content: space-around;
             margin-top: 10px;
         }
-        .option-box {
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 10px;
-            background-color: #ffffff;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        .option-text {
+            color: #000000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .option-text:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -205,7 +204,6 @@
         <h1>WordFraud 1.0</h1>
         <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off" disabled>
         <button id="fraudeloiButton" onclick="findWords()" disabled>Fraudeloi</button>
-        <div class="hidden" id="optionsContainer"></div> <!-- Piilotettu alussa -->
     </div>
     <div class="container" id="mainContainer" style="display: none;">
         <div class="result-title" id="resultTitle"></div>
@@ -225,6 +223,8 @@
     <div class="full-screen-image" id="rabbitImage" style="display: none;">
         <img src="therabbit.png" alt="Jänis">
     </div>
+
+    <div class="link-box hidden" id="optionsContainer"></div> <!-- Piilotettu alussa -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0"></script>
@@ -387,16 +387,13 @@
 
         function showOptions() {
             document.getElementById('whatIsThisLink').style.display = 'none';
-            document.getElementById('optionsContainer').classList.remove('hidden');
-            document.getElementById('optionsContainer').innerHTML = `
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.classList.remove('hidden');
+            optionsContainer.innerHTML = `
                 <p>Did you mean..?</p>
                 <div class="option-container">
-                    <div class="option-box">
-                        <a href="javascript:void(0)" onclick="chooseOption('this')">WHAT IS THIS</a>
-                    </div>
-                    <div class="option-box">
-                        <a href="javascript:void(0)" onclick="chooseOption('that')">WHAT IS THAT</a>
-                    </div>
+                    <a class="option-text" onclick="chooseOption('this')">What is this</a><br>
+                    <a class="option-text" onclick="chooseOption('that')">What is that</a>
                 </div>
             `;
         }
@@ -407,55 +404,28 @@
                 optionsContainer.innerHTML = `
                     <p>This is where you are.</p>
                     <div class="option-container">
-                        <div class="option-box">
-                            <a href="javascript:void(0)" onclick="continueOption()">CONTINUE</a>
-                        </div>
-                        <div class="option-box">
-                            <a href="https://youtu.be/N2ICtCO8TCw">TAKE THAT</a>
-                        </div>
+                        <a class="option-text" onclick="continueOption()">Continue</a><br>
+                        <a class="option-text" href="https://youtu.be/N2ICtCO8TCw">Take that</a>
                     </div>
                 `;
             } else if (option === 'that') {
                 optionsContainer.innerHTML = `
-                    <p>That is kind of imperfect to this.</p>
+                    <p>Are you sure?</p>
                     <div class="option-container">
-                        <div class="option-box">
-                            <a href="javascript:void(0)" onclick="lockInAnswer()">LUKITSEN VASTAUKSEN</a>
-                        </div>
-                        <div class="option-box">
-                            <a href="https://youtu.be/-crgQGdpZR0">TAKE A CHANGE</a>
-                        </div>
+                        <a class="option-text" onclick="lockInAnswer()">Olen varma</a><br>
+                        <a class="option-text" href="https://youtu.be/-crgQGdpZR0">Take a change</a>
                     </div>
                 `;
             }
         }
 
         function continueOption() {
-            document.getElementById('optionsContainer').innerHTML = `<p>Here we are again.</p>`;
+            document.getElementById('optionsContainer').classList.add('hidden');
+            document.getElementById('inputContainer').style.display = 'block';
+            document.getElementById('mainContainer').style.display = 'none';
         }
 
         function lockInAnswer() {
-            document.getElementById('optionsContainer').innerHTML = `
-                <p>ARE YOU SURE (Y/N)</p>
-                <div class="option-container">
-                    <div class="option-box">
-                        <a href="javascript:void(0)" onclick="yesOption()">Y</a>
-                    </div>
-                    <div class="option-box">
-                        <a href="javascript:void(0)" onclick="noOption()">N</a>
-                    </div>
-                </div>
-            `;
-        }
-
-        function yesOption() {
-            document.body.innerHTML = `<p style="color: white; text-align: center;">That is elsewhere.</p>`;
-            setTimeout(() => {
-                location.reload();
-            }, 3000);
-        }
-
-        function noOption() {
             window.location.href = 'wordporn.html';
         }
 
