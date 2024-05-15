@@ -29,7 +29,7 @@
             margin: 20px auto;
         }
         .input-container {
-            max-width: 500px; /* Suurennettu max-width hieman */
+            max-width: 700px; /* Suurennettu max-width */
             text-align: center;
             padding: 20px;
             border: 1px solid #ccc;
@@ -149,6 +149,22 @@
             color: red;
             font-weight: bold;
         }
+        .full-screen-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .full-screen-image img {
+            max-width: 100%;
+            max-height: 100%;
+        }
     </style>
 </head>
 <body>
@@ -170,6 +186,10 @@
         <div class="centered">
             <button class="reset-button" id="resetButton" onclick="resetPage()">Uudelleen</button>
         </div>
+    </div>
+    
+    <div class="full-screen-image" id="rabbitImage" style="display: none;">
+        <img src="therabbit.png" alt="Jänis">
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
@@ -264,6 +284,7 @@
             const resetButton = document.getElementById('resetButton');
             const mainContainer = document.getElementById('mainContainer');
             const inputContainer = document.getElementById('inputContainer');
+            const rabbitImage = document.getElementById('rabbitImage');
             column1.innerHTML = '';
             column2.innerHTML = '';
             resultTitle.style.display = 'none';
@@ -315,6 +336,17 @@
             mainContainer.style.display = 'block';
             resultTitle.style.display = 'block';
             resetButton.style.display = 'block';
+
+            if (letters === 'JÄNIS') {
+                resultTitle.textContent += ". Onks kello hyvin?";
+                setTimeout(() => {
+                    rabbitImage.style.display = 'flex';
+                    setTimeout(() => {
+                        rabbitImage.style.display = 'none';
+                        resultTitle.innerHTML = `Kysyit: ${letters}. <a href="https://youtu.be/0wHXcv4Q4Sk" style="color: black; font-weight: bold;">Hei mikä toi on?</a>`;
+                    }, 1000);
+                }, 2000);
+            }
 
             window.scrollTo(0, 0);
         }
