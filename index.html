@@ -29,7 +29,7 @@
             margin: 20px auto;
         }
         .input-container {
-            max-width: 450px; /* Suurennettu max-width */
+            max-width: 500px; /* Suurennettu max-width hieman */
             text-align: center;
             padding: 20px;
             border: 1px solid #ccc;
@@ -248,22 +248,6 @@
             });
         }
 
-        function showRabbitImage() {
-            const imageUrl = 'https://path-to-rabbit-image.jpg'; // Korvaa oikealla kuvan URL:lla
-            const img = document.createElement('img');
-            img.src = imageUrl;
-            img.style.position = 'fixed';
-            img.style.top = '0';
-            img.style.left = '0';
-            img.style.width = '100%';
-            img.style.height = '100%';
-            img.style.zIndex = '1000';
-            document.body.appendChild(img);
-            setTimeout(() => {
-                document.body.removeChild(img);
-            }, 3000);
-        }
-
         function findWords() {
             if (!isDataLoaded || !isOffensiveLoaded) {
                 alert('Sanat eivät ole vielä latautuneet. Odota hetki ja yritä uudelleen.');
@@ -288,9 +272,6 @@
             if (letters.length < 2 || letters.length > 7) { // Muutettu maksimiarvo 7
                 alert("Anna 2-7 kirjainta.");
                 return;
-            }
-            if (letters === 'JÄNIS') {
-                showRabbitImage();
             }
             console.time('findPossibleWords');
             const possibleWords = getAllCombinations(letters.toLowerCase());
