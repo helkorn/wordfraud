@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordPorn</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #333333;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            overflow-y: hidden;
+        }
+        .container {
+            max-width: 600px;
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #444444;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            margin: 20px auto;
+        }
+        h1 {
+            color: #ffffff;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        .scrambled-word {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #555555;
+            color: #ffffff;
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 50px;
+            background-color: #ffffff;
+            color: #333333;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #eeeeee;
+        }
+        .timer {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>WordPorn</h1>
+        <p>Analgrammit. Mitä nyt vittua taas.</p>
+        <div class="scrambled-word" id="scrambledWord"></div>
+        <input type="text" id="answer" placeholder="Kirjoita alkuperäinen sana">
+        <button onclick="checkAnswer()">Tarkista</button>
+        <div class="timer" id="timer">30</div>
+    </div>
+    <script>
+        let words = [];
+        let currentWord = '';
+        let timer;
+        let timeLeft = 30;
+
+        // Load the word list
+        fetch('filtered_wordpornFI.csv')
+            .then(response => response.text())
+            .then(text => {
+                words = text.split('\n').map(word => word.trim()).filter(Boolean);
+                nextWord();
+                startTimer();
+            });
+
+        function scrambleWord(word) {
+            let scrambled = word.split('').sort(() => Math.random() - 0.5).join('');
+            while (scrambled === word) {
+                scrambled = word.split('').sort(() => Math.random() - 0.5).join('');
+            }
+            return scrambled.toUpperCase();
+        }
+
+        function nextWord() {
+            if (words.length === 0) {
+                return;
+            }
+            currentWord = words[Math.floor(Math.random() * words.length)];
+            document.getElementById('scrambledWord').innerText = scrambleWord(currentWord);
+        }
+
+        function startTimer() {
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    document.body.innerHTML = '<p style="color: black; text-align: center; background-color: white;">That is an imperfect to this.</p>';
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 3000);
+                }
+            }, 1000);
+        }
+
+        function checkAnswer() {
+            const answer = document.getElementById('answer').value.toLowerCase();
+            if (answer === currentWord.toLowerCase()) {
+                timeLeft = 30;
+                nextWord();
+                document.getElementById('answer').value = '';
+            } else {
+                timeLeft = Math.max(timeLeft - 5, 1);
+            }
+        }
+    </script>
+</body>
+</html>
