@@ -19,7 +19,7 @@
             overflow-y: auto;
         }
         .container {
-            width: 100%; /* Muutettu max-width: 600px; -> width: 100%; */
+            width: 100%;
             max-width: 600px;
             text-align: center;
             padding: 20px;
@@ -128,13 +128,30 @@
             color: #333333;
             text-transform: capitalize;
         }
+        .progress-bar {
+            width: 100%;
+            background-color: #f3f3f3;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .progress-bar-fill {
+            height: 20px;
+            background-color: #4caf50;
+            width: 0%;
+            border-radius: 5px;
+            transition: width 0.25s;
+        }
     </style>
 </head>
 <body>
     <div class="container" id="mainContainer">
         <h1>WordFraud 1.0</h1>
-        <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off">
-        <button id="fraudeloiButton" onclick="findWords()">Fraudeloi</button>
+        <div class="progress-bar">
+            <div class="progress-bar-fill" id="progressBarFill"></div>
+        </div>
+        <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off" disabled>
+        <button id="fraudeloiButton" onclick="findWords()" disabled>Fraudeloi</button>
         <div class="result-title" id="resultTitle" style="display: none;"></div>
         <div class="columns">
             <div class="column" id="column1"></div>
@@ -151,6 +168,17 @@
         let offensiveWords = new Set();
         let isDataLoaded = false;
         let isOffensiveLoaded = false;
+        let progress = 0;
+
+        function updateProgressBar(increment) {
+            progress += increment;
+            const progressBarFill = document.getElementById('progressBarFill');
+            progressBarFill.style.width = progress + '%';
+            if (progress >= 100) {
+                document.getElementById('letters').disabled = false;
+                document.getElementById('fraudeloiButton').disabled = false;
+            }
+        }
 
         // Ladataan tavalliset sanat CSV-tiedostosta
         Papa.parse('https://raw.githubusercontent.com/timosalonen/wordfraud/main/wordfraudFI.csv', {
@@ -161,6 +189,7 @@
                 });
                 console.log('Sanat ladattu:', words.size);
                 isDataLoaded = true;
+                updateProgressBar(50); // Päivitetään latausprosenttia
             }
         });
 
@@ -173,6 +202,7 @@
                 });
                 console.log('Rivot sanat ladattu:', offensiveWords.size);
                 isOffensiveLoaded = true;
+                updateProgressBar(50); // Päivitetään latausprosenttia
             }
         });
 
@@ -217,8 +247,8 @@
             column1.innerHTML = '';
             column2.innerHTML = '';
             resultTitle.style.display = 'none';
-            if (letters.length < 2 || letters.length > 7) {
-                alert("Anna 2-7 kirjainta.");
+            if (letters.length < 2 || letters.length > 10) {
+                alert("Anna 2-10 kirjainta.");
                 return;
             }
             console.time('findPossibleWords');
@@ -246,7 +276,13 @@
                 });
             }
 
-            resultTitle.textContent = containsOffensive ? "Kysyit tuhmia" : `Kysyit: ${letters}`;
+            // Tarkistetaan, onko syötetyt kirjaimet "TIMPE"
+            if (letters === "TIMPE") {
+                resultTitle.textContent = "Nyt osui kunkku, otahan punkku..:";
+            } else {
+                resultTitle.textContent = containsOffensive ? "Kysyit tuhmia" : `Kysyit: ${letters}`;
+            }
+            
             resultTitle.style.display = 'block';
             fraudeloiButton.style.display = 'none';
             inputField.style.display = 'none';
