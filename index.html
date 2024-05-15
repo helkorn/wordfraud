@@ -17,6 +17,7 @@
             min-height: 100vh;
             flex-direction: column;
             overflow-y: auto;
+            position: relative; /* Lisätty */
         }
         .container {
             max-width: 600px;
@@ -37,7 +38,6 @@
             background-color: #ffffff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             margin: 20px auto;
-            position: relative; /* Uusi sijainti linkille */
         }
         h1 {
             color: #333333;
@@ -167,8 +167,8 @@
             max-height: 100%;
         }
         .link-box {
-            position: absolute;
-            top: 10px;
+            position: fixed; /* Muutettu */
+            top: 10px; /* Sijoitettu oikeaan yläkulmaan */
             right: 10px;
             font-size: 14px;
             color: #000000;
@@ -186,22 +186,14 @@
     </style>
 </head>
 <body>
+    <div class="link-box" id="whatIsThisLink">
+        <a href="javascript:void(0)" onclick="showOptions()">What is this?<img src="icon-link.ai" alt="link icon" style="width: 12px; height: 12px; margin-left: 5px;"></a>
+    </div>
     <div class="input-container" id="inputContainer">
         <h1>WordFraud 1.0</h1>
         <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off" disabled>
         <button id="fraudeloiButton" onclick="findWords()" disabled>Fraudeloi</button>
-        <div class="link-box" id="whatIsThisLink">
-            <a href="javascript:void(0)" onclick="showOptions()">What is this?<img src="icon-link.ai" alt="link icon" style="width: 12px; height: 12px; margin-left: 5px;"></a>
-        </div>
-        <div class="hidden" id="optionsContainer">
-            <p>Did you mean..?</p>
-            <div class="link-box">
-                <a href="javascript:void(0)" onclick="chooseOption('this')">WHAT IS THIS</a>
-            </div>
-            <div class="link-box">
-                <a href="javascript:void(0)" onclick="chooseOption('that')">WHAT IS THAT</a>
-            </div>
-        </div>
+        <div class="hidden" id="optionsContainer"></div> <!-- Piilotettu alussa -->
     </div>
     <div class="container" id="mainContainer" style="display: none;">
         <div class="result-title" id="resultTitle"></div>
@@ -384,11 +376,21 @@
         function showOptions() {
             document.getElementById('whatIsThisLink').style.display = 'none';
             document.getElementById('optionsContainer').classList.remove('hidden');
+            document.getElementById('optionsContainer').innerHTML = `
+                <p>Did you mean..?</p>
+                <div class="link-box">
+                    <a href="javascript:void(0)" onclick="chooseOption('this')">WHAT IS THIS</a>
+                </div>
+                <div class="link-box">
+                    <a href="javascript:void(0)" onclick="chooseOption('that')">WHAT IS THAT</a>
+                </div>
+            `;
         }
 
         function chooseOption(option) {
+            const optionsContainer = document.getElementById('optionsContainer');
             if (option === 'this') {
-                document.getElementById('optionsContainer').innerHTML = `
+                optionsContainer.innerHTML = `
                     <p>This is where you are.</p>
                     <div class="link-box">
                         <a href="javascript:void(0)" onclick="continueOption()">CONTINUE</a>
@@ -398,7 +400,7 @@
                     </div>
                 `;
             } else if (option === 'that') {
-                document.getElementById('optionsContainer').innerHTML = `
+                optionsContainer.innerHTML = `
                     <p>That is kind of imperfect to this.</p>
                     <div class="link-box">
                         <a href="javascript:void(0)" onclick="lockInAnswer()">LUKITSEN VASTAUKSEN</a>
