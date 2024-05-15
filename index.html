@@ -5,10 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timin WordFraud</title>
     <style>
-        @font-face {
-            font-family: 'C64';
-            src: url('fontC64.ttf') format('truetype');
-        }
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
@@ -198,34 +194,6 @@
         .option-text:hover {
             text-decoration: underline;
         }
-        .basic-text {
-            font-family: 'C64';
-            color: #008000; /* Tumma vihreä */
-            white-space: pre-wrap;
-        }
-        .cursor {
-            display: inline-block;
-            width: 10px;
-            height: 20px;
-            background-color: #008000; /* Tumma vihreä */
-            animation: blink 1s step-end infinite;
-        }
-        @keyframes blink {
-            from, to {
-                background-color: transparent;
-            }
-            50% {
-                background-color: #008000; /* Tumma vihreä */
-            }
-        }
-        .basic-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #000;
-            padding: 10px;
-            border-radius: 5px;
-        }
     </style>
 </head>
 <body>
@@ -257,7 +225,6 @@
     </div>
 
     <div class="link-box hidden" id="optionsContainer"></div> <!-- Piilotettu alussa -->
-    <div class="basic-container hidden" id="basicContainer"></div> <!-- Piilotettu alussa -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0"></script>
@@ -411,7 +378,7 @@
                         rabbitImage.style.display = 'none';
                         resultTitle.innerHTML = `Kysyit: ${letters}. <a href="https://youtu.be/0wHXcv4Q4Sk" style="color: black; text-decoration: underline;">Hei mikä toi on?</a>`;
                     }, 1500);
-                }, 1000);
+                }, 500);
             }
 
             window.scrollTo(0, 0);
@@ -420,37 +387,18 @@
         function showOptions() {
             document.getElementById('whatIsThisLink').style.display = 'none';
             const optionsContainer = document.getElementById('optionsContainer');
-            const basicContainer = document.getElementById('basicContainer');
             optionsContainer.classList.remove('hidden');
-            printBasicText(`
-10 PRINT CHR$(29); CHR$(31)
-20 PRINT "Did you mean.."
-30 PRINT "What is this? Or"
-40 PRINT "What is that?"
-50 INPUT "CHOOSE YOUR PILL 1 or 2:", V
-60 IF V = 1 THEN GOTO this
-70 IF V = 2 THEN GOTO that
-80 IF V <> 1 AND V <> 2 THEN GOSUB 3000
-90 END`, () => {
-                setTimeout(() => {
-                    printText("READY.");
-                    basicContainer.innerHTML += `<div class="cursor"></div>`;
-                    setTimeout(() => {
-                        optionsContainer.innerHTML = `
-                            <p>Did you mean..?</p>
-                            <div class="option-container">
-                                <a class="option-text" onclick="chooseOption('this')">What is this?</a><br>
-                                <a class="option-text" onclick="chooseOption('that')">Or What is that?</a>
-                            </div>
-                        `;
-                    }, 500);
-                }, 500);
-            }, basicContainer);
+            optionsContainer.innerHTML = `
+                <p>Did you mean..?</p>
+                <div class="option-container">
+                    <a class="option-text" onclick="chooseOption('this')">What is this?</a><br>
+                    <a class="option-text" onclick="chooseOption('that')">Or What is that?</a>
+                </div>
+            `;
         }
 
         function chooseOption(option) {
             const optionsContainer = document.getElementById('optionsContainer');
-            const basicContainer = document.getElementById('basicContainer');
             if (option === 'this') {
                 optionsContainer.innerHTML = `
                     <p>This is where you are.</p>
@@ -471,33 +419,7 @@
         }
 
         function elsewhereOption() {
-            const optionsContainer = document.getElementById('optionsContainer');
-            const basicContainer = document.getElementById('basicContainer');
-            optionsContainer.classList.add('hidden');
-            printBasicText(`
-SYS 64738 (Y)
-POKE 53280, 6 (Z)
-LOAD "PACMAN",8,1 (Y)(Y)`, () => {
-                setTimeout(() => {
-                    window.location.href = 'pacman.html';
-                }, 1500);
-            }, basicContainer);
-        }
-
-        function printBasicText(text, callback, container) {
-            container.classList.remove('hidden');
-            container.innerHTML = '<div class="basic-text" id="basicText"></div>';
-            const basicText = document.getElementById('basicText');
-            let i = 0;
-            const interval = setInterval(() => {
-                if (i < text.length) {
-                    basicText.innerHTML += text.charAt(i);
-                    i++;
-                } else {
-                    clearInterval(interval);
-                    if (callback) callback();
-                }
-            }, 50);
+            window.location.href = 'pacman.html';
         }
 
         function lockInAnswer() {
