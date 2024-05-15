@@ -97,23 +97,24 @@
             return words.has(word);
         }
 
-        function getCombinations(letters, minLen, maxLen) {
+        function getPermutations(letters) {
             let results = [];
 
-            function combine(active, rest, depth) {
-                if (depth >= minLen && depth <= maxLen && isValidWord(active)) {
-                    results.push(active);
+            function permute(arr, memo = '') {
+                let cur, memoCopy;
+                for (let i = 0; i < arr.length; i++) {
+                    cur = arr.splice(i, 1);
+                    memoCopy = memo + cur;
+                    if (arr.length === 0) {
+                        results.push(memoCopy);
+                    }
+                    permute(arr.slice(), memoCopy);
+                    arr.splice(i, 0, cur);
                 }
-                if (depth === maxLen) {
-                    return;
-                }
-                for (let i = 0; i < rest.length; i++) {
-                    combine(active + rest[i], rest.slice(0, i) + rest.slice(i + 1), depth + 1);
-                }
+                return results;
             }
 
-            combine('', letters, 0);
-            return results;
+            return permute(letters.split('')).filter(isValidWord);
         }
 
         function findWords() {
@@ -125,7 +126,7 @@
                 return;
             }
             console.time('findPossibleWords');
-            const possibleWords = getCombinations(letters, 2, letters.length);
+            const possibleWords = getPermutations(letters);
             console.timeEnd('findPossibleWords');
             if (possibleWords.length === 0) {
                 wordList.innerHTML = '<li>Ei löydettyjä sanoja.</li>';
