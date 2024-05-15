@@ -123,6 +123,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script>
         let words = new Set();
+        let isDataLoaded = false;
 
         // Ladataan sanat CSV-tiedostosta
         Papa.parse('https://raw.githubusercontent.com/timosalonen/wordfraud/main/wordfraudFI.csv', {
@@ -132,6 +133,7 @@
                     words.add(word.toLowerCase()); // Varmista, että kaikki sanat ovat pieniä kirjaimia
                 });
                 console.log('Sanat ladattu:', words.size);
+                isDataLoaded = true;
             }
         });
 
@@ -157,6 +159,11 @@
         }
 
         function findWords() {
+            if (!isDataLoaded) {
+                alert('Sanat eivät ole vielä latautuneet. Odota hetki ja yritä uudelleen.');
+                return;
+            }
+
             const letters = document.getElementById('letters').value.toUpperCase();
             const column1 = document.getElementById('column1');
             const column2 = document.getElementById('column2');
