@@ -73,107 +73,59 @@
 <body>
     <div class="container">
         <h1>WordFraud 1.0</h1>
-        <input type="text" id="letters" placeholder="Syötä kirjaimet (esim artspl)">
+        <input type="text" id="letters" placeholder="Syötä kirjaimet (max 7)">
         <button onclick="findWords()">Fraudeloi</button>
         <ul id="wordList"></ul>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script>
-        class TrieNode {
-            constructor() {
-                this.children = {};
-                this.isWord = false;
-            }
-        }
-
-        class Trie {
-            constructor() {
-                this.root = new TrieNode();
-            }
-
-            insert(word) {
-                let node = this.root;
-                for (let char of word) {
-                    if (!node.children[char]) {
-                        node.children[char] = new TrieNode();
-                    }
-                    node = node.children[char];
-                }
-                node.isWord = true;
-            }
-
-            search(word) {
-                let node = this.root;
-                for (let char of word) {
-                    if (!node.children[char]) {
-                        return false;
-                    }
-                    node = node.children[char];
-                }
-                return node.isWord;
-            }
-
-            startsWith(prefix) {
-                let node = this.root;
-                for (let char of prefix) {
-                    if (!node.children[char]) {
-                        return false;
-                    }
-                    node = node.children[char];
-                }
-                return true;
-            }
-        }
-
-        let trie = new Trie();
+        let words = new Set();
 
         // Ladataan sanat CSV-tiedostosta
         Papa.parse('https://raw.githubusercontent.com/timosalonen/wordfraud/main/wordfraudFI.csv', {
             download: true,
             complete: function(results) {
                 results.data.flat().map(word => word.trim()).filter(Boolean).forEach(word => {
-                    trie.insert(word);
+                    words.add(word);
                 });
-                console.log('Sanat ladattu:', results.data.length);
+                console.log('Sanat ladattu:', words.size);
             }
         });
 
-        function findPossibleWords(letters, trie) {
-            const results = new Set();
-            const path = [];
+        function isValidWord(word) {
+            return words.has(word);
+        }
 
-            function backtrack(start) {
-                if (start > letters.length) return;
+        function getCombinations(letters, minLen, maxLen) {
+            let results = [];
 
-                for (let i = 0; i < letters.length; i++) {
-                    if (path.includes(i)) continue;
-                    path.push(i);
-                    const word = path.map(index => letters[index]).join('');
-                    if (trie.search(word)) {
-                        results.add(word);
-                    }
-                    if (trie.startsWith(word)) {
-                        backtrack(start + 1);
-                    }
-                    path.pop();
+            function combine(active, rest, depth) {
+                if (depth >= minLen && depth <= maxLen && isValidWord(active)) {
+                    results.push(active);
+                }
+                if (depth === maxLen) {
+                    return;
+                }
+                for (let i = 0; i < rest.length; i++) {
+                    combine(active + rest[i], rest.slice(0, i) + rest.slice(i + 1), depth + 1);
                 }
             }
 
-            backtrack(0);
-            return Array.from(results).sort((a, b) => b.length - a.length);
+            combine('', letters, 0);
+            return results;
         }
 
         function findWords() {
             const letters = document.getElementById('letters').value;
             const wordList = document.getElementById('wordList');
             wordList.innerHTML = '';
-            if (letters.length < 2) {
-                alert("Anna vähintään kaksi kirjainta.");
+            if (letters.length < 2 || letters.length > 7) {
+                alert("Anna 2-7 kirjainta.");
                 return;
             }
             console.time('findPossibleWords');
-            const possibleWords = findPossibleWords(letters, trie);
+            const possibleWords = getCombinations(letters, 2, letters.length);
             console.timeEnd('findPossibleWords');
             if (possibleWords.length === 0) {
                 wordList.innerHTML = '<li>Ei löydettyjä sanoja.</li>';
