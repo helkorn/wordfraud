@@ -83,7 +83,7 @@
         let words = [];
 
         // Ladataan sanat CSV-tiedostosta
-        Papa.parse('https://hkiug.com/wp-content/uploads/2024/05/Fraud-suomi.csv', {
+        Papa.parse('https://raw.githubusercontent.com/timosalonen/wordfraud/main/wordfraudFI.csv', {
             download: true,
             complete: function(results) {
                 words = results.data.flat().map(word => word.trim()).filter(Boolean);
