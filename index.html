@@ -46,7 +46,6 @@
     </style>
 </head>
 <body>
-    <canvas></canvas>
     <div class="link-box" id="whatIsThisLink">
         <a href="javascript:void(0)" onclick="showOptions()">What is this?</a>
     </div>
@@ -210,7 +209,7 @@
                 resultTitle.textContent = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
             } else if (resultCount > medianThreshold) {
                 highlightMessage.style.display = 'block';
-                resultTitle.textContent = `Kysyit: ${letters}. ${letters.length kirjainta ja ${resultCount} sanaa`;
+                resultTitle.textContent = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
             } else {
                 resultTitle.textContent = `Kysyit: ${letters}`;
             }
@@ -330,7 +329,6 @@
                         });
 
                         setTimeout(() => {
-                            document.body.innerHTML = '';
                             var matrixCanvas = document.createElement('canvas');
                             document.body.appendChild(matrixCanvas);
                             var matrixCtx = matrixCanvas.getContext('2d');
