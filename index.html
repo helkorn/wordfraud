@@ -19,24 +19,24 @@
             overflow-y: auto;
         }
         .container {
-            max-width: 600px; /* Kapeampi max-width */
+            max-width: 600px;
             text-align: center;
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 10px;
             background-color: #ffffff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin: 20px auto; /* Keskitetään vaakasuunnassa */
+            margin: 20px auto;
         }
         .input-container {
-            max-width: 400px; /* Kapeampi max-width */
+            max-width: 450px; /* Suurennettu max-width */
             text-align: center;
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 10px;
             background-color: #ffffff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin: 20px auto; /* Keskitetään vaakasuunnassa */
+            margin: 20px auto;
         }
         h1 {
             color: #333333;
@@ -137,6 +137,11 @@
             color: #333333;
             text-transform: capitalize;
         }
+        .highlight {
+            color: #ff0000;
+            font-weight: bold;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -152,6 +157,9 @@
             <div class="column" id="column2"></div>
         </div>
         <div class="centered">
+            <div class="highlight" id="highlightMessage" style="display: none;">Huippuhyvä löytö!</div>
+        </div>
+        <div class="centered">
             <button class="reset-button" id="resetButton" onclick="resetPage()">Uudelleen</button>
         </div>
     </div>
@@ -162,6 +170,7 @@
         let offensiveWords = new Set();
         let isDataLoaded = false;
         let isOffensiveLoaded = false;
+        const medianThreshold = 50; // Oletettu mediaaniarvo huippuhyville löydöille
 
         // Ladataan tavalliset sanat CSV-tiedostosta
         Papa.parse('https://raw.githubusercontent.com/timosalonen/wordfraud/main/wordfraudFI.csv', {
@@ -231,6 +240,7 @@
             const column1 = document.getElementById('column1');
             const column2 = document.getElementById('column2');
             const resultTitle = document.getElementById('resultTitle');
+            const highlightMessage = document.getElementById('highlightMessage');
             const fraudeloiButton = document.getElementById('fraudeloiButton');
             const resetButton = document.getElementById('resetButton');
             const mainContainer = document.getElementById('mainContainer');
@@ -238,6 +248,7 @@
             column1.innerHTML = '';
             column2.innerHTML = '';
             resultTitle.style.display = 'none';
+            highlightMessage.style.display = 'none';
             if (letters.length < 2 || letters.length > 7) { // Muutettu maksimiarvo 7
                 alert("Anna 2-7 kirjainta.");
                 return;
@@ -268,11 +279,18 @@
             }
 
             const resultCount = possibleWords.length - 1; // Vähennetään yksi, koska hakusana itse sisältyy tuloksiin
+            const resultText = resultCount === 1 ? "Löytyi yksi tulos" : `Löytyi ${resultCount} tulosta`;
+
             // Tarkistetaan, onko syötetyt kirjaimet "TIMPE"
             if (letters === "TIMPE") {
-                resultTitle.textContent = `Nyt osui kunkku otahan punkku: Löytyi ${resultCount} tulosta`;
+                resultTitle.textContent = `Nyt osui kunkku otahan punkku: ${resultText}`;
             } else {
-                resultTitle.textContent = containsOffensive ? `Kysyit tuhmia: Löytyi ${resultCount} tulosta` : `Kysyit: ${letters}. Löytyi ${resultCount} tulosta`;
+                resultTitle.textContent = containsOffensive ? `Kysyit tuhmia: ${resultText}` : `Kysyit: ${letters}. ${resultText}`;
+            }
+
+            // Näytetään "Huippuhyvä löytö!"-viesti, jos tulosten määrä ylittää mediaanin
+            if (resultCount > medianThreshold) {
+                highlightMessage.style.display = 'block';
             }
 
             inputContainer.style.display = 'none';
