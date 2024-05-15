@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Timin WordFraud</title>
+    <title>Timin Sanahuijaus</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -153,7 +153,7 @@
 </head>
 <body>
     <div class="input-container" id="inputContainer">
-        <h1>WordFraud 1.0</h1>
+        <h1>Sanahuijaus 1.0</h1>
         <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off" disabled>
         <button id="fraudeloiButton" onclick="findWords()" disabled>Fraudeloi</button>
     </div>
@@ -299,21 +299,16 @@
             }
 
             const resultCount = possibleWords.length - 1; // Vähennetään yksi, koska hakusana itse sisältyy tuloksiin
-            const resultText = resultCount === 1 ? "Löytyi yksi tulos" : `Löytyi ${resultCount} tulosta`;
 
-            // Tarkistetaan, onko syötetyt kirjaimet "TIMPE"
-            if (letters === "TIMPE") {
-                resultTitle.textContent = `Nyt osui kunkku otahan punkku: ${resultText}`;
-            } else {
-                resultTitle.textContent = containsOffensive ? `Kysyit tuhmia: ${resultText}` : `Kysyit: ${letters}. ${resultText}`;
-            }
-
-            // Näytetään "Huippuhyvä löytö!"-viesti tai "SUPERLÖYTÖ!", jos tulosten määrä ylittää mediaanin
             if (resultCount > superThreshold) {
                 superHighlightMessage.style.display = 'block';
                 showConfetti();
+                resultTitle.textContent = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
             } else if (resultCount > medianThreshold) {
                 highlightMessage.style.display = 'block';
+                resultTitle.textContent = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
+            } else {
+                resultTitle.textContent = `Kysyit: ${letters}`;
             }
 
             inputContainer.style.display = 'none';
