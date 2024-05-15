@@ -16,6 +16,7 @@
             align-items: center;
             height: 100vh;
             flex-direction: column;
+            overflow-y: auto; /* Varmistaa, että koko sisältö on näkyvissä */
         }
         .container {
             max-width: 600px;
@@ -210,18 +211,11 @@
             fraudeloiButton.style.display = 'none';
             inputField.style.display = 'none';
             resetButton.style.display = 'block'; // Näytä reset-nappi
-            mainContainer.style.width = ''; // Palautetaan alkuperäinen leveys
+            mainContainer.style.width = '600px'; // Palautetaan alkuperäinen leveys
         }
 
         function resetPage() {
-            document.getElementById('letters').value = '';
-            document.getElementById('column1').innerHTML = '';
-            document.getElementById('column2').innerHTML = '';
-            document.getElementById('resultTitle').style.display = 'none';
-            document.getElementById('fraudeloiButton').style.display = 'block';
-            document.getElementById('letters').style.display = 'block';
-            document.getElementById('resetButton').style.display = 'none'; // Piilota reset-nappi
-            document.getElementById('mainContainer').style.width = '600px'; // Palautetaan alkuperäinen leveys
+            location.reload(); // Päivitetään sivu uudelleen
         }
     </script>
 </body>
