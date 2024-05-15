@@ -329,44 +329,7 @@
                         });
 
                         setTimeout(() => {
-                            var matrixCanvas = document.createElement('canvas');
-                            document.body.appendChild(matrixCanvas);
-                            var matrixCtx = matrixCanvas.getContext('2d');
-
-                            matrixCanvas.width = window.innerWidth;
-                            matrixCanvas.height = window.innerHeight;
-
-                            var letters = 'ABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZ';
-                            letters = letters.split('');
-
-                            var fontSize = 10;
-                            var columns = matrixCanvas.width / fontSize;
-
-                            var drops = [];
-                            for (var i = 0; i < columns; i++) {
-                                drops[i] = 1;
-                            }
-
-                            function drawMatrix() {
-                                matrixCtx.fillStyle = 'rgba(0, 0, 0, .1)';
-                                matrixCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
-                                matrixCtx.font = fontSize + 'px arial';
-                                for (var i = 0; i < drops.length; i++) {
-                                    var text = letters[Math.floor(Math.random() * letters.length)];
-                                    matrixCtx.fillStyle = '#0f0';
-                                    matrixCtx.fillText(text, i * fontSize, drops[i] * fontSize);
-                                    drops[i]++;
-                                    if (drops[i] * fontSize > matrixCanvas.height && Math.random() > .95) {
-                                        drops[i] = 0;
-                                    }
-                                }
-                            }
-
-                            setInterval(drawMatrix, 33);
-
-                            setTimeout(() => {
-                                window.location.href = 'pacman.html';
-                            }, 3000);
+                            window.location.href = 'pacman.html';
                         }, delay * lines.length + 3000);
                     }, 1500);
                 }, 1500);
