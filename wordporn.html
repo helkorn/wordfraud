@@ -84,7 +84,7 @@
         let timeLeft = 30;
 
         // Load the word list
-        fetch('filtered_wordpornFI.csv')
+        fetch('wordpornFI.csv')
             .then(response => response.text())
             .then(text => {
                 words = text.split('\n').map(word => word.trim()).filter(Boolean);
