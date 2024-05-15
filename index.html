@@ -26,7 +26,7 @@
             border-radius: 10px;
             background-color: #ffffff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin: 20px auto; /* Keskitetään vaakasuunnassa */
+            margin: 20px auto;
         }
         h1 {
             color: #333333;
@@ -69,6 +69,7 @@
         }
         .column {
             flex: 1;
+            min-width: 250px; /* Varmistetaan, että kolumnit ovat tarpeeksi leveitä */
             padding: 10px;
         }
         ul {
@@ -148,7 +149,6 @@
         let words = new Set();
         let isDataLoaded = false;
 
-        // Ladataan sanat CSV-tiedostosta
         Papa.parse('https://raw.githubusercontent.com/timosalonen/wordfraud/main/wordfraudFI.csv', {
             download: true,
             complete: function(results) {
