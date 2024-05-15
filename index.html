@@ -98,13 +98,21 @@
         .reset-button:hover {
             background-color: #555555;
         }
+        .result-title {
+            font-size: 1.5em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            color: #333333;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>WordFraud 1.0</h1>
         <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)">
-        <button onclick="findWords()">Fraudeloi</button>
+        <button id="fraudeloiButton" onclick="findWords()">Fraudeloi</button>
+        <div class="result-title" id="resultTitle" style="display: none;"></div>
         <div class="columns">
             <div class="column" id="column1"></div>
             <div class="column" id="column2"></div>
@@ -149,18 +157,21 @@
         }
 
         function findWords() {
-            const letters = document.getElementById('letters').value.toLowerCase();
+            const letters = document.getElementById('letters').value.toUpperCase();
             const column1 = document.getElementById('column1');
             const column2 = document.getElementById('column2');
+            const resultTitle = document.getElementById('resultTitle');
+            const fraudeloiButton = document.getElementById('fraudeloiButton');
             const resetButton = document.getElementById('resetButton');
             column1.innerHTML = '';
             column2.innerHTML = '';
+            resultTitle.style.display = 'none';
             if (letters.length < 2 || letters.length > 7) {
                 alert("Anna 2-7 kirjainta.");
                 return;
             }
             console.time('findPossibleWords');
-            const possibleWords = getAllCombinations(letters);
+            const possibleWords = getAllCombinations(letters.toLowerCase());
             console.timeEnd('findPossibleWords');
             if (possibleWords.length === 0) {
                 const li = document.createElement('li');
@@ -169,7 +180,7 @@
             } else {
                 possibleWords.forEach((word, index) => {
                     const li = document.createElement('li');
-                    li.textContent = word;
+                    li.textContent = word.toUpperCase();
                     if (index % 2 === 0) {
                         column1.appendChild(li);
                     } else {
@@ -177,6 +188,9 @@
                     }
                 });
             }
+            resultTitle.textContent = `Tulokset kirjaimille ${letters}`;
+            resultTitle.style.display = 'block';
+            fraudeloiButton.style.display = 'none';
             resetButton.style.display = 'block'; // Näytä reset-nappi
         }
 
@@ -184,6 +198,8 @@
             document.getElementById('letters').value = '';
             document.getElementById('column1').innerHTML = '';
             document.getElementById('column2').innerHTML = '';
+            document.getElementById('resultTitle').style.display = 'none';
+            document.getElementById('fraudeloiButton').style.display = 'block';
             document.getElementById('resetButton').style.display = 'none'; // Piilota reset-nappi
         }
     </script>
