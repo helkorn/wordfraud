@@ -200,14 +200,14 @@
         }
         .basic-text {
             font-family: 'C64';
-            color: #00FF00;
+            color: #008000; /* Tumma vihreä */
             white-space: pre-wrap;
         }
         .cursor {
             display: inline-block;
             width: 10px;
             height: 20px;
-            background-color: #00FF00;
+            background-color: #008000; /* Tumma vihreä */
             animation: blink 1s step-end infinite;
         }
         @keyframes blink {
@@ -215,8 +215,16 @@
                 background-color: transparent;
             }
             50% {
-                background-color: #00FF00;
+                background-color: #008000; /* Tumma vihreä */
             }
+        }
+        .basic-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #000;
+            padding: 10px;
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -249,6 +257,7 @@
     </div>
 
     <div class="link-box hidden" id="optionsContainer"></div> <!-- Piilotettu alussa -->
+    <div class="basic-container hidden" id="basicContainer"></div> <!-- Piilotettu alussa -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0"></script>
@@ -411,10 +420,11 @@
         function showOptions() {
             document.getElementById('whatIsThisLink').style.display = 'none';
             const optionsContainer = document.getElementById('optionsContainer');
+            const basicContainer = document.getElementById('basicContainer');
             optionsContainer.classList.remove('hidden');
             printBasicText(`
 10 PRINT CHR$(29); CHR$(31)
-20 PRINT "Did you mean..?"
+20 PRINT "Did you mean.."
 30 PRINT "What is this? Or"
 40 PRINT "What is that?"
 50 INPUT "CHOOSE YOUR PILL 1 or 2:", V
@@ -424,7 +434,7 @@
 90 END`, () => {
                 setTimeout(() => {
                     printText("READY.");
-                    optionsContainer.innerHTML += `<div class="cursor"></div>`;
+                    basicContainer.innerHTML += `<div class="cursor"></div>`;
                     setTimeout(() => {
                         optionsContainer.innerHTML = `
                             <p>Did you mean..?</p>
@@ -435,11 +445,12 @@
                         `;
                     }, 500);
                 }, 500);
-            });
+            }, basicContainer);
         }
 
         function chooseOption(option) {
             const optionsContainer = document.getElementById('optionsContainer');
+            const basicContainer = document.getElementById('basicContainer');
             if (option === 'this') {
                 optionsContainer.innerHTML = `
                     <p>This is where you are.</p>
@@ -461,6 +472,7 @@
 
         function elsewhereOption() {
             const optionsContainer = document.getElementById('optionsContainer');
+            const basicContainer = document.getElementById('basicContainer');
             optionsContainer.classList.add('hidden');
             printBasicText(`
 SYS 64738 (Y)
@@ -469,11 +481,10 @@ LOAD "PACMAN",8,1 (Y)(Y)`, () => {
                 setTimeout(() => {
                     window.location.href = 'pacman.html';
                 }, 1500);
-            });
+            }, basicContainer);
         }
 
-        function printBasicText(text, callback) {
-            const container = document.getElementById('optionsContainer');
+        function printBasicText(text, callback, container) {
             container.classList.remove('hidden');
             container.innerHTML = '<div class="basic-text" id="basicText"></div>';
             const basicText = document.getElementById('basicText');
