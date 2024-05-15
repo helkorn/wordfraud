@@ -28,6 +28,16 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             margin: 20px auto; /* Keskitetään vaakasuunnassa */
         }
+        .input-container {
+            max-width: 400px; /* Kapeampi max-width */
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 20px auto; /* Keskitetään vaakasuunnassa */
+        }
         h1 {
             color: #333333;
             font-size: 2em;
@@ -130,11 +140,13 @@
     </style>
 </head>
 <body>
-    <div class="container" id="mainContainer">
+    <div class="input-container" id="inputContainer">
         <h1>WordFraud 1.0</h1>
         <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off" disabled>
         <button id="fraudeloiButton" onclick="findWords()" disabled>Fraudeloi</button>
-        <div class="result-title" id="resultTitle" style="display: none;"></div>
+    </div>
+    <div class="container" id="mainContainer" style="display: none;">
+        <div class="result-title" id="resultTitle"></div>
         <div class="columns">
             <div class="column" id="column1"></div>
             <div class="column" id="column2"></div>
@@ -221,12 +233,13 @@
             const resultTitle = document.getElementById('resultTitle');
             const fraudeloiButton = document.getElementById('fraudeloiButton');
             const resetButton = document.getElementById('resetButton');
-            const inputField = document.getElementById('letters');
+            const mainContainer = document.getElementById('mainContainer');
+            const inputContainer = document.getElementById('inputContainer');
             column1.innerHTML = '';
             column2.innerHTML = '';
             resultTitle.style.display = 'none';
-            if (letters.length < 2 || letters.length > 10) {
-                alert("Anna 2-10 kirjainta.");
+            if (letters.length < 2 || letters.length > 7) { // Muutettu maksimiarvo 7
+                alert("Anna 2-7 kirjainta.");
                 return;
             }
             console.time('findPossibleWords');
@@ -254,16 +267,17 @@
                 });
             }
 
+            const resultCount = possibleWords.length - 1; // Vähennetään yksi, koska hakusana itse sisältyy tuloksiin
             // Tarkistetaan, onko syötetyt kirjaimet "TIMPE"
             if (letters === "TIMPE") {
-                resultTitle.textContent = "Nyt osui kunkku otahan punkku:";
+                resultTitle.textContent = `Nyt osui kunkku otahan punkku: Löytyi ${resultCount} tulosta`;
             } else {
-                resultTitle.textContent = containsOffensive ? "Kysyit tuhmia" : `Kysyit: ${letters}`;
+                resultTitle.textContent = containsOffensive ? `Kysyit tuhmia: Löytyi ${resultCount} tulosta` : `Kysyit: ${letters}. Löytyi ${resultCount} tulosta`;
             }
-            
+
+            inputContainer.style.display = 'none';
+            mainContainer.style.display = 'block';
             resultTitle.style.display = 'block';
-            fraudeloiButton.style.display = 'none';
-            inputField.style.display = 'none';
             resetButton.style.display = 'block';
 
             window.scrollTo(0, 0);
