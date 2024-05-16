@@ -40,7 +40,7 @@
             border-radius: 10px;
             background-color: #ffffff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin: 100px auto 20px; /* Siirretty paneelia alaspäin */
+            margin: 20px auto;
         }
         h1 {
             color: #333333;
@@ -373,7 +373,7 @@
                 resultTitle.textContent = `Kysyit: ${letters}. ${letters.length kirjainta ja ${resultCount} sanaa`;
             } else if (resultCount > medianThreshold) {
                 highlightMessage.style.display = 'block';
-                resultTitle.textContent = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
+                resultTitle.textContent = `Kysyit: ${letters}. ${letters.length kirjainta ja ${resultCount} sanaa`;
             } else {
                 resultTitle.textContent = `Kysyit: ${letters}`;
             }
@@ -402,7 +402,7 @@
             const optionsContainer = document.getElementById('optionsContainer');
             optionsContainer.classList.remove('hidden');
             optionsContainer.style.position = 'fixed';
-            optionsContainer.style.top = '20px';
+            optionsContainer.style.top = '40px'; /* Siirretty yhden rivin alaspäin */
             optionsContainer.style.right = '20px';
             optionsContainer.innerHTML = `
                 <p>Did you mean..?</p>
