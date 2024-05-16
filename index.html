@@ -403,23 +403,69 @@
                 optionsContainer.innerHTML = `
                     <p>This is where you are.</p>
                     <div class="option-container">
-                        <a class="option-text" onclick="elsewhereOption()">Elsewhere</a><br>
-                        <a class="option-text" href="https://youtu.be/N2ICtCO8TCw">Take that</a>
+                        <a class="option-text" onclick="chooseContinueOption()">Continue</a><br>
+                        <a class="option-text" href="https://youtu.be/N2ICtCO8TCw">Take That</a>
                     </div>
                 `;
             } else if (option === 'that') {
                 optionsContainer.innerHTML = `
-                    <p>Are you sure?</p>
+                    <p>That is imperfect of this.</p>
                     <div class="option-container">
-                        <a class="option-text" onclick="lockInAnswer()">Lukitsen</a><br>
-                        <a class="option-text" href="https://youtu.be/-crgQGdpZR0">Take a change</a>
+                        <a class="option-text" onclick="lockInAnswer()">Sure thing, I call.</a><br>
+                        <a class="option-text" href="https://youtu.be/-crgQGdpZR0">Or, Take a Change</a>
                     </div>
                 `;
             }
         }
 
-        function elsewhereOption() {
-            window.location.href = 'pacman.html';
+        function chooseContinueOption() {
+            document.body.innerHTML = '<canvas></canvas>';
+            var canvas = document.querySelector('canvas');
+            var ctx = canvas.getContext('2d');
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.font = '20px fontC64';
+            ctx.fillStyle = '#696969';  // Tumman harmaa
+
+            var lines = [
+                'SYS 64738',
+                'POKE 53280, 0',
+                'READY.',
+                '',
+                '10 INPUT "CHOOSE YOUR PILL 1 or 2:", V',
+                '20 IF V = 1 THEN GOTO 10',
+                '30 IF V = 2 THEN GOTO 3000',
+                '40 IF V <> 1 AND V <> 2 THEN GOSUB 3500',
+                '50 END',
+                '',
+                '3010 LOAD "PACMAN",8,1',
+                '3020 RUN',
+                '',
+                '3500 PRINT "You take the blue pill, the story ends."',
+                '3510 PRINT "You wake up in your bed and believe whatever you want to believe."',
+                '3520 PRINT "You take the red pill, you stay in Wonderland,"',
+                '3520 PRINT "and I show you how deep the rabbit hole goes."',
+                '3520 END'
+            ];
+
+            var y = canvas.height - 20;
+            var delay = 100;
+
+            lines.forEach((line, index) => {
+                setTimeout(() => {
+                    ctx.fillText(line, 20, y);
+                    y -= 20;  // Move up for next line
+                }, delay * index);
+            });
+
+            setTimeout(() => {
+                window.location.href = 'pacman.html';
+            }, delay * lines.length + 3000);
         }
 
         function lockInAnswer() {
