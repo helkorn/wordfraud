@@ -40,8 +40,7 @@
             border-radius: 10px;
             background-color: #ffffff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-top: 100px; /* Lisätty marginaali ylös */
-            margin-bottom: 20px; 
+            margin: 100px auto 20px; /* Siirretty paneelia alaspäin */
         }
         h1 {
             color: #333333;
@@ -177,6 +176,7 @@
             font-size: 14px;
             color: #000000;
             white-space: nowrap;
+            text-align: right; /* Tekstien asemoiminen oikealle */
         }
         .link-box a {
             color: #000000;
@@ -190,6 +190,7 @@
         }
         .option-container {
             margin-top: 10px;
+            text-align: right; /* Tekstien asemoiminen oikealle */
         }
         .option-text {
             color: #000000;
@@ -369,7 +370,7 @@
             if (resultCount > superThreshold) {
                 superHighlightMessage.style.display = 'block';
                 showConfetti();
-                resultTitle.textContent = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
+                resultTitle.textContent = `Kysyit: ${letters}. ${letters.length kirjainta ja ${resultCount} sanaa`;
             } else if (resultCount > medianThreshold) {
                 highlightMessage.style.display = 'block';
                 resultTitle.textContent = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
@@ -418,7 +419,7 @@
                 optionsContainer.innerHTML = `
                     <p>This is where you are.</p>
                     <div class="option-container">
-                        <a class="option-text" href="https://youtu.be/N2ICtCO8TCw">Take That or</a><br>
+                        <a class="option-text" href="https://youtu.be/N2ICtCO8TCw">Take That</a> or<br>
                         <a class="option-text" onclick="continueOption()">Continue</a>
                     </div>
                 `;
@@ -488,6 +489,7 @@
                 ctx.fillText('READY.', 20, y);
                 y += 20;
                 ctx.fillRect(20, y, 10, 20); // Draw cursor
+                ctx.fillText('READY.', 20, y - 20); // Add READY text above cursor
             }, delay * lines.length);
 
             setTimeout(() => {
