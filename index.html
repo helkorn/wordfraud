@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timin WordFraud</title>
     <style>
+        @font-face {
+            font-family: 'C64';
+            src: url('path/to/fontC64.ttf') format('truetype');
+        }
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
@@ -189,6 +193,21 @@
             bottom: 20px;
             right: 20px;
             text-align: right;
+        }
+        .c64-screen {
+            font-family: 'C64', monospace;
+            color: gray;
+            background-color: black;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .c64-text {
+            white-space: pre;
+            color: gray;
         }
     </style>
 </head>
@@ -385,35 +404,65 @@
             const optionsContainer = document.getElementById('optionsContainer');
             optionsContainer.classList.remove('hidden');
             optionsContainer.innerHTML = `
-                <p>Did you mean..?</p>
-                <a class="option-text" onclick="chooseOption('this')">What is this?</a><br>
-                <a class="option-text" onclick="chooseOption('that')">Or What is that?</a>
+                <p>This is where you are.</p>
+                <a class="option-text" onclick="chooseOption('continue')">Take That</a><br>
+                <a class="option-text" onclick="chooseOption('this')">Continue</a>
             `;
         }
 
         function chooseOption(option) {
             const optionsContainer = document.getElementById('optionsContainer');
             if (option === 'this') {
-                optionsContainer.innerHTML = `
-                    <p>This is where you are.</p>
-                    <div class="option-container">
-                        <a class="option-text" onclick="elsewhereOption()">Elsewhere</a><br>
-                        <a class="option-text" href="https://youtu.be/N2ICtCO8TCw">Take that</a>
-                    </div>
-                `;
+                showC64Screen();
             } else if (option === 'that') {
                 optionsContainer.innerHTML = `
-                    <p>Are you sure?</p>
+                    <p>That is imperfect of this.</p>
                     <div class="option-container">
-                        <a class="option-text" onclick="lockInAnswer()">Lukitsen</a><br>
-                        <a class="option-text" href="https://youtu.be/-crgQGdpZR0">Take a change</a>
+                        <a class="option-text" onclick="lockInAnswer()">Sure thing, I call.</a><br>
+                        <p>Or</p>
+                        <a class="option-text" href="https://youtu.be/-crgQGdpZR0">Take A Change</a>
                     </div>
                 `;
             }
         }
 
-        function elsewhereOption() {
-            window.location.href = 'pacman.html';
+        function showC64Screen() {
+            document.body.innerHTML = `
+                <div class="c64-screen">
+                    <div id="c64Text" class="c64-text"></div>
+                </div>
+            `;
+            const textContent = `SYS 64738
+POKE 53280, 0
+READY.
+
+10 INPUT "CHOOSE YOUR PILL 1 or 2:", V
+20 IF V = 1 THEN GOTO 10
+30 IF V = 2 THEN GOTO 3000
+40 IF V <> 1 AND V <> 2 THEN GOSUB 3500
+50 END
+
+3010 LOAD "PACMAN",8,1
+3020 RUN
+
+3500 PRINT "You take the blue pill, the story ends. You wake up in your bed and believe whatever you want to believe. You take the red pill, you stay in Wonderland, and I show you how deep the rabbit hole goes."
+
+3510 END
+READY.`;
+
+            let i = 0;
+            function typeWriter() {
+                if (i < textContent.length) {
+                    document.getElementById("c64Text").innerHTML += textContent.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 50);
+                } else {
+                    setTimeout(() => {
+                        window.location.href = 'pacman.html';
+                    }, 2000);
+                }
+            }
+            typeWriter();
         }
 
         function lockInAnswer() {
