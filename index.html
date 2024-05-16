@@ -209,7 +209,7 @@
 </head>
 <body>
     <div class="link-box" id="whatIsThisLink">
-        <a href="javascript:void(0)" onclick="showOptions()">What is this?</a> <!-- Korjattu linkki -->
+        <a href="javascript:void(0)" onclick="showOptions()">What is this? </a> <!-- Lisätty tyhjä välimerkki -->
     </div>
     <div class="container" id="mainContent">
         <div class="input-container" id="inputContainer">
@@ -370,10 +370,10 @@
             if (resultCount > superThreshold) {
                 superHighlightMessage.style.display = 'block';
                 showConfetti();
-                resultTitle.textContent = `Kysyit: ${letters}. ${letters.length kirjainta ja ${resultCount} sanaa`;
+                resultTitle.textContent = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
             } else if (resultCount > medianThreshold) {
                 highlightMessage.style.display = 'block';
-                resultTitle.textContent = `Kysyit: ${letters}. ${letters.length kirjainta ja ${resultCount} sanaa`;
+                resultTitle.textContent = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
             } else {
                 resultTitle.textContent = `Kysyit: ${letters}`;
             }
@@ -402,7 +402,7 @@
             const optionsContainer = document.getElementById('optionsContainer');
             optionsContainer.classList.remove('hidden');
             optionsContainer.style.position = 'fixed';
-            optionsContainer.style.top = '40px'; /* Siirretty yhden rivin alaspäin */
+            optionsContainer.style.top = '20px';
             optionsContainer.style.right = '20px';
             optionsContainer.innerHTML = `
                 <p>Did you mean..?</p>
@@ -419,7 +419,7 @@
                 optionsContainer.innerHTML = `
                     <p>This is where you are.</p>
                     <div class="option-container">
-                        <a class="option-text" href="https://youtu.be/N2ICtCO8TCw">Take That</a> or<br>
+                        <a class="option-text" href="https://youtu.be/N2ICtCO8TCw">Take That or</a><br>
                         <a class="option-text" onclick="continueOption()">Continue</a>
                     </div>
                 `;
@@ -472,29 +472,27 @@
                 '3520 PRINT "You take the red pill, you stay in Wonderland,"',
                 '3530 PRINT "and I show you how deep the rabbit hole goes."',
                 '3540 END',
-                ''
+                '',
+                'READY.'
             ];
 
-            var y = 20;
-            var delay = 150;
+            var y = 40; // Lisää tilaa ylhäällä
+            var delay = 150; // Lisää viive
 
             lines.forEach((line, index) => {
                 setTimeout(() => {
                     ctx.fillText(line, 20, y);
-                    y += 20;  // Move down for next line
+                    y += 20;  // Siirrä alaspäin seuraavaa riviä varten
                 }, delay * index);
             });
 
             setTimeout(() => {
-                ctx.fillText('READY.', 20, y);
-                y += 20;
-                ctx.fillRect(20, y, 10, 20); // Draw cursor
-                ctx.fillText('READY.', 20, y - 20); // Add READY text above cursor
+                ctx.fillRect(20, y, 10, 20); // Piirrä kursori
             }, delay * lines.length);
 
             setTimeout(() => {
                 window.location.href = 'pacman.html';
-            }, delay * lines.length + 4500); // Added 1.5 times more delay
+            }, delay * lines.length + 4500); // Lisää 1,5-kertainen viive
         }
 
         function lockInAnswer() {
