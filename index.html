@@ -16,8 +16,7 @@
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
+            justify-content: space-between;
             min-height: 100vh;
             flex-direction: column;
             overflow-y: auto;
@@ -172,10 +171,11 @@
         }
         .link-box {
             position: fixed;
-            top: 20px;
+            top: 40px; /* Siirretty yhden rivin alaspäin */
             right: 20px;
             font-size: 14px;
             color: #000000;
+            white-space: nowrap;
         }
         .link-box a {
             color: #000000;
@@ -203,44 +203,31 @@
             color: #696969; /* Tumman harmaa */
             white-space: pre-wrap;
         }
-        .cursor {
-            display: inline-block;
-            width: 10px;
-            height: 20px;
-            background-color: #696969; /* Tumman harmaa */
-            animation: blink 1s step-end infinite;
-        }
-        @keyframes blink {
-            from, to {
-                background-color: transparent;
-            }
-            50% {
-                background-color: #696969;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="link-box" id="whatIsThisLink">
-        <a href="javascript:void(0)" onclick="showOptions()">What is this?</a>
+        <a href="javascript:void(0)" onclick="showOptions()">What is this? </a> <!-- Lisätty tyhjä välimerkki -->
     </div>
-    <div class="input-container" id="inputContainer">
-        <h1>WordFraud 1.0</h1>
-        <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off" disabled>
-        <button id="fraudeloiButton" onclick="findWords()" disabled>Fraudeloi</button>
-    </div>
-    <div class="container" id="mainContainer" style="display: none;">
-        <div class="result-title" id="resultTitle"></div>
-        <div class="centered">
-            <div class="highlight" id="highlightMessage" style="display: none;">Huippuhyvä löytö!</div>
-            <div class="super-highlight" id="superHighlightMessage" style="display: none;">SUPERLÖYTÖ!</div>
+    <div class="container" id="mainContent">
+        <div class="input-container" id="inputContainer">
+            <h1>WordFraud 1.0</h1>
+            <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off" disabled>
+            <button id="fraudeloiButton" onclick="findWords()" disabled>Fraudeloi</button>
         </div>
-        <div class="columns">
-            <div class="column" id="column1"></div>
-            <div class="column" id="column2"></div>
-        </div>
-        <div class="centered">
-            <button class="reset-button" id="resetButton" onclick="resetPage()">Uudelleen</button>
+        <div class="container" id="mainContainer" style="display: none;">
+            <div class="result-title" id="resultTitle"></div>
+            <div class="centered">
+                <div class="highlight" id="highlightMessage" style="display: none;">Huippuhyvä löytö!</div>
+                <div class="super-highlight" id="superHighlightMessage" style="display: none;">SUPERLÖYTÖ!</div>
+            </div>
+            <div class="columns">
+                <div class="column" id="column1"></div>
+                <div class="column" id="column2"></div>
+            </div>
+            <div class="centered">
+                <button class="reset-button" id="resetButton" onclick="resetPage()">Uudelleen</button>
+            </div>
         </div>
     </div>
     
@@ -491,13 +478,6 @@
                     ctx.fillText(line, 20, y);
                     y += 20;  // Move down for next line
                 }, delay * index);
-
-                // Add cursor after each line
-                if (line !== '') {
-                    setTimeout(() => {
-                        ctx.fillRect(20 + ctx.measureText(line).width, y - 20, 10, 20); // Draw cursor
-                    }, delay * (index + 1) - 50);
-                }
             });
 
             setTimeout(() => {
