@@ -5,10 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WordPorn</title>
     <style>
+        @font-face {
+            font-family: 'C64';
+            src: url('fontC64.ttf') format('truetype');
+        }
         body {
             font-family: Arial, sans-serif;
-            background-color: #333333;
-            color: #ffffff;
+            background-color: #000;
+            color: #fff;
             margin: 0;
             padding: 0;
             display: flex;
@@ -16,25 +20,25 @@
             align-items: center;
             min-height: 100vh;
             flex-direction: column;
-            overflow-y: hidden;
+            overflow: hidden;
+            position: relative;
         }
         .container {
-            max-width: 600px;
+            max-width: 800px;
             text-align: center;
             padding: 20px;
-            border: 1px solid #ccc;
+            border: 1px solid #333;
             border-radius: 10px;
-            background-color: #444444;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            margin: 20px auto;
+            background-color: #111;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
         }
         h1 {
-            color: #ffffff;
+            color: #fff;
             font-size: 2em;
             margin-bottom: 20px;
         }
-        .scrambled-word {
-            font-size: 2em;
+        .timer {
+            font-size: 1.5em;
             margin-bottom: 20px;
         }
         input[type="text"] {
@@ -42,93 +46,197 @@
             padding: 10px;
             font-size: 16px;
             margin-bottom: 10px;
-            border: 1px solid #ccc;
+            border: 1px solid #333;
             border-radius: 5px;
-            background-color: #555555;
-            color: #ffffff;
+            background-color: #222;
+            color: #fff;
             text-align: center;
         }
         button {
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
-            border: 1px solid #ccc;
+            border: 1px solid #333;
             border-radius: 50px;
-            background-color: #ffffff;
-            color: #333333;
+            background-color: #333;
+            color: #fff;
             transition: background-color 0.3s;
             margin-top: 10px;
         }
         button:hover {
-            background-color: #eeeeee;
+            background-color: #555;
         }
-        .timer {
-            font-size: 1.5em;
-            margin-bottom: 20px;
+        .result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #f00;
+        }
+        .link-box {
+            position: fixed;
+            top: 40px;
+            right: 20px;
+            font-size: 14px;
+            color: #fff;
+            white-space: nowrap;
+            text-align: right;
+        }
+        .link-box a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .link-box a:hover {
+            text-decoration: underline;
+        }
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
+    <div class="link-box" id="whatIsThisLink">
+        <a href="javascript:void(0)" onclick="showAnalgrammi()">What is this?</a>
+    </div>
     <div class="container">
         <h1>WordPorn</h1>
         <p>Analgrammit. Mitä nyt vittua taas.</p>
-        <div class="scrambled-word" id="scrambledWord"></div>
-        <input type="text" id="answer" placeholder="Kirjoita alkuperäinen sana">
-        <button onclick="checkAnswer()">Ratkaise</button>
-        <div class="timer" id="timer">90</div>
+        <div class="timer" id="timer">60</div>
+        <input type="text" id="answer" placeholder="Kirjoita vastaus">
+        <div>
+            <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
+            <button id="revealButton" onclick="revealAnswer()">PALJASTA</button>
+        </div>
+        <div class="result" id="result"></div>
     </div>
+
     <script>
-        let words = [];
+        let words = new Set();
         let currentWord = '';
         let timer;
-        let timeLeft = 90;
-
-        // Load the word list
-        fetch('wordpornFI.csv')
-            .then(response => response.text())
-            .then(text => {
-                words = text.split('\n').map(word => word.trim()).filter(Boolean);
-                nextWord();
-                startTimer();
-            });
-
-        function scrambleWord(word) {
-            let scrambled = word.split('').sort(() => Math.random() - 0.5).join('');
-            while (scrambled === word) {
-                scrambled = word.split('').sort(() => Math.random() - 0.5).join('');
-            }
-            return scrambled.toUpperCase();
-        }
-
-        function nextWord() {
-            if (words.length === 0) {
-                return;
-            }
-            currentWord = words[Math.floor(Math.random() * words.length)];
-            document.getElementById('scrambledWord').innerText = scrambleWord(currentWord);
-        }
+        let timeLeft = 60;
 
         function startTimer() {
             timer = setInterval(() => {
                 timeLeft--;
-                document.getElementById('timer').innerText = timeLeft;
+                document.getElementById('timer').textContent = timeLeft;
                 if (timeLeft <= 0) {
                     clearInterval(timer);
-                    window.location.href = 'index.html';
+                    revealAnswer();
                 }
             }, 1000);
         }
 
+        function shuffleWord(word) {
+            let shuffledWord = word.split('').sort(() => Math.random() - 0.5).join('');
+            while (shuffledWord === word) {
+                shuffledWord = word.split('').sort(() => Math.random() - 0.5).join('');
+            }
+            return shuffledWord;
+        }
+
+        function loadNewWord() {
+            const wordsArray = Array.from(words);
+            currentWord = wordsArray[Math.floor(Math.random() * wordsArray.length)];
+            const shuffledWord = shuffleWord(currentWord);
+            document.getElementById('answer').placeholder = shuffledWord;
+        }
+
         function checkAnswer() {
-            const answer = document.getElementById('answer').value.toLowerCase();
+            const answer = document.getElementById('answer').value.trim().toLowerCase();
             if (answer === currentWord.toLowerCase()) {
-                timeLeft = 90;
-                nextWord();
-                document.getElementById('answer').value = '';
+                document.getElementById('result').textContent = 'Oikein!';
+                clearInterval(timer);
+                setTimeout(() => {
+                    document.getElementById('result').textContent = '';
+                    timeLeft = 60;
+                    document.getElementById('timer').textContent = timeLeft;
+                    loadNewWord();
+                    startTimer();
+                }, 2000);
             } else {
-                timeLeft = Math.max(timeLeft - 10, 1);
+                document.getElementById('result').textContent = 'Väärin!';
             }
         }
+
+        function revealAnswer() {
+            document.body.innerHTML = '<canvas></canvas>';
+            var canvas = document.querySelector('canvas');
+            var ctx = canvas.getContext('2d');
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.font = '20px C64';
+            ctx.fillStyle = '#696969';  // Tumman harmaa
+
+            var lines = [
+                '*** WORDPORN V 1.0 ***',
+                '',
+                'OIKEA VASTAUS',
+                'OIKEA VASTAUS',
+                'OIKEA VASTAUS',
+                'OIKEA VASTAUS',
+                'OIKEA VASTAUS',
+                'OIKEA VASTAUS',
+                'OIKEA VASTAUS',
+                'OIKEA VASTAUS',
+                'OIKEA VASTAUS',
+                'OIKEA VASTAUS',
+                'OIKEA VASTAUS',
+                'OIKEA VASTAUS',
+                'OIKEA VASTAUS',
+                'OIKEA VASTAUS',
+                'OIKEA VASTAUS',
+                'OIKEA VASTAUS',
+                'OIKEA VASTAUS',
+                'OIKEA VASTAUS',
+                'OIKEA VASTAUS'
+            ];
+
+            var y = 20;
+            var delay = 100;
+
+            lines.forEach((line, index) => {
+                setTimeout(() => {
+                    ctx.fillText(line, 20, y);
+                    y += 20;  // Move down for next line
+                }, delay * index);
+            });
+
+            setTimeout(() => {
+                window.location.href = 'wordporn.html';
+            }, delay * lines.length + 4500); // Added delay
+        }
+
+        function showAnalgrammi() {
+            const link = document.getElementById('whatIsThisLink');
+            link.innerHTML = '';
+            const text = 'Analgrammi';
+            let index = 0;
+
+            const interval = setInterval(() => {
+                link.innerHTML += text[index];
+                index++;
+                if (index >= text.length) {
+                    clearInterval(interval);
+                }
+            }, 100);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            Papa.parse('https://raw.githubusercontent.com/timosalonen/wordfraud/main/wordpornFI.csv', {
+                download: true,
+                complete: function(results) {
+                    results.data.flat().map(word => word.trim()).filter(Boolean).forEach(word => {
+                        words.add(word.toLowerCase());
+                    });
+                    loadNewWord();
+                    startTimer();
+                }
+            });
+        });
     </script>
 </body>
 </html>
