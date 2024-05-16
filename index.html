@@ -29,6 +29,16 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             margin: 20px auto;
         }
+        .input-container {
+            max-width: 650px;
+            text-align: center;
+            padding: 25px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+        }
         h1 {
             color: #333333;
             font-size: 2em;
@@ -196,7 +206,7 @@
     <div class="link-box" id="whatIsThisLink">
         <a href="javascript:void(0)" onclick="showOptions()">What is this?</a>
     </div>
-    <div class="container" id="inputContainer">
+    <div class="input-container" id="inputContainer">
         <h1>WordFraud 1.0</h1>
         <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off" disabled>
         <button id="fraudeloiButton" onclick="findWords()" disabled>Fraudeloi</button>
