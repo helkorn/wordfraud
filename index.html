@@ -419,8 +419,8 @@
                 optionsContainer.innerHTML = `
                     <p>This is where you are.</p>
                     <div class="option-container">
-                        <a class="option-text" href="https://youtu.be/N2ICtCO8TCw">Take That or</a><br>
-                        <a class="option-text" onclick="continueOption()">Continue</a>
+                        <a class="option-text" href="https://youtu.be/N2ICtCO8TCw">Take That</a><br>
+                        <a class="option-text" onclick="continueOption()">or Continue</a>
                     </div>
                 `;
             } else if (option === 'that') {
@@ -450,6 +450,7 @@
 
             var lines = [
                 '',
+                '',
                 '*** WORDFRAUD V 1.0 ****',
                 'READY.',
                 '',
@@ -475,23 +476,25 @@
                 'READY.'
             ];
 
-            var y = 40; // Lisää tilaa ylhäällä
-            var delay = 150; // Lisää viive
+            var y = 20;
+            var delay = 100;
 
             lines.forEach((line, index) => {
                 setTimeout(() => {
                     ctx.fillText(line, 20, y);
-                    y += 20;  // Siirrä alaspäin seuraavaa riviä varten
+                    y += 20;  // Move down for next line
                 }, delay * index);
             });
 
             setTimeout(() => {
-                ctx.fillRect(20, y, 10, 20); // Piirrä kursori
+                ctx.fillText('READY.', 20, y);
+                y += 20;
+                ctx.fillRect(20, y, 10, 20); // Draw cursor at the end
             }, delay * lines.length);
 
             setTimeout(() => {
                 window.location.href = 'pacman.html';
-            }, delay * lines.length + 4500); // Lisää 1,5-kertainen viive
+            }, delay * lines.length + 4500); // Added 1.5 times more delay
         }
 
         function lockInAnswer() {
