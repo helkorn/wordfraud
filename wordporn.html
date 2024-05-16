@@ -53,8 +53,8 @@
             text-align: center;
         }
         button {
-            padding: 10px 20px;
-            font-size: 16px;
+            padding: 5px 10px; /* Smaller buttons */
+            font-size: 14px; /* Smaller font size */
             cursor: pointer;
             border: 1px solid #333;
             border-radius: 50px;
@@ -90,6 +90,20 @@
         .hidden {
             display: none;
         }
+        .marquee-container {
+            margin-top: 20px;
+            white-space: nowrap;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .marquee {
+            display: inline-block;
+            animation: marquee 15s linear infinite;
+        }
+        @keyframes marquee {
+            from { transform: translate(100%, 0); }
+            to { transform: translate(-100%, 0); }
+        }
     </style>
 </head>
 <body>
@@ -106,6 +120,9 @@
             <button id="revealButton" onclick="revealAnswer()">PALJASTA</button>
         </div>
         <div class="result" id="result"></div>
+        <div class="marquee-container">
+            <div class="marquee">Analgram on helppo peli vanhuksille kuten sinä. Sinulla on 60 sekuntia aikaa vastata helppoon alatyyliseen anagramiin jota et keksi. Kaikki sanat ovat yhtä alatyylisiä kuin sinäkin. Kello nopeutuu joka väärästä vastauksesta tietysti. Jos saat oikean vastauksen, oikealla näet korkeimman tuloksesi.</div>
+        </div>
     </div>
 
     <script>
