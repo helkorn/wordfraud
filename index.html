@@ -413,7 +413,7 @@
             const optionsContainer = document.getElementById('optionsContainer');
             optionsContainer.classList.remove('hidden');
             optionsContainer.style.position = 'fixed';
-            optionsContainer.style.bottom = '20px';
+            optionsContainer.style.top = '20px';
             optionsContainer.style.right = '20px';
             optionsContainer.innerHTML = `
                 <p>Did you mean..?</p>
@@ -460,7 +460,10 @@
             ctx.fillStyle = '#696969';  // Tumman harmaa
 
             var lines = [
-                'SYS 64738',
+                '*** WORDFRAUD V 1.0 ****',
+                'READY.',
+                '',
+                'SYS 64738 : REM KILL SWITCH',
                 'POKE 53280, 0',
                 'READY.',
                 '',
@@ -480,19 +483,31 @@
                 '3540 END'
             ];
 
-            var y = canvas.height - 20;
+            var y = 20;
             var delay = 100;
 
             lines.forEach((line, index) => {
                 setTimeout(() => {
                     ctx.fillText(line, 20, y);
-                    y -= 20;  // Move up for next line
+                    y += 20;  // Move down for next line
                 }, delay * index);
+
+                // Add cursor after each line
+                if (line !== '') {
+                    setTimeout(() => {
+                        ctx.fillRect(20 + ctx.measureText(line).width, y - 20, 10, 20); // Draw cursor
+                    }, delay * (index + 1) - 50);
+                }
             });
 
             setTimeout(() => {
+                ctx.fillText('', 20, y);
+                ctx.fillRect(20, y, 10, 20); // Draw cursor at the end
+            }, delay * lines.length);
+
+            setTimeout(() => {
                 window.location.href = 'pacman.html';
-            }, delay * lines.length + 3000);
+            }, delay * lines.length + 4500); // Added 1.5 times more delay
         }
 
         function lockInAnswer() {
