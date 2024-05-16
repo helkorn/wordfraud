@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timin WordFraud</title>
     <style>
+        @font-face {
+            font-family: 'C64';
+            src: url('fontC64.ttf') format('truetype');
+        }
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
@@ -193,6 +197,26 @@
         }
         .option-text:hover {
             text-decoration: underline;
+        }
+        .basic-text {
+            font-family: 'C64';
+            color: #696969; /* Tumman harmaa */
+            white-space: pre-wrap;
+        }
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background-color: #696969; /* Tumman harmaa */
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            from, to {
+                background-color: transparent;
+            }
+            50% {
+                background-color: #696969;
+            }
         }
     </style>
 </head>
@@ -388,11 +412,14 @@
             document.getElementById('whatIsThisLink').style.display = 'none';
             const optionsContainer = document.getElementById('optionsContainer');
             optionsContainer.classList.remove('hidden');
+            optionsContainer.style.position = 'fixed';
+            optionsContainer.style.bottom = '20px';
+            optionsContainer.style.right = '20px';
             optionsContainer.innerHTML = `
                 <p>Did you mean..?</p>
                 <div class="option-container">
-                    <a class="option-text" onclick="chooseOption('this')">What is this?</a><br>
-                    <a class="option-text" onclick="chooseOption('that')">Or What is that?</a>
+                    <a class="option-text" onclick="chooseOption('this')">What is this</a> or<br>
+                    <a class="option-text" onclick="chooseOption('that')">What is that?</a>
                 </div>
             `;
         }
@@ -403,8 +430,8 @@
                 optionsContainer.innerHTML = `
                     <p>This is where you are.</p>
                     <div class="option-container">
-                        <a class="option-text" onclick="chooseContinueOption()">Continue</a><br>
-                        <a class="option-text" href="https://youtu.be/N2ICtCO8TCw">Take That</a>
+                        <a class="option-text" href="https://youtu.be/N2ICtCO8TCw">Take That</a><br>
+                        <a class="option-text" onclick="continueOption()">Continue</a>
                     </div>
                 `;
             } else if (option === 'that') {
@@ -418,7 +445,7 @@
             }
         }
 
-        function chooseContinueOption() {
+        function continueOption() {
             document.body.innerHTML = '<canvas></canvas>';
             var canvas = document.querySelector('canvas');
             var ctx = canvas.getContext('2d');
@@ -429,7 +456,7 @@
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.font = '20px fontC64';
+            ctx.font = '20px C64';
             ctx.fillStyle = '#696969';  // Tumman harmaa
 
             var lines = [
@@ -449,8 +476,8 @@
                 '3500 PRINT "You take the blue pill, the story ends."',
                 '3510 PRINT "You wake up in your bed and believe whatever you want to believe."',
                 '3520 PRINT "You take the red pill, you stay in Wonderland,"',
-                '3520 PRINT "and I show you how deep the rabbit hole goes."',
-                '3520 END'
+                '3530 PRINT "and I show you how deep the rabbit hole goes."',
+                '3540 END'
             ];
 
             var y = canvas.height - 20;
