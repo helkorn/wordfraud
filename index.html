@@ -40,7 +40,8 @@
             border-radius: 10px;
             background-color: #ffffff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin: 50px auto 20px; /* Nostettu hieman ylös */
+            margin-top: 100px; /* Lisätty marginaali ylös */
+            margin-bottom: 20px; 
         }
         h1 {
             color: #333333;
@@ -469,7 +470,8 @@
                 '3510 PRINT "You wake up in your bed and believe whatever you want to believe."',
                 '3520 PRINT "You take the red pill, you stay in Wonderland,"',
                 '3530 PRINT "and I show you how deep the rabbit hole goes."',
-                '3540 END'
+                '3540 END',
+                ''
             ];
 
             var y = 20;
@@ -485,13 +487,7 @@
             setTimeout(() => {
                 ctx.fillText('READY.', 20, y);
                 y += 20;
-                ctx.fillText(' ', 20, y);
                 ctx.fillRect(20, y, 10, 20); // Draw cursor
-                y += 20;
-                ctx.fillText(' ', 20, y); // Empty line
-                y += 20;
-                ctx.fillText(' ', 20, y); // Empty line
-                ctx.fillText('RETURN', 20, y); // Button text
             }, delay * lines.length);
 
             setTimeout(() => {
