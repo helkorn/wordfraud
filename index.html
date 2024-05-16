@@ -40,7 +40,7 @@
             border-radius: 10px;
             background-color: #ffffff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin: 20px auto;
+            margin: 50px auto 20px; /* Nostettu hieman ylös */
         }
         h1 {
             color: #333333;
@@ -417,15 +417,15 @@
                 optionsContainer.innerHTML = `
                     <p>This is where you are.</p>
                     <div class="option-container">
-                        <a class="option-text" href="https://youtu.be/N2ICtCO8TCw">Take That</a><br>
-                        <a class="option-text" onclick="continueOption()">or Continue</a>
+                        <a class="option-text" href="https://youtu.be/N2ICtCO8TCw">Take That or</a><br>
+                        <a class="option-text" onclick="continueOption()">Continue</a>
                     </div>
                 `;
             } else if (option === 'that') {
                 optionsContainer.innerHTML = `
                     <p>That is like an imperfect of this.</p>
                     <div class="option-container">
-                        <a class="option-text" onclick="lockInAnswer()">Sure thing, I call.</a><br>
+                        <a class="option-text" onclick="lockInAnswer()">Sure thing, I call</a><br>
                         <a class="option-text" href="https://youtu.be/-crgQGdpZR0">Take a Change</a>
                     </div>
                 `;
@@ -447,6 +447,8 @@
             ctx.fillStyle = '#696969';  // Tumman harmaa
 
             var lines = [
+                '',
+                '',
                 '*** WORDFRAUD V 1.0 ****',
                 'READY.',
                 '',
@@ -471,7 +473,7 @@
             ];
 
             var y = 20;
-            var delay = 100;
+            var delay = 150;
 
             lines.forEach((line, index) => {
                 setTimeout(() => {
@@ -481,8 +483,15 @@
             });
 
             setTimeout(() => {
-                ctx.fillText('', 20, y);
-                ctx.fillRect(20, y, 10, 20); // Draw cursor at the end
+                ctx.fillText('READY.', 20, y);
+                y += 20;
+                ctx.fillText(' ', 20, y);
+                ctx.fillRect(20, y, 10, 20); // Draw cursor
+                y += 20;
+                ctx.fillText(' ', 20, y); // Empty line
+                y += 20;
+                ctx.fillText(' ', 20, y); // Empty line
+                ctx.fillText('RETURN', 20, y); // Button text
             }, delay * lines.length);
 
             setTimeout(() => {
