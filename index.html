@@ -1,13 +1,161 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timin WordFraud</title>
     <style>
-        * { margin: 0; padding: 0; }
-        body { background: #000; overflow: hidden; }
-        canvas { display: block; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+        }
+        .container {
+            max-width: 600px;
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+        }
+        h1 {
+            color: #333333;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            color: #333333;
+            autocomplete: off;
+        }
+        input[type="text"]::placeholder {
+            color: #333333;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 50px;
+            background-color: #333333;
+            color: #ffffff;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #555555;
+        }
+        .columns {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .column {
+            flex: 1;
+            min-width: 250px;
+            padding: 10px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            text-align: left;
+        }
+        li {
+            background: #f9f9f9;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            color: #333333;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+        li:hover {
+            background-color: #eee;
+        }
+        .reset-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 50px;
+            background-color: #333333;
+            color: #ffffff;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+            display: none;
+        }
+        .reset-button:hover {
+            background-color: #555555;
+        }
+        .result-title {
+            font-size: 1em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            color: #333333;
+        }
+        .centered {
+            display: flex;
+            justify-content: center;
+            text-align: center;
+        }
+        .no-results {
+            text-align: center;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            background: #f9f9f9;
+            color: #333333;
+            text-transform: capitalize;
+        }
+        .highlight {
+            font-size: 1.2em;
+            margin-top: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        .super-highlight {
+            font-size: 1.5em;
+            margin-top: 5px;
+            color: red;
+            font-weight: bold;
+        }
+        .full-screen-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .full-screen-image img {
+            max-width: 100%;
+            max-height: 100%;
+        }
         .link-box {
             position: fixed;
             top: 20px;
@@ -38,10 +186,9 @@
         }
         .right-corner {
             position: fixed;
-            top: 40px;
+            bottom: 20px;
             right: 20px;
             text-align: right;
-            color: white;
         }
     </style>
 </head>
@@ -49,7 +196,7 @@
     <div class="link-box" id="whatIsThisLink">
         <a href="javascript:void(0)" onclick="showOptions()">What is this?</a>
     </div>
-    <div class="input-container" id="inputContainer">
+    <div class="container" id="inputContainer">
         <h1>WordFraud 1.0</h1>
         <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off" disabled>
         <button id="fraudeloiButton" onclick="findWords()" disabled>Fraudeloi</button>
@@ -250,94 +397,26 @@
                 optionsContainer.innerHTML = `
                     <p>This is where you are.</p>
                     <div class="option-container">
-                        <a class="option-text" href="https://youtu.be/N2ICtCO8TCw">Take That</a><br>
-                        <a class="option-text" onclick="continueOption()">Continue</a>
+                        <a class="option-text" onclick="elsewhereOption()">Elsewhere</a><br>
+                        <a class="option-text" href="https://youtu.be/N2ICtCO8TCw">Take that</a>
                     </div>
                 `;
             } else if (option === 'that') {
                 optionsContainer.innerHTML = `
-                    <p>That is imperfect of this.</p>
+                    <p>Are you sure?</p>
                     <div class="option-container">
-                        <a class="option-text" onclick="lockInAnswer()">Sure Thing I Call.</a><br>
-                        <a class="option-text" href="https://youtu.be/-crgQGdpZR0">Or Take A Change</a>
+                        <a class="option-text" onclick="lockInAnswer()">Lukitsen</a><br>
+                        <a class="option-text" href="https://youtu.be/-crgQGdpZR0">Take a change</a>
                     </div>
                 `;
             }
         }
 
-        function continueOption() {
-            document.body.innerHTML = '<canvas></canvas>';
-            var canvas = document.querySelector('canvas');
-            var ctx = canvas.getContext('2d');
-
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-
-            ctx.fillStyle = '#fff';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            setTimeout(() => {
-                ctx.fillStyle = '#000';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                ctx.fillStyle = '#fff';
-                ctx.font = '30px fontC64';
-                ctx.fillText('...', 20, 30);
-
-                setTimeout(() => {
-                    ctx.fillText('..', 20, 30);
-                }, 500);
-
-                setTimeout(() => {
-                    ctx.fillText('.', 20, 30);
-                }, 1000);
-
-                setTimeout(() => {
-                    ctx.fillText('', 20, 30);
-                    ctx.fillRect(0, 40, canvas.width, 5);
-
-                    setTimeout(() => {
-                        ctx.fillStyle = '#000';
-                        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                        ctx.font = '20px fontC64';
-                        var lines = [
-                            'SYS 64738',
-                            'POKE 53280, 0',
-                            'READY.',
-                            '',
-                            '10 INPUT "CHOOSE YOUR PILL 1 or 2:", V',
-                            '20 IF V = 1 THEN GOTO 10',
-                            '30 IF V = 2 THEN GOTO 3000',
-                            '40 IF V <> 1 AND V <> 2 THEN GOSUB 3500',
-                            '50 END',
-                            '',
-                            '3010 LOAD "PACMAN",8,1',
-                            '3020 RUN',
-                            '',
-                            '3500 PRINT "You take the blue pill, the story ends. You wake up in your bed and believe whatever you want to believe. You take the red pill, you stay in Wonderland, and I show you how deep the rabbit hole goes."',
-                            '3510 END'
-                        ];
-                        var y = 30;
-                        var delay = 100;
-
-                        lines.forEach((line, index) => {
-                            setTimeout(() => {
-                                ctx.fillText(line, 20, y);
-                                y += 30;
-                            }, delay * index);
-                        });
-
-                        setTimeout(() => {
-                            window.location.href = 'pacman.html';
-                        }, delay * lines.length + 3000);
-                    }, 1500);
-                }, 1500);
-            }, 500);
+        function elsewhereOption() {
+            window.location.href = 'pacman.html';
         }
 
         function lockInAnswer() {
-            // Tämä funktio ohjaa WordPorn-sivulle
             window.location.href = 'wordporn.html';
         }
 
