@@ -194,12 +194,6 @@
         .option-text:hover {
             text-decoration: underline;
         }
-        .right-corner {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            text-align: right;
-        }
     </style>
 </head>
 <body>
@@ -230,7 +224,7 @@
         <img src="therabbit.png" alt="Jänis">
     </div>
 
-    <div class="right-corner hidden" id="optionsContainer"></div> <!-- Piilotettu alussa -->
+    <div class="link-box hidden" id="optionsContainer"></div> <!-- Piilotettu alussa -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0"></script>
@@ -396,8 +390,10 @@
             optionsContainer.classList.remove('hidden');
             optionsContainer.innerHTML = `
                 <p>Did you mean..?</p>
-                <a class="option-text" onclick="chooseOption('this')">What is this?</a><br>
-                <a class="option-text" onclick="chooseOption('that')">Or What is that?</a>
+                <div class="option-container">
+                    <a class="option-text" onclick="chooseOption('this')">What is this?</a><br>
+                    <a class="option-text" onclick="chooseOption('that')">Or What is that?</a>
+                </div>
             `;
         }
 
