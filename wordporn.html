@@ -60,11 +60,11 @@
             background-color: #222;
             color: #fff;
             text-align: center;
-            -webkit-appearance: none; /* Poistaa historian Safari */
-            -moz-appearance: none; /* Poistaa historian Firefox */
-            appearance: none; /* Poistaa historian muissa selaimissa */
-            autocomplete: off; /* Poistaa historian */
-            spellcheck: false; /* Poistaa oikeinkirjoituksen tarkistuksen */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            autocomplete: off;
+            spellcheck: false;
         }
         button {
             padding: 5px 10px;
@@ -82,7 +82,7 @@
         }
         .result {
             margin-top: 20px;
-            font-size: 1em; /* Pienennetty fonttikoko */
+            font-size: 1em;
             color: #f00;
         }
         .link-box {
@@ -114,9 +114,9 @@
             border: 1px solid #333;
             border-radius: 5px;
             font-family: 'Typewriter', monospace;
-            font-size: 13px; /* Pienennetty fonttikoko hieman */
+            font-size: 13px;
             white-space: pre-wrap;
-            width: 200px; /* Leveys, joka vastaa noin neljää sanaa */
+            width: 200px;
         }
         .suggestion-box {
             position: fixed;
@@ -151,16 +151,27 @@
             background-color: #222;
             color: #fff;
         }
+        .close-button {
+            background-color: #ff0000;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="link-box" id="whatIsThisLink">
-        <a href="javascript:void(0)" onclick="showAnalgrammi()">What is this?</a><br>
+        <a href="javascript:void(0)" onclick="showAnalgrammi()">Mikä tämä on?</a><br>
         <a href="javascript:void(0)" onclick="showSuggestionBox()">Ehdota sanaa</a>
     </div>
     <div class="container">
         <h1>WordPorn</h1>
-        <p>Analgrammit. Mitä nyt vittua taas.</p>
+        <p>Analgrammi. Mitä nyt vittua taas.</p>
         <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
         <div class="timer" id="timer">20</div>
         <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
@@ -171,6 +182,7 @@
     </div>
 
     <div class="suggestion-box" id="suggestionBox">
+        <button class="close-button" onclick="hideSuggestionBox()">X</button>
         <input type="text" id="suggestionInput" placeholder="Kirjoita oma sanasi">
         <button onclick="submitSuggestion()">LÄHETÄ</button>
         <div class="word-list" id="wordList"></div>
@@ -251,7 +263,7 @@
 
         function revealCorrectAnswer(callback) {
             const shuffledWordElement = document.getElementById('shuffledWord');
-            shuffledWordElement.style.color = '#FFFF00'; // Keltaiseksi
+            shuffledWordElement.style.color = '#FFFF00';
             let currentIndex = 0;
 
             const interval = setInterval(() => {
@@ -270,7 +282,7 @@
                         }, 2000);
                     }
                 }
-            }, 150); // Hidastettu poistumistahti
+            }, 150);
         }
 
         function handleTimeOut() {
@@ -293,41 +305,39 @@
                 if (index < text.length) {
                     box.textContent += text[index];
                     index++;
-                    let delay = 50;  // Hidastettu kirjoitustahti
+                    let delay = 50;
                     if (text[index - 1] === ' ' || text[index - 1] === '\n') {
-                        delay = 120; // Pidempi tauko sanan jälkeen
+                        delay = 120;
                     }
                     setTimeout(typeNext, delay);
                 } else {
-                    setTimeout(removeText, 2000); // Tauko ennen tekstin häviämisprosessia
+                    setTimeout(removeText, 2000);
                 }
             }
 
             function removeText() {
-                let grayValue = 245; // Alkuperäinen harmaa arvo
+                let grayValue = 245;
                 let upperIndex = 0;
                 const lines = box.textContent.split('\n');
                 const interval = setInterval(() => {
                     if (box.textContent.length > 0) {
                         if (upperIndex < lines.length) {
-                            // Poistetaan rivi yläosasta
                             lines[upperIndex] = '';
                             upperIndex++;
                             box.textContent = lines.join('\n');
                         } else {
-                            // Poistetaan yksittäisiä merkkejä alaosasta
                             const randomIndex = Math.floor(Math.random() * box.textContent.length);
                             box.textContent = box.textContent.slice(0, randomIndex) + box.textContent.slice(randomIndex + 1);
                         }
-                        grayValue -= 5; // Vähennetään harmaan arvoa
+                        grayValue -= 5;
                         box.style.backgroundColor = `rgb(${grayValue}, ${grayValue}, ${grayValue})`;
                     } else {
                         clearInterval(interval);
                         box.remove();
-                        paused = false; // Päästä kello "PAUSE"-tilasta vasta, kun teksti on poistettu
+                        paused = false;
                         startTimer();
                     }
-                }, 50); // Nopeampi poistumistahti yläosasta
+                }, 50);
             }
 
             typeNext();
@@ -342,14 +352,23 @@
             suggestionBox.style.display = 'flex';
         }
 
+        function hideSuggestionBox() {
+            const suggestionBox = document.getElementById('suggestionBox');
+            suggestionBox.style.display = 'none';
+            paused = false;
+            startTimer();
+        }
+
         function submitSuggestion() {
             const suggestionInput = document.getElementById('suggestionInput');
             const newWord = suggestionInput.value.trim();
-            if (newWord) {
+            if (newWord && !/(\w)\1\1/.test(newWord)) {
                 words.push(newWord);
                 const wordList = document.getElementById('wordList');
                 wordList.innerHTML += `<div>${newWord}</div>`;
                 suggestionInput.value = '';
+            } else {
+                alert('Tämä sana ei ole sallittu.');
             }
         }
 
