@@ -106,7 +106,7 @@
             font-family: 'Typewriter', monospace;
             font-size: 14px;
             white-space: pre-wrap;
-            width: 200px; /* Leveys, joka vastaa neljän sanan leveyttä */
+            width: 200px; /* Leveys, joka vastaa noin neljää sanaa */
         }
     </style>
 </head>
@@ -183,16 +183,22 @@
             box.id = 'typewriterBox';
             box.className = 'typewriter-box';
             document.body.appendChild(box);
-            const text = 'Analgram on helppo peli erityisen vanhoille kuten sinä. Sinulla on 60 sekuntia aikaa vastata helppoon alatyyliseen anagrammiin. Et keksi sitä, eli palaat alkuun. Mutta jos keksit, kaikki sanasi ovat yhtä alatyylisiä kuin sinäkin. Kello nopeutuu joka väärästä vastauksesta.';
+            const text = 'Analgrammi on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä kuin sinä.\n\nKäytä luovuutta jota sinulla ei ole.\n\nMuodosta oikea vastaus sanalla joka on helppo kuin sinä.\n\nJos keksit sen, ihan ok, mutta silloinkin kaikki arvauksesi ovat olleet alatyylisiä kuin sinäkin.\n\nKello nopeutuu joka vastauksesta joka on pielessä, kuten sinä.\n\nOnnea peliin, joka on kuin Analgrammi.';
             let index = 0;
 
-            const interval = setInterval(() => {
-                box.textContent += text[index];
-                index++;
-                if (index >= text.length) {
-                    clearInterval(interval);
+            function typeNext() {
+                if (index < text.length) {
+                    box.textContent += text[index];
+                    index++;
+                    let delay = 50;
+                    if (text[index - 1] === ' ' || text[index - 1] === '\n') {
+                        delay = 200; // Pidempi tauko sanan jälkeen
+                    }
+                    setTimeout(typeNext, delay);
                 }
-            }, 100);
+            }
+
+            typeNext();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
