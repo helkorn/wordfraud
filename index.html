@@ -171,12 +171,12 @@
         }
         .link-box {
             position: fixed;
-            top: 40px; /* Siirretty yhden rivin alaspäin */
+            top: 40px;
             right: 20px;
             font-size: 14px;
             color: #000000;
             white-space: nowrap;
-            text-align: right; /* Tekstien asemoiminen oikealle */
+            text-align: right;
         }
         .link-box a {
             color: #000000;
@@ -190,7 +190,7 @@
         }
         .option-container {
             margin-top: 10px;
-            text-align: right; /* Tekstien asemoiminen oikealle */
+            text-align: right;
         }
         .option-text {
             color: #000000;
@@ -202,14 +202,14 @@
         }
         .basic-text {
             font-family: 'C64';
-            color: #696969; /* Tumman harmaa */
+            color: #696969;
             white-space: pre-wrap;
         }
     </style>
 </head>
 <body>
     <div class="link-box" id="whatIsThisLink">
-        <a href="javascript:void(0)" onclick="showOptions()">What is this? </a> <!-- Lisätty tyhjä välimerkki -->
+        <a href="javascript:void(0)" onclick="showOptions()">What is this? </a>
     </div>
     <div class="container" id="mainContent">
         <div class="input-container" id="inputContainer">
@@ -237,7 +237,7 @@
         <img src="therabbit.png" alt="Jänis">
     </div>
 
-    <div class="link-box hidden" id="optionsContainer"></div> <!-- Piilotettu alussa -->
+    <div class="link-box hidden" id="optionsContainer"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0"></script>
@@ -246,10 +246,9 @@
         let offensiveWords = new Set();
         let isDataLoaded = false;
         let isOffensiveLoaded = false;
-        const medianThreshold = 50; // Oletettu mediaaniarvo huippuhyville löydöille
-        const superThreshold = 75; // Oletettu raja-arvo superlöydölle
+        const medianThreshold = 50;
+        const superThreshold = 75;
 
-        // Ladataan tavalliset sanat CSV-tiedostosta
         Papa.parse('https://raw.githubusercontent.com/timosalonen/wordfraud/main/wordfraudFI.csv', {
             download: true,
             complete: function(results) {
@@ -262,7 +261,6 @@
             }
         });
 
-        // Ladataan rivot sanat CSV-tiedostosta
         Papa.parse('https://raw.githubusercontent.com/timosalonen/wordfraud/main/offensiveFI.csv', {
             download: true,
             complete: function(results) {
@@ -446,9 +444,8 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             ctx.font = '20px C64';
-            ctx.fillStyle = '#696969';  // Tumman harmaa
+            ctx.fillStyle = '#696969';
 
-            // Wait for the font to load
             document.fonts.load('20px C64').then(() => {
                 var lines = [
                     '',
@@ -482,19 +479,19 @@
                 lines.forEach((line, index) => {
                     setTimeout(() => {
                         ctx.fillText(line, 20, y);
-                        y += 20;  // Move down for next line
+                        y += 20;
                     }, delay * index);
                 });
 
                 setTimeout(() => {
                     ctx.fillText('READY.', 20, y);
                     y += 20;
-                    ctx.fillRect(20, y, 10, 20); // Draw cursor at the end
+                    ctx.fillRect(20, y, 10, 20);
                 }, delay * lines.length);
 
                 setTimeout(() => {
                     window.location.href = 'pacman.html';
-                }, delay * lines.length + 4500); // Added 1.5 times more delay
+                }, delay * lines.length + 4500);
             });
         }
 
