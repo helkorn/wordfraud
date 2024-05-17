@@ -266,17 +266,27 @@
 
             function removeText() {
                 let grayValue = 245; // Alkuperäinen harmaa arvo
+                let upperIndex = 0;
+                const lines = box.textContent.split('\n');
                 const interval = setInterval(() => {
                     if (box.textContent.length > 0) {
-                        const randomIndex = Math.floor(Math.random() * box.textContent.length);
-                        box.textContent = box.textContent.slice(0, randomIndex) + box.textContent.slice(randomIndex + 1);
+                        if (upperIndex < lines.length) {
+                            // Poistetaan rivi yläosasta
+                            lines[upperIndex] = '';
+                            upperIndex++;
+                            box.textContent = lines.join('\n');
+                        } else {
+                            // Poistetaan yksittäisiä merkkejä alaosasta
+                            const randomIndex = Math.floor(Math.random() * box.textContent.length);
+                            box.textContent = box.textContent.slice(0, randomIndex) + box.textContent.slice(randomIndex + 1);
+                        }
                         grayValue -= 5; // Vähennetään harmaan arvoa
                         box.style.backgroundColor = `rgb(${grayValue}, ${grayValue}, ${grayValue})`;
                     } else {
                         clearInterval(interval);
                         box.remove();
                     }
-                }, 100); // Hidastettu poistumistahti
+                }, 50); // Nopeampi poistumistahti yläosasta
             }
 
             typeNext();
