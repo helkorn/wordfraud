@@ -155,7 +155,7 @@
         let words = [];
         let currentWord = '';
         let timer;
-        let timeLeft = 20;
+        let timeLeft = 15;
         let paused = false;
 
         function startTimer() {
@@ -186,7 +186,7 @@
                 const shuffledWord = shuffleWord(currentWord);
                 document.getElementById('shuffledWord').textContent = shuffledWord;
                 document.getElementById('answer').value = '';
-                timeLeft = 20;
+                timeLeft = 15;
                 document.getElementById('timer').textContent = timeLeft;
                 startTimer();
             } else {
@@ -239,7 +239,7 @@
                 } else {
                     clearInterval(interval);
                     if (callback) {
-                        setTimeout(callback, 1500);
+                        setTimeout(callback, 1200);
                     } else {
                         setTimeout(() => {
                             window.location.href = 'https://timosalonen.github.io/wordfraud/wordporn.html';
