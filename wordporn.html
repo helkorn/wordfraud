@@ -160,7 +160,7 @@
         <a href="javascript:void(0)" onclick="showAnalgrammi()">Mikä tämä on?  </a>
     </div>
     <div class="container">
-        <h1><span style="color: red;">P</span>WordPorn</h1>
+        <h1>Word<span style="color: red;">P</span>orn</h1>
         <p>Analgrammit. Mitä nyt vittua taas.</p>
         <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
         <div class="timer" id="timer">20</div>
@@ -180,15 +180,20 @@
         let paused = false;
         let points = 0;
         let bestScore = 0;
+        let bestPlayer = '';
         let currentLevel = 0;
+        let lastWord = '';
 
         // Load best score from Firestore
         function loadBestScore() {
             db.doc("/wordporn_scores/O0GVUONRTmF65Q9k9CU2").get().then((doc) => {
                 if (doc.exists) {
-                    bestScore = doc.data().score;
+                    const data = doc.data();
+                    bestScore = data.score;
+                    bestPlayer = data.player;
                 } else {
                     bestScore = 0;
+                    bestPlayer = 'Ei kukaan';
                 }
             }).catch((error) => {
                 console.error("Error getting best score: ", error);
@@ -196,9 +201,10 @@
         }
 
         // Save best score to Firestore
-        function saveBestScore(score) {
+        function saveBestScore(score, player) {
             db.doc("/wordporn_scores/O0GVUONRTmF65Q9k9CU2").set({
-                score: score
+                score: score,
+                player: player
             }).then(() => {
                 console.log("Best score successfully written!");
             }).catch((error) => {
@@ -232,6 +238,7 @@
             if (words.length > 0) {
                 let wordList = wordGroups[currentLevel];
                 currentWord = wordList[Math.floor(Math.random() * wordList.length)];
+                lastWord = currentWord;
                 const shuffledWord = shuffleWord(currentWord);
                 document.getElementById('shuffledWord').textContent = shuffledWord;
                 document.getElementById('answer').value = '';
@@ -255,7 +262,7 @@
                 currentLevel = Math.min(wordGroups.length - 1, currentLevel + 1);
                 revealCorrectAnswer(() => {
                     document.body.innerHTML = `
-                        <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                        <div style="color: grey; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
                             Ok, no nyt pyörii paskaämpäri, pisteet jo ${points} Pidä perse ylhäällä. Ladataan vaikeampi peli..
                         </div>`;
                     setTimeout(() => {
@@ -264,7 +271,7 @@
                     }, 3000);
                 });
             } else {
-                revealCorrectAnswer();
+                showFailureMessage();
             }
         }
 
@@ -293,20 +300,34 @@
         }
 
         function handleTimeOut() {
-            revealCorrectAnswer(() => {
-                if (points > bestScore) {
-                    bestScore = points;
-                    saveBestScore(bestScore);
-                    showHighScoreInput();
-                } else {
+            if (points > 0) {
+                showFailureMessage();
+            } else {
+                revealCorrectAnswer(() => {
                     showGameOver();
-                }
-            });
+                });
+            }
+        }
+
+        function showFailureMessage() {
+            const failureMessage = `
+                Ladataan uusi peli. Hankalaa oli analgrammin ${lastWord.toLowerCase()} kanssa, oikea vastaus oli <span style="color: grey;">${currentWord.toLowerCase()}</span>.<br>
+                Loppupisteesi ${points}. Kauden paras on: ${bestPlayer} pisteillä ${bestScore}.<br>
+                Eli helvetillinen pettymys jälleen bitch.
+            `;
+
+            document.body.innerHTML = `
+                <div style="color: grey; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: 'Typewriter', monospace;">
+                    ${failureMessage}
+                </div>`;
+            setTimeout(() => {
+                location.reload();
+            }, 8000);
         }
 
         function showGameOver() {
             document.body.innerHTML = `
-                <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                <div style="color: grey; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
                     Pisteesi: ${points}. Petrillä ${bestScore} doinskia. Helvetillinen pettymys, ladataan uusi peli..
                 </div>`;
             setTimeout(() => {
@@ -316,7 +337,7 @@
 
         function showHighScoreInput() {
             document.body.innerHTML = `
-                <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                <div style="color: grey; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
                     Oho, kauden parhaat ${points}. Kirjoita nimesi alle.
                     <input type="text" id="playerName" placeholder="Nimesi" style="display: block; margin: 20px auto; padding: 10px; font-size: 16px;">
                     <button onclick="savePlayerName()">Tallenna</button>
@@ -329,15 +350,7 @@
                 alert('Anna nimi.');
                 return;
             }
-            db.doc("/wordporn_scores/O0GVUONRTmF65Q9k9CU2").set({
-                score: points,
-                player: playerName
-            }).then(() => {
-                alert('Nimi tallennettu!');
-                location.reload();
-            }).catch((error) => {
-                console.error("Error writing player name: ", error);
-            });
+            saveBestScore(points, playerName);
         }
 
         function showAnalgrammi() {
