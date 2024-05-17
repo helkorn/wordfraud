@@ -128,7 +128,7 @@
         <h1>WordPorn</h1>
         <p>Analgrammit. Mitä nyt vittua taas.</p>
         <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
-        <div class="timer" id="timer">30</div>
+        <div class="timer" id="timer">20</div>
         <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
         <div>
             <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
@@ -140,16 +140,19 @@
         let words = [];
         let currentWord = '';
         let timer;
-        let timeLeft = 30;
+        let timeLeft = 20;
+        let paused = false;
 
         function startTimer() {
             clearInterval(timer);
             timer = setInterval(() => {
-                timeLeft--;
-                document.getElementById('timer').textContent = timeLeft;
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    handleTimeOut();
+                if (!paused) {
+                    timeLeft--;
+                    document.getElementById('timer').textContent = timeLeft;
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                        handleTimeOut();
+                    }
                 }
             }, 1000);
         }
@@ -235,6 +238,8 @@
         }
 
         function showAnalgrammi() {
+            paused = true;
+            document.getElementById('timer').textContent = 'PAUSED';
             const linkBox = document.getElementById('whatIsThisLink');
             linkBox.innerHTML = '';
             const box = document.createElement('div');
@@ -248,9 +253,9 @@
                 if (index < text.length) {
                     box.textContent += text[index];
                     index++;
-                    let delay = 20;  // Hidastettu kirjoitustahti
+                    let delay = 50;  // Hidastettu kirjoitustahti
                     if (text[index - 1] === ' ' || text[index - 1] === '\n') {
-                        delay = 100; // Pidempi tauko sanan jälkeen
+                        delay = 150; // Pidempi tauko sanan jälkeen
                     }
                     setTimeout(typeNext, delay);
                 } else {
@@ -266,6 +271,7 @@
                     } else {
                         clearInterval(interval);
                         box.remove();
+                        paused = false;
                     }
                 }, 100);
             }
