@@ -208,8 +208,10 @@
                             words[`group${group.trim()}`].push(word.trim());
                         }
                     }
+                    console.log(words); // Debugging: Print the loaded words
                     loadNewWord();
-                });
+                })
+                .catch(error => console.error('Error loading words:', error));
         }
 
         // Load best score from Firestore
