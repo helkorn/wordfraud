@@ -255,14 +255,14 @@
 
         function showAnalgrammi() {
             paused = true;
-            document.getElementById('timer').innerHTML = '<span class="waiting">-waiting-</span>';
+            document.getElementById('timer').innerHTML = '<span class="waiting">-kirjoittaa viestiä-</span>';
             const linkBox = document.getElementById('whatIsThisLink');
             linkBox.innerHTML = '';
             const box = document.createElement('div');
             box.id = 'typewriterBox';
             box.className = 'typewriter-box';
             document.body.appendChild(box);
-            const text = 'Rakas persehaju,\n\nTämä on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä, kuin sinäkin.\n\nMuodosta kirjaimista sana. Ole arvaamaton ja yllättävä, kuten äidillesi sinä.\n\nOnnea peliin, saatana.\n\nSe on helppo kuin sinä.\n\nT Koiranoksennus johon nussit';
+            const text = 'Rakas persehaju,\n\nTämä on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä, kuin sinäkin.\n\nMuodosta kirjaimista sana. Ole arvaamaton ja yllättävä, kuten äidillesi sinä.\n\nOnnea peliin. Se on helppo kuin sinä.\n\nT Koiranoksennus johon nussit';
             let index = 0;
 
             function typeNext() {
