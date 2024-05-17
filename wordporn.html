@@ -142,7 +142,6 @@
         let timer;
         let timeLeft = 20;
         let paused = false;
-        let typewriterFinished = false;
 
         function startTimer() {
             clearInterval(timer);
@@ -152,10 +151,6 @@
                     document.getElementById('timer').textContent = timeLeft;
                     if (timeLeft <= 0) {
                         clearInterval(timer);
-                        if (!typewriterFinished) {
-                            paused = true;
-                            document.getElementById('timer').textContent = 'PAUSED';
-                        }
                         handleTimeOut();
                     }
                 }
@@ -243,6 +238,8 @@
         }
 
         function showAnalgrammi() {
+            paused = true;
+            document.getElementById('timer').textContent = 'PAUSED';
             const linkBox = document.getElementById('whatIsThisLink');
             linkBox.innerHTML = '';
             const box = document.createElement('div');
@@ -262,11 +259,7 @@
                     }
                     setTimeout(typeNext, delay);
                 } else {
-                    typewriterFinished = true;
-                    if (timeLeft <= 0) {
-                        paused = false;
-                        document.getElementById('timer').textContent = timeLeft;
-                    }
+                    paused = false; // Päästä kello "PAUSE"-tilasta heti kun teksti on kirjoitettu
                     setTimeout(removeText, 2000); // Tauko ennen tekstin häviämisprosessia
                 }
             }
