@@ -41,6 +41,9 @@
             font-size: 2em;
             margin-bottom: 20px;
         }
+        h1 span {
+            color: red;
+        }
         .timer {
             font-size: 1.5em;
             margin-bottom: 20px;
@@ -125,7 +128,7 @@
         <a href="javascript:void(0)" onclick="showAnalgrammi()">What is this?</a>
     </div>
     <div class="container">
-        <h1>WordPorn</h1>
+        <h1>Word<span>P</span>orn</h1>
         <p>Analgrammit. Mitä nyt vittua taas.</p>
         <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
         <div class="timer" id="timer">20</div>
@@ -180,9 +183,11 @@
         }
 
         function checkAnswer() {
+            paused = true;
+            document.getElementById('timer').style.display = 'none';
             const answer = document.getElementById('answer').value.trim().toLowerCase();
             if (answer === '') {
-                document.getElementById('result').textContent = 'Vastaa nyt jotain menee hermo.';
+                document.getElementById('result').textContent = 'Vastaa nyt jotain menee hermo';
                 return;
             }
             if (answer === currentWord.toLowerCase()) {
@@ -230,7 +235,7 @@
                         }, 2000);
                     }
                 }
-            }, 150);
+            }, 200);
         }
 
         function handleTimeOut() {
@@ -239,7 +244,7 @@
 
         function showAnalgrammi() {
             paused = true;
-            document.getElementById('timer').textContent = 'PAUSED';
+            document.getElementById('timer').style.display = 'none';
             const linkBox = document.getElementById('whatIsThisLink');
             linkBox.innerHTML = '';
             const box = document.createElement('div');
@@ -253,9 +258,9 @@
                 if (index < text.length) {
                     box.textContent += text[index];
                     index++;
-                    let delay = 50;
+                    let delay = 40;
                     if (text[index - 1] === ' ' || text[index - 1] === '\n') {
-                        delay = 120;
+                        delay = 100;
                     }
                     setTimeout(typeNext, delay);
                 } else {
@@ -285,7 +290,7 @@
                         paused = false;
                         startTimer();
                     }
-                }, 50);
+                }, 30);
             }
 
             typeNext();
