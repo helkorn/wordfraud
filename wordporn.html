@@ -61,6 +61,20 @@
             color: #fff;
             text-align: center;
         }
+        button {
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+            border: 1px solid #333;
+            border-radius: 50px;
+            background-color: #333;
+            color: #fff;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #555;
+        }
         .result {
             margin-top: 20px;
             font-size: 1.2em;
@@ -127,9 +141,12 @@
     <div class="container">
         <h1>WordPorn</h1>
         <p>Analgrammit. Mitä nyt vittua taas.</p>
-        <div class="shuffled-word" id="shuffledWord">Ladataan analgrammia...</div>
-        <div class="timer" id="timer">60</div>
+        <div class="shuffled-word" id="shuffledWord">Ladataan Analgeet..</div>
+        <div class="timer" id="timer">30</div>
         <input type="text" id="answer" placeholder="Kirjoita vastaus">
+        <div>
+            <button id="solveButton" onclick="checkAnswer()">PAINAMUASAATANA</button>
+        </div>
         <div class="result" id="result"></div>
     </div>
     <div class="score-board-container" id="scoreBoardContainer">
@@ -142,7 +159,7 @@
         let words = new Set();
         let currentWord = '';
         let timer;
-        let timeLeft = 60;
+        let timeLeft = 30;
         let gameNumber = 1;
         let scores = [];
         let playerName = playerNames[Math.floor(Math.random() * playerNames.length)];
@@ -174,7 +191,7 @@
                 const shuffledWord = shuffleWord(currentWord);
                 document.getElementById('shuffledWord').textContent = shuffledWord;
                 document.getElementById('answer').value = '';
-                timeLeft = 60;
+                timeLeft = 30;
                 document.getElementById('timer').textContent = timeLeft;
                 startTimer();
             } else {
@@ -201,6 +218,10 @@
 
         function checkAnswer() {
             const answer = document.getElementById('answer').value.trim().toLowerCase();
+            if (answer === '') {
+                document.getElementById('result').textContent = 'Et antanut vittujakaan.';
+                return;
+            }
             if (answer === currentWord.toLowerCase()) {
                 const score = 12 * currentWord.length;
                 scores.push(score);
@@ -227,7 +248,7 @@
             box.id = 'typewriterBox';
             box.className = 'typewriter-box';
             document.body.appendChild(box);
-            const text = 'WordPorn on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä kuin sinäkin.\n\nMuodosta kirjaimista sana. Ole arvaamaton ja yllättävä kuten äidillesi sinä.\n\nOnnea peliin WordPorn.\n\nHelppo kuin sinä!';
+            const text = 'Rakas persehaju,\n\nWordPorn on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä, kuin sinäkin.\n\nMuodosta kirjaimista sana. Ole arvaamaton ja yllättävä, kuten äidillesi sinä.\n\nOnnea peliin WordPorn. Se on helppo kuin sinä.';
             let index = 0;
 
             function typeNext() {
