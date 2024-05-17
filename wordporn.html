@@ -183,11 +183,17 @@
                 return;
             }
             if (answer === currentWord.toLowerCase()) {
-                document.body.innerHTML = '<div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">ONNEKSI OLKOON<br>PORNHUB ON TUTTUA<br>SEURAAVA ASIAKAS</div>';
+                document.body.innerHTML = `
+                    <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                        Lauantai on halvempi.<br>Budapest-Helsinki klo 18.55-22.15<br>96 € yhteensä
+                    </div>`;
                 let countdown = 5;
                 const interval = setInterval(() => {
                     countdown--;
-                    document.body.innerHTML = `<div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">ONNEKSI OLKOON<br>PORNHUB ON TUTTUA<br>SEURAAVA ASIAKAS<br>${countdown}</div>`;
+                    document.body.innerHTML = `
+                        <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                            Lauantai on halvempi.<br>Budapest-Helsinki klo 18.55-22.15<br>96 € yhteensä<br>${countdown}
+                        </div>`;
                     if (countdown <= 0) {
                         clearInterval(interval);
                         location.reload();
@@ -219,26 +225,13 @@
         }
 
         function showTimeUpMessage() {
-            document.body.innerHTML = '<div id="timeUpMessage" style="background-color: #fff; color: #000; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;"></div>';
-            const message = 'Aika loppui ja kiinnostus suhun. Olisit edes jotain vastannut saatana.';
-            let index = 0;
-
-            function typeMessage() {
-                if (index < message.length) {
-                    document.getElementById('timeUpMessage').textContent += message[index];
-                    index++;
-                    setTimeout(typeMessage, 100);
-                } else {
-                    setTimeout(() => {
-                        document.getElementById('timeUpMessage').textContent = 'Paluu analgrammiin..';
-                        setTimeout(() => {
-                            window.location.href = 'wordporn.html';
-                        }, 2000);
-                    }, 1000);
-                }
-            }
-
-            typeMessage();
+            document.body.innerHTML = '<div id="timeUpMessage" style="background-color: #fff; color: #000; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">Aika loppui. Jeesus mikä pettymys.</div>';
+            setTimeout(() => {
+                document.getElementById('timeUpMessage').textContent = 'Paluu analgrammiin..';
+                setTimeout(() => {
+                    window.location.href = 'wordporn.html';
+                }, 2000);
+            }, 1000);
         }
 
         function showAnalgrammi() {
