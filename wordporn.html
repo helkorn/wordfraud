@@ -41,6 +41,9 @@
             font-size: 2em;
             margin-bottom: 20px;
         }
+        h1 span {
+            color: red;
+        }
         .timer {
             font-size: 1.5em;
             margin-bottom: 20px;
@@ -108,7 +111,7 @@
         }
         .typewriter-box {
             position: absolute;
-            top: 50px;
+            top: 40px;
             right: 20px;
             background-color: #f5f5f5;
             color: #000;
@@ -134,16 +137,19 @@
             }
         }
     </style>
+    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-firestore.js"></script>
 </head>
 <body>
     <div class="link-box" id="whatIsThisLink">
         <a href="javascript:void(0)" onclick="showAnalgrammi()">Mikä tämä on?  </a>
     </div>
     <div class="container">
-        <h1>WordPorn</h1>
+        <h1><span>P</span>WordPorn</h1>
         <p>Analgrammit. Mitä nyt vittua taas.</p>
         <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
-        <div class="timer" id="timer">15</div>
+        <div class="timer" id="timer">20</div>
         <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
         <div>
             <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
@@ -153,10 +159,51 @@
 
     <script>
         let words = [];
+        let wordGroups = [];
         let currentWord = '';
         let timer;
-        let timeLeft = 15;
+        let timeLeft = 20;
         let paused = false;
+        let points = 0;
+        let bestScore = 0;
+        let currentLevel = 0;
+
+        // Firebase configuration
+        var firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Load best score from Firestore
+        function loadBestScore() {
+            db.collection("scores").doc("bestScore").get().then((doc) => {
+                if (doc.exists) {
+                    bestScore = doc.data().score;
+                } else {
+                    bestScore = 0;
+                }
+            }).catch((error) => {
+                console.error("Error getting best score: ", error);
+            });
+        }
+
+        // Save best score to Firestore
+        function saveBestScore(score) {
+            db.collection("scores").doc("bestScore").set({
+                score: score
+            }).then(() => {
+                console.log("Best score successfully written!");
+            }).catch((error) => {
+                console.error("Error writing best score: ", error);
+            });
+        }
 
         function startTimer() {
             clearInterval(timer);
@@ -182,11 +229,12 @@
 
         function loadNewWord() {
             if (words.length > 0) {
-                currentWord = words[Math.floor(Math.random() * words.length)];
+                let wordList = wordGroups[currentLevel];
+                currentWord = wordList[Math.floor(Math.random() * wordList.length)];
                 const shuffledWord = shuffleWord(currentWord);
                 document.getElementById('shuffledWord').textContent = shuffledWord;
                 document.getElementById('answer').value = '';
-                timeLeft = 15;
+                timeLeft = Math.max(5, 20 - currentLevel);
                 document.getElementById('timer').textContent = timeLeft;
                 startTimer();
             } else {
@@ -202,23 +250,19 @@
             }
             paused = true;
             if (answer === currentWord.toLowerCase()) {
+                points += currentWord.length;
+                currentLevel = Math.min(wordGroups.length - 1, currentLevel + 1);
                 revealCorrectAnswer(() => {
                     document.body.innerHTML = `
                         <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                            Ihan oikein, hienoa!<br>Äidin pikku vittunaama.<br>Ladataan uudestaan..
+                            Ok, no nyt pyörii paskaämpäri ylläsi ${points} pisteellä.<br>
+                            Kauden paras on ${bestScore}, jonka saavuttamiseen onnistuit juuri nopeuttamaan peliä ja anagrammit ovat vaikeampia.<br>
+                            Pidä perse ylhäällä koko ajan tulee!
                         </div>`;
-                    let countdown = 5;
-                    const interval = setInterval(() => {
-                        countdown--;
-                        document.body.innerHTML = `
-                            <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                                Ihan oikein, hienoa!<br>Äidin pikku vittunaama.<br>Ladataan uudestaan..<br>${countdown}
-                            </div>`;
-                        if (countdown <= 0) {
-                            clearInterval(interval);
-                            location.reload();
-                        }
-                    }, 1000);
+                    setTimeout(() => {
+                        loadNewWord();
+                        paused = false;
+                    }, 3000);
                 });
             } else {
                 revealCorrectAnswer();
@@ -239,7 +283,7 @@
                 } else {
                     clearInterval(interval);
                     if (callback) {
-                        setTimeout(callback, 1200);
+                        setTimeout(callback, 1500);
                     } else {
                         setTimeout(() => {
                             window.location.href = 'https://timosalonen.github.io/wordfraud/wordporn.html';
@@ -250,7 +294,20 @@
         }
 
         function handleTimeOut() {
-            revealCorrectAnswer();
+            revealCorrectAnswer(() => {
+                if (points > bestScore) {
+                    bestScore = points;
+                    saveBestScore(bestScore);
+                }
+                document.body.innerHTML = `
+                    <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                        Venäläinen prostituoitu hinkkaa paremmat kuin sinun: ${points} pistettä.<br>
+                        Helvetin pettymys, ladataan uusi peli..
+                    </div>`;
+                setTimeout(() => {
+                    location.reload();
+                }, 3000);
+            });
         }
 
         function showAnalgrammi() {
@@ -261,9 +318,8 @@
             const box = document.createElement('div');
             box.id = 'typewriterBox';
             box.className = 'typewriter-box';
-            box.style.top = '60px'; // Alennettu hieman 40px -> 60px
             document.body.appendChild(box);
-            const text = 'Rakas persehaju,\n\nTämä on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä, kuin sinäkin.\n\nMuodosta kirjaimista sana. Ole yllättävä kuin äitisi raskaus.\n\nOnnea peliin. Se on helppo kuten sinä.\n\nT Koiranoksennus johon nussit';
+            const text = 'Rakas persehaju,\n\nTämä on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä, jos sinäkin.\n\nMuodosta kirjaimista sana. Ole yllättävä kuin äitisi raskaus.\n\nOnnea peliin. Se on helppo kuten sinä.\n\nT Koiranoksennus johon nussit';
             let index = 0;
 
             function typeNext() {
@@ -276,12 +332,12 @@
                     }
                     setTimeout(typeNext, delay);
                 } else {
-                    setTimeout(removeText, 3000); // Lisätty ylimääräinen sekunti
+                    setTimeout(removeText, 3000);
                 }
             }
 
             function removeText() {
-                document.getElementById('timer').innerHTML = timeLeft; // Nopeutettu muutos kelloksi
+                document.getElementById('timer').innerHTML = timeLeft;
                 let grayValue = 245;
                 let upperIndex = 0;
                 const lines = box.textContent.split('\n');
@@ -314,8 +370,14 @@
                 .then(response => response.text())
                 .then(text => {
                     words = text.split('\n').map(word => word.trim()).filter(Boolean);
+                    words.sort((a, b) => a.length - b.length);
+                    let step = Math.ceil(words.length / 20);
+                    for (let i = 0; i < 20; i++) {
+                        wordGroups.push(words.slice(i * step, (i + 1) * step));
+                    }
                     loadNewWord();
                 });
+            loadBestScore();
         });
 
         document.getElementById('answer').addEventListener('keydown', function (e) {
