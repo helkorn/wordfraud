@@ -96,7 +96,7 @@
         }
         .typewriter-box {
             position: absolute;
-            top: 70px;
+            top: 40px;
             right: 20px;
             background-color: #f5f5f5;
             color: #000;
@@ -106,13 +106,13 @@
             font-family: 'Typewriter', monospace;
             font-size: 14px;
             white-space: pre-wrap;
+            width: 200px; /* Leveys, joka vastaa neljän sanan leveyttä */
         }
     </style>
 </head>
 <body>
     <div class="link-box" id="whatIsThisLink">
         <a href="javascript:void(0)" onclick="showAnalgrammi()">What is this?</a>
-        <div class="typewriter-box hidden" id="typewriterBox"></div>
     </div>
     <div class="container">
         <h1>WordPorn</h1>
@@ -121,7 +121,7 @@
         <input type="text" id="answer" placeholder="Kirjoita vastaus">
         <div>
             <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
-            <button id="revealButton" onclick="revealAnswer()">PALJASTA</button>
+            <button id="revealButton" onclick="loadNewWord()">PALJASTA</button>
         </div>
         <div class="result" id="result"></div>
     </div>
@@ -177,11 +177,13 @@
         }
 
         function showAnalgrammi() {
-            const link = document.getElementById('whatIsThisLink');
-            link.innerHTML = '<a href="javascript:void(0)" onclick="showAnalgrammi()">What is this?</a>';
-            const box = document.getElementById('typewriterBox');
-            box.classList.remove('hidden');
-            const text = 'Analgram on helppo peli äärimmäisen vanhoille kuten sinä. Sinulla on 60 sekuntia aikaa vastata helppoon alatyyliseen anagramiin. Et keksi sitä eli palaat alkuun. Kaikki sanat ovat yhtä alatyylisiä kuin sinäkin. Kello nopeutuu joka väärästä vastauksesta.';
+            const linkBox = document.getElementById('whatIsThisLink');
+            linkBox.innerHTML = '';
+            const box = document.createElement('div');
+            box.id = 'typewriterBox';
+            box.className = 'typewriter-box';
+            document.body.appendChild(box);
+            const text = 'Analgram on helppo peli erityisen vanhoille kuten sinä. Sinulla on 60 sekuntia aikaa vastata helppoon alatyyliseen anagrammiin. Et keksi sitä, eli palaat alkuun. Mutta jos keksit, kaikki sanasi ovat yhtä alatyylisiä kuin sinäkin. Kello nopeutuu joka väärästä vastauksesta.';
             let index = 0;
 
             const interval = setInterval(() => {
