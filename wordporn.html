@@ -149,7 +149,7 @@
                 document.getElementById('timer').textContent = timeLeft;
                 if (timeLeft <= 0) {
                     clearInterval(timer);
-                    showTimeUpMessage();
+                    handleTimeOut();
                 }
             }, 1000);
         }
@@ -183,28 +183,30 @@
                 return;
             }
             if (answer === currentWord.toLowerCase()) {
-                document.body.innerHTML = `
-                    <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                        Noin sai ihan oikein,<br>äidin pikku vittunaama. Sairas mieli.<br>Koita uudestaan.
-                    </div>`;
-                let countdown = 5;
-                const interval = setInterval(() => {
-                    countdown--;
+                revealCorrectAnswer(() => {
                     document.body.innerHTML = `
                         <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                            Noin sitten sai ihan oikein,<br>äidin vittunaama. Sairas mieli.<br>Koita uudestaan.<br>${countdown}
+                            Ihan oikein, hienoa!<br>Äidin pikku vittunaama.<br>Lataa uudestaan..
                         </div>`;
-                    if (countdown <= 0) {
-                        clearInterval(interval);
-                        location.reload();
-                    }
-                }, 1000);
+                    let countdown = 5;
+                    const interval = setInterval(() => {
+                        countdown--;
+                        document.body.innerHTML = `
+                            <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                Ihan oikein, hienoa!<br>Äidin pikku vittunaama.<br>Ladataan uudestaan..<br>${countdown}
+                            </div>`;
+                        if (countdown <= 0) {
+                            clearInterval(interval);
+                            location.reload();
+                        }
+                    }, 1000);
+                });
             } else {
                 revealCorrectAnswer();
             }
         }
 
-        function revealCorrectAnswer() {
+        function revealCorrectAnswer(callback) {
             const shuffledWordElement = document.getElementById('shuffledWord');
             shuffledWordElement.style.color = '#FFFF00'; // Keltaiseksi
             let currentIndex = 0;
@@ -217,21 +219,19 @@
                     currentIndex++;
                 } else {
                     clearInterval(interval);
-                    setTimeout(() => {
-                        window.location.href = 'https://timosalonen.github.io/wordfraud/wordporn.html';
-                    }, 2000);
+                    if (callback) {
+                        setTimeout(callback, 2000);
+                    } else {
+                        setTimeout(() => {
+                            window.location.href = 'https://timosalonen.github.io/wordfraud/wordporn.html';
+                        }, 2000);
+                    }
                 }
             }, 200);
         }
 
-        function showTimeUpMessage() {
-            document.body.innerHTML = '<div id="timeUpMessage" style="background-color: #fff; color: #000; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">Aika loppui. Jeesus mikä pettymys.</div>';
-            setTimeout(() => {
-                document.getElementById('timeUpMessage').textContent = 'Paluu analgrammiin..';
-                setTimeout(() => {
-                    window.location.href = 'wordporn.html';
-                }, 2000);
-            }, 1000);
+        function handleTimeOut() {
+            revealCorrectAnswer();
         }
 
         function showAnalgrammi() {
@@ -289,4 +289,4 @@
         });
     </script>
 </body>
-</html>
+</html
