@@ -9,6 +9,10 @@
             font-family: 'C64';
             src: url('fontC64.ttf') format('truetype');
         }
+        @font-face {
+            font-family: 'Typewriter';
+            src: url('fontTW.ttf') format('truetype');
+        }
         body {
             font-family: Arial, sans-serif;
             background-color: #000;
@@ -53,8 +57,8 @@
             text-align: center;
         }
         button {
-            padding: 10px 20px;
-            font-size: 16px;
+            padding: 5px 10px;
+            font-size: 14px;
             cursor: pointer;
             border: 1px solid #333;
             border-radius: 50px;
@@ -90,11 +94,25 @@
         .hidden {
             display: none;
         }
+        .typewriter-box {
+            position: absolute;
+            top: 70px;
+            right: 20px;
+            background-color: #f5f5f5;
+            color: #000;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            font-family: 'Typewriter', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
     </style>
 </head>
 <body>
     <div class="link-box" id="whatIsThisLink">
         <a href="javascript:void(0)" onclick="showAnalgrammi()">What is this?</a>
+        <div class="typewriter-box hidden" id="typewriterBox"></div>
     </div>
     <div class="container">
         <h1>WordPorn</h1>
@@ -120,7 +138,7 @@
                 document.getElementById('timer').textContent = timeLeft;
                 if (timeLeft <= 0) {
                     clearInterval(timer);
-                    revealAnswer();
+                    loadNewWord();
                 }
             }, 1000);
         }
@@ -138,6 +156,10 @@
             currentWord = wordsArray[Math.floor(Math.random() * wordsArray.length)];
             const shuffledWord = shuffleWord(currentWord);
             document.getElementById('answer').placeholder = shuffledWord;
+            document.getElementById('answer').value = '';
+            timeLeft = 60;
+            document.getElementById('timer').textContent = timeLeft;
+            startTimer();
         }
 
         function checkAnswer() {
@@ -147,77 +169,23 @@
                 clearInterval(timer);
                 setTimeout(() => {
                     document.getElementById('result').textContent = '';
-                    timeLeft = 60;
-                    document.getElementById('timer').textContent = timeLeft;
                     loadNewWord();
-                    startTimer();
                 }, 2000);
             } else {
                 document.getElementById('result').textContent = 'Väärin!';
             }
         }
 
-        function revealAnswer() {
-            document.body.innerHTML = '<canvas></canvas>';
-            var canvas = document.querySelector('canvas');
-            var ctx = canvas.getContext('2d');
-
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-
-            ctx.fillStyle = '#000';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.font = '20px C64';
-            ctx.fillStyle = '#696969';  // Tumman harmaa
-
-            var lines = [
-                '*** WORDPORN V 1.0 ***',
-                '',
-                'OIKEA VASTAUS',
-                'OIKEA VASTAUS',
-                'OIKEA VASTAUS',
-                'OIKEA VASTAUS',
-                'OIKEA VASTAUS',
-                'OIKEA VASTAUS',
-                'OIKEA VASTAUS',
-                'OIKEA VASTAUS',
-                'OIKEA VASTAUS',
-                'OIKEA VASTAUS',
-                'OIKEA VASTAUS',
-                'OIKEA VASTAUS',
-                'OIKEA VASTAUS',
-                'OIKEA VASTAUS',
-                'OIKEA VASTAUS',
-                'OIKEA VASTAUS',
-                'OIKEA VASTAUS',
-                'OIKEA VASTAUS',
-                'OIKEA VASTAUS'
-            ];
-
-            var y = 20;
-            var delay = 100;
-
-            lines.forEach((line, index) => {
-                setTimeout(() => {
-                    ctx.fillText(line, 20, y);
-                    y += 20;  // Move down for next line
-                }, delay * index);
-            });
-
-            setTimeout(() => {
-                window.location.href = 'wordporn.html';
-            }, delay * lines.length + 4500); // Added delay
-        }
-
         function showAnalgrammi() {
             const link = document.getElementById('whatIsThisLink');
-            link.innerHTML = '';
-            const text = 'Analgrammi';
+            link.innerHTML = '<a href="javascript:void(0)" onclick="showAnalgrammi()">What is this?</a>';
+            const box = document.getElementById('typewriterBox');
+            box.classList.remove('hidden');
+            const text = 'Analgram on helppo peli äärimmäisen vanhoille kuten sinä. Sinulla on 60 sekuntia aikaa vastata helppoon alatyyliseen anagramiin. Et keksi sitä eli palaat alkuun. Kaikki sanat ovat yhtä alatyylisiä kuin sinäkin. Kello nopeutuu joka väärästä vastauksesta.';
             let index = 0;
 
             const interval = setInterval(() => {
-                link.innerHTML += text[index];
+                box.textContent += text[index];
                 index++;
                 if (index >= text.length) {
                     clearInterval(interval);
@@ -233,7 +201,6 @@
                         words.add(word.toLowerCase());
                     });
                     loadNewWord();
-                    startTimer();
                 }
             });
         });
