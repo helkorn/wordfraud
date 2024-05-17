@@ -98,9 +98,10 @@
             text-align: right;
         }
         .link-box a {
-            color: #ccc;
+            color: #888;
             text-decoration: none;
             font-weight: bold;
+            padding-right: 10px;
         }
         .link-box a:hover {
             text-decoration: underline;
@@ -139,7 +140,7 @@
 </head>
 <body>
     <div class="link-box" id="whatIsThisLink">
-        <a href="javascript:void(0)" onclick="showAnalgrammi()">Mikä tämä on?</a>
+        <a href="javascript:void(0)" onclick="showAnalgrammi()">Mikä tämä on?  </a>
     </div>
     <div class="container">
         <h1>Word<span>P</span>orn</h1>
@@ -199,12 +200,13 @@
         }
 
         function checkAnswer() {
-            paused = true;
             const answer = document.getElementById('answer').value.trim().toLowerCase();
             if (answer === '') {
-                document.getElementById('result').textContent = 'Vastaa nyt jotain menee hermo';
+                document.getElementById('result').textContent = 'Vastaa nyt jotain menee hermo.';
                 return;
             }
+            paused = true;
+            document.getElementById('timer').innerHTML = '<span class="waiting">-waiting-</span>';
             if (answer === currentWord.toLowerCase()) {
                 revealCorrectAnswer(() => {
                     document.body.innerHTML = `
@@ -282,7 +284,7 @@
                     setTimeout(() => {
                         document.getElementById('timer').innerHTML = timeLeft;
                         removeText();
-                    }, 1500);
+                    }, 1000); // Nopeutettu muutos kelloksi
                 }
             }
 
