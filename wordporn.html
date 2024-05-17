@@ -112,7 +112,7 @@
             border: 1px solid #333;
             border-radius: 5px;
             font-family: 'Typewriter', monospace;
-            font-size: 16px; /* Suurempi fonttikoko */
+            font-size: 13px; /* Pienennetty fonttikoko hieman */
             white-space: pre-wrap;
             width: 200px; /* Leveys, joka vastaa noin neljää sanaa */
         }
@@ -239,8 +239,27 @@
                 }, 1000);
                 updateScoreBoard();
             } else {
-                document.getElementById('result').textContent = 'Väärin!';
+                revealCorrectAnswer();
             }
+        }
+
+        function revealCorrectAnswer() {
+            const shuffledWordElement = document.getElementById('shuffledWord');
+            let currentIndex = 0;
+
+            const interval = setInterval(() => {
+                if (currentIndex < currentWord.length) {
+                    shuffledWordElement.textContent =
+                        currentWord.slice(0, currentIndex + 1) +
+                        shuffledWordElement.textContent.slice(currentIndex + 1);
+                    currentIndex++;
+                } else {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        window.location.href = 'wordporn.html';
+                    }, 5000);
+                }
+            }, 200);
         }
 
         function showAnalgrammi() {
@@ -257,9 +276,9 @@
                 if (index < text.length) {
                     box.textContent += text[index];
                     index++;
-                    let delay = 25;  // Nopeampi kirjoitustahti
+                    let delay = 50;  // Hidastettu kirjoitustahti
                     if (text[index - 1] === ' ' || text[index - 1] === '\n') {
-                        delay = 100; // Pidempi tauko sanan jälkeen
+                        delay = 150; // Pidempi tauko sanan jälkeen
                     }
                     setTimeout(typeNext, delay);
                 } else {
