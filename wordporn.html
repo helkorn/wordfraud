@@ -230,7 +230,7 @@
                         }, 2000);
                     }
                 }
-            }, 200);
+            }, 100);
         }
 
         function handleTimeOut() {
@@ -253,13 +253,14 @@
                 if (index < text.length) {
                     box.textContent += text[index];
                     index++;
-                    let delay = 50;  // Hidastettu kirjoitustahti
+                    let delay = 30;  // Nopeampi kirjoitustahti
                     if (text[index - 1] === ' ' || text[index - 1] === '\n') {
-                        delay = 150; // Pidempi tauko sanan jälkeen
+                        delay = 100; // Pidempi tauko sanan jälkeen
                     }
                     setTimeout(typeNext, delay);
                 } else {
-                    setTimeout(removeText, 3000);
+                    paused = false; // Päästä kello "PAUSE"-tilasta heti kun teksti on kirjoitettu
+                    setTimeout(removeText, 1000); // Nopeampi tekstin häviämisprosessi
                 }
             }
 
@@ -271,9 +272,8 @@
                     } else {
                         clearInterval(interval);
                         box.remove();
-                        paused = false;
                     }
-                }, 100);
+                }, 50);
             }
 
             typeNext();
