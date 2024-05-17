@@ -108,7 +108,7 @@
         }
         .typewriter-box {
             position: absolute;
-            top: 40px;
+            top: 60px;
             right: 20px;
             background-color: #f5f5f5;
             color: #000;
@@ -261,6 +261,7 @@
             const box = document.createElement('div');
             box.id = 'typewriterBox';
             box.className = 'typewriter-box';
+            box.style.top = '60px'; // Alennettu hieman 40px -> 60px
             document.body.appendChild(box);
             const text = 'Rakas persehaju,\n\nTämä on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä, kuin sinäkin.\n\nMuodosta kirjaimista sana. Ole yllättävä kuin äitisi raskaus.\n\nOnnea peliin. Se on helppo kuten sinä.\n\nT Koiranoksennus johon nussit';
             let index = 0;
