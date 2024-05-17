@@ -251,7 +251,7 @@
             box.id = 'typewriterBox';
             box.className = 'typewriter-box';
             document.body.appendChild(box);
-            const text = 'Rakas persehaju,\n\nAnalgrammit on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä, kuin sinäkin.\n\nMuodosta kirjaimista sana. Ole arvaamaton ja yllättävä, kuten äidillesi sinä.\n\nOnnea peliin saatana. WordPorn on helppo kuin sinä.';
+            const text = 'Rakas persehaju,\n\nWordPorn on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä, kuin sinäkin.\n\nMuodosta kirjaimista sana. Ole arvaamaton ja yllättävä, kuten äidillesi sinä.\n\nOnnea peliin, saatana.\n\nSe on helppo kuin sinä.\n\nT. Koiranoksennus johon nussit.';
             let index = 0;
 
             function typeNext() {
@@ -273,17 +273,10 @@
             document.getElementById('playerName').textContent = playerName;
             Papa.parse('/mnt/data/wordpornFI.csv', {
                 download: true,
-                step: function(results, parser) {
-                    if (results.data && results.data.length > 0) {
-                        results.data.flat().map(word => word.trim()).filter(Boolean).forEach(word => {
-                            words.add(word.toLowerCase());
-                        });
-                        let percent = Math.floor((parser.stream.offset / parser.stream.size) * 100);
-                        document.getElementById('shuffledWord').textContent = `Ladataan ${percent}%`;
-                    }
-                },
-                complete: function() {
-                    document.getElementById('shuffledWord').textContent = "Lataus valmis";
+                complete: function(results) {
+                    results.data.flat().map(word => word.trim()).filter(Boolean).forEach(word => {
+                        words.add(word.toLowerCase());
+                    });
                     loadNewWord();
                 }
             });
