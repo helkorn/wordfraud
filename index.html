@@ -100,6 +100,13 @@
             color: #333333;
             text-transform: uppercase;
             cursor: pointer;
+            position: relative;
+        }
+        li.has-background-image {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.5;
         }
         li:hover {
             background-color: #eee;
@@ -206,20 +213,7 @@
             white-space: pre-wrap;
         }
         .image-container {
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            width: 150px;
-            height: 150px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            overflow: hidden;
             display: none;
-        }
-        .image-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
         }
     </style>
 </head>
@@ -254,9 +248,6 @@
     </div>
 
     <div class="link-box hidden" id="optionsContainer"></div>
-    <div class="image-container" id="imageContainer">
-        <img id="wordImage" src="" alt="Word Image">
-    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0"></script>
@@ -376,6 +367,7 @@
                     const li = document.createElement('li');
                     li.textContent = word.toUpperCase();
                     li.onclick = () => findWordsForWord(word.toUpperCase());
+                    li.id = `word-${word.toUpperCase()}`;
                     if (index % 2 === 0) {
                         column1.appendChild(li);
                     } else {
@@ -437,22 +429,23 @@
             .then(response => response.json())
             .then(data => {
                 const translatedWord = data.data.translations[0].translatedText;
-                fetchImage(translatedWord);
+                fetchImage(word, translatedWord);
             })
             .catch(error => {
                 console.error('Error translating the word:', error);
             });
         }
 
-        function fetchImage(translatedWord) {
+        function fetchImage(word, translatedWord) {
             fetch(`https://api.unsplash.com/photos/random?query=${translatedWord}&client_id=${unsplashAccessKey}`)
                 .then(response => response.json())
                 .then(data => {
                     const imageUrl = data.urls.small;
-                    const imageContainer = document.getElementById('imageContainer');
-                    const wordImage = document.getElementById('wordImage');
-                    wordImage.src = imageUrl;
-                    imageContainer.style.display = 'block';
+                    const wordElement = document.getElementById(`word-${word.toUpperCase()}`);
+                    if (wordElement) {
+                        wordElement.style.backgroundImage = `url(${imageUrl})`;
+                        wordElement.classList.add('has-background-image');
+                    }
                 })
                 .catch(error => {
                     console.error('Error fetching the image:', error);
