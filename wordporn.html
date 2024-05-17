@@ -98,7 +98,7 @@
             text-align: right;
         }
         .link-box a {
-            color: #444;
+            color: #ccc;
             text-decoration: none;
             font-weight: bold;
         }
@@ -279,7 +279,10 @@
                     }
                     setTimeout(typeNext, delay);
                 } else {
-                    setTimeout(removeText, 2000);
+                    setTimeout(() => {
+                        document.getElementById('timer').innerHTML = timeLeft;
+                        removeText();
+                    }, 1500);
                 }
             }
 
