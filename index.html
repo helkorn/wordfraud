@@ -267,6 +267,8 @@
         let isOffensiveLoaded = false;
         const medianThreshold = 50;
         const superThreshold = 75;
+        const translateApiKey = 'AIzaSyDdmqFZttVpbpzvRU3sIu1-Ws4jI4iIEGo';
+        const unsplashAccessKey = 'gBPFkxZCEH2EV6t8GaezB2_WM2QVkVUnkCHP0bITUos';
 
         Papa.parse('https://raw.githubusercontent.com/timosalonen/wordfraud/main/wordfraudFI.csv', {
             download: true,
@@ -413,7 +415,48 @@
 
             window.scrollTo(0, 0);
 
-            showImage(letters);
+            translateAndShowImage(letters);
+        }
+
+        function translateAndShowImage(word) {
+            const url = `https://translation.googleapis.com/language/translate/v2?key=${translateApiKey}`;
+            const data = {
+                q: word,
+                source: 'fi',
+                target: 'en',
+                format: 'text'
+            };
+
+            fetch(url, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const translatedWord = data.data.translations[0].translatedText;
+                fetchImage(translatedWord);
+            })
+            .catch(error => {
+                console.error('Error translating the word:', error);
+            });
+        }
+
+        function fetchImage(translatedWord) {
+            fetch(`https://api.unsplash.com/photos/random?query=${translatedWord}&client_id=${unsplashAccessKey}`)
+                .then(response => response.json())
+                .then(data => {
+                    const imageUrl = data.urls.small;
+                    const imageContainer = document.getElementById('imageContainer');
+                    const wordImage = document.getElementById('wordImage');
+                    wordImage.src = imageUrl;
+                    imageContainer.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error fetching the image:', error);
+                });
         }
 
         function showOptions() {
@@ -527,23 +570,6 @@
 
         function resetPage() {
             location.reload();
-        }
-
-        function showImage(word) {
-            if (isValidWord(word.toLowerCase())) {
-                fetch(`https://api.unsplash.com/photos/random?query=${word}&client_id=gBPFkxZCEH2EV6t8GaezB2_WM2QVkVUnkCHP0bITUos`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const imageUrl = data.urls.small;
-                        const imageContainer = document.getElementById('imageContainer');
-                        const wordImage = document.getElementById('wordImage');
-                        wordImage.src = imageUrl;
-                        imageContainer.style.display = 'block';
-                    })
-                    .catch(error => {
-                        console.error('Error fetching the image:', error);
-                    });
-            }
         }
     </script>
 </body>
