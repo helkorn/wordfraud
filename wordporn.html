@@ -129,74 +129,19 @@
             0%, 100% {
                 color: #888;
             }
-            40% {
+            35% {
                 color: #444;
             }
-        }
-        .writing-board {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 50%;
-            height: 100%;
-            background-color: #fff;
-            overflow-y: scroll;
-            z-index: 10;
-            padding: 20px;
-            box-sizing: border-box;
-            font-family: 'Typewriter', monospace;
-            font-size: 16px;
-            white-space: pre-wrap;
-        }
-        .answer-board {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 50%;
-            height: 100%;
-            background-color: #000;
-            color: #fff;
-            overflow-y: scroll;
-            z-index: 10;
-            padding: 20px;
-            box-sizing: border-box;
-            font-family: 'Typewriter', monospace;
-            font-size: 16px;
-            white-space: pre-wrap;
-        }
-        .writing-board textarea {
-            width: calc(100% - 40px);
-            height: calc(100% - 80px);
-            resize: none;
-            border: none;
-            background-color: transparent;
-            font-family: 'Typewriter', monospace;
-            font-size: 16px;
-            white-space: pre-wrap;
-        }
-        .writing-board button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border: 1px solid #333;
-            border-radius: 5px;
-            background-color: #333;
-            color: #fff;
-            transition: background-color 0.3s;
-            margin-top: 10px;
-        }
-        .writing-board button:hover {
-            background-color: #555;
         }
     </style>
 </head>
 <body>
     <div class="link-box" id="whatIsThisLink">
-        <a href="javascript:void(0)" onclick="showAnalgrammi()">Mikä tämä on?  </a>
+        <a href="javascript:void(0)" onclick="showAnalgrammi()">MikÃ¤ tÃ¤mÃ¤ on?  </a>
     </div>
     <div class="container">
         <h1>WordPorn</h1>
-        <p>Analgrammi. Mitä nyt vittua taas.</p>
+        <p>Analgrammi. MitÃ¤ nyt vittua taas.</p>
         <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
         <div class="timer" id="timer">20</div>
         <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
@@ -260,14 +205,14 @@
                 revealCorrectAnswer(() => {
                     document.body.innerHTML = `
                         <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                            Ihan oikein, hienoa!<br>Äidin pikku vittunaama.<br>Ladataan uudestaan..
+                            Ihan oikein, hienoa!<br>Ã„idin pikku vittunaama.<br>Ladataan uudestaan..
                         </div>`;
                     let countdown = 5;
                     const interval = setInterval(() => {
                         countdown--;
                         document.body.innerHTML = `
                             <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                                Ihan oikein, hienoa!<br>Äidin pikku vittunaama.<br>Ladataan uudestaan..<br>${countdown}
+                                Ihan oikein, hienoa!<br>Ã„idin pikku vittunaama.<br>Ladataan uudestaan..<br>${countdown}
                             </div>`;
                         if (countdown <= 0) {
                             clearInterval(interval);
@@ -310,25 +255,19 @@
 
         function showAnalgrammi() {
             paused = true;
-            document.getElementById('timer').innerHTML = '<span class="waiting">-haluatko vastata-</span>';
+            document.getElementById('timer').innerHTML = '<span class="waiting">-lue viesti-</span>';
             const linkBox = document.getElementById('whatIsThisLink');
             linkBox.innerHTML = '';
-            const writingBoard = document.createElement('div');
-            writingBoard.className = 'writing-board';
-            writingBoard.innerHTML = `
-                <textarea id="writingArea" placeholder="Kirjoita tähän kirjoituskonefontilla"></textarea>
-                <button onclick="sendAnswer()">LÄHETÄ</button>`;
-            const answerBoard = document.createElement('div');
-            answerBoard.className = 'answer-board';
-            document.body.appendChild(writingBoard);
-            document.body.appendChild(answerBoard);
-
-            const text = 'Rakas persehaju,\n\nTämä on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä, kuin sinäkin.\n\nMuodosta kirjaimista sana. Ole arvaamaton ja yllättävä, kuten äidillesi sinä.\n\nOnnea peliin. Se on helppo kuin sinä.\n\nT Koiranoksennus johon nussit';
+            const box = document.createElement('div');
+            box.id = 'typewriterBox';
+            box.className = 'typewriter-box';
+            document.body.appendChild(box);
+            const text = 'Rakas persehaju,\n\nTÃ¤mÃ¤ on helppo peli erityisen vanhoille kuten sinÃ¤.\n\nKaikki sanat ovat alatyylisiÃ¤ kuten sinÃ¤.\n\nSanassa on kirjaimet menneet sekaisin kuten sinÃ¤.\n\nSiksi se on epÃ¤selvÃ¤, kuin sinÃ¤kin.\n\nMuodosta kirjaimista sana. Ole arvaamaton ja yllÃ¤ttÃ¤vÃ¤, kuten Ã¤idillesi sinÃ¤.\n\nOnnea peliin. Se on helppo kuin sinÃ¤.\n\nT Koiranoksennus johon nussit';
             let index = 0;
 
             function typeNext() {
                 if (index < text.length) {
-                    writingBoard.textContent += text[index];
+                    box.textContent += text[index];
                     index++;
                     let delay = 40;
                     if (text[index - 1] === ' ' || text[index - 1] === '\n') {
@@ -336,7 +275,7 @@
                     }
                     setTimeout(typeNext, delay);
                 } else {
-                    setTimeout(removeText, 3000); // Lisätty ylimääräinen sekunti
+                    setTimeout(removeText, 3000); // LisÃ¤tty ylimÃ¤Ã¤rÃ¤inen sekunti
                 }
             }
 
@@ -344,23 +283,22 @@
                 document.getElementById('timer').innerHTML = timeLeft; // Nopeutettu muutos kelloksi
                 let grayValue = 245;
                 let upperIndex = 0;
-                const lines = writingBoard.textContent.split('\n');
+                const lines = box.textContent.split('\n');
                 const interval = setInterval(() => {
-                    if (writingBoard.textContent.length > 0) {
+                    if (box.textContent.length > 0) {
                         if (upperIndex < lines.length) {
                             lines[upperIndex] = '';
                             upperIndex++;
-                            writingBoard.textContent = lines.join('\n');
+                            box.textContent = lines.join('\n');
                         } else {
-                            const randomIndex = Math.floor(Math.random() * writingBoard.textContent.length);
-                            writingBoard.textContent = writingBoard.textContent.slice(0, randomIndex) + writingBoard.textContent.slice(randomIndex + 1);
+                            const randomIndex = Math.floor(Math.random() * box.textContent.length);
+                            box.textContent = box.textContent.slice(0, randomIndex) + box.textContent.slice(randomIndex + 1);
                         }
                         grayValue -= 5;
-                        writingBoard.style.backgroundColor = `rgb(${grayValue}, ${grayValue}, ${grayValue})`;
+                        box.style.backgroundColor = `rgb(${grayValue}, ${grayValue}, ${grayValue})`;
                     } else {
                         clearInterval(interval);
-                        writingBoard.remove();
-                        answerBoard.remove();
+                        box.remove();
                         paused = false;
                         startTimer();
                     }
@@ -368,16 +306,6 @@
             }
 
             typeNext();
-        }
-
-        function sendAnswer() {
-            const answer = document.getElementById('writingArea').value.trim().toLowerCase();
-            if (answer === '') {
-                alert('Kirjoita vastaus ennen lähettämistä.');
-                return;
-            }
-            alert('Vastauksesi on lähetetty.');
-            document.getElementById('writingArea').value = '';
         }
 
         document.addEventListener('DOMContentLoaded', () => {
