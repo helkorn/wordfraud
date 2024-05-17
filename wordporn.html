@@ -112,23 +112,28 @@
             border: 1px solid #333;
             border-radius: 5px;
             font-family: 'Typewriter', monospace;
-            font-size: 14px; /* Palautettu fonttikoko */
+            font-size: 16px; /* Suurempi fonttikoko */
             white-space: pre-wrap;
             width: 200px; /* Leveys, joka vastaa noin neljää sanaa */
         }
+        .score-board-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #222;
+            color: #fff;
+            width: 200px;
+            height: 100vh;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+            display: none; /* Piilotettu, kunnes ensimmäinen oikea vastaus on saatu */
+        }
         .score-board {
-            background-color: #666;
-            padding: 10px;
+            font-size: 16px;
             margin-top: 20px;
-            border-radius: 10px;
-            text-align: left;
-            width: 100%;
-            max-width: 300px;
-            margin-left: auto;
-            margin-right: auto;
         }
         .score-board div {
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
     </style>
 </head>
@@ -146,10 +151,10 @@
             <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
         </div>
         <div class="result" id="result"></div>
-        <div class="score-board">
-            <div>Vitunhuora: <span id="currentScore">0</span></div>
-            <div>Tavoitepaino: <span id="bestScore">0</span></div>
-        </div>
+    </div>
+    <div class="score-board-container" id="scoreBoardContainer">
+        <div>PELAAJA: <span id="playerName"></span></div>
+        <div class="score-board" id="scoreBoard"></div>
     </div>
 
     <script>
@@ -161,8 +166,6 @@
         let gameNumber = 1;
         let scores = [];
         let playerName = playerNames[Math.floor(Math.random() * playerNames.length)];
-        let currentScore = 0;
-        let bestScore = 0;
 
         function startTimer() {
             clearInterval(timer);
@@ -199,8 +202,20 @@
         }
 
         function updateScoreBoard() {
-            document.getElementById('currentScore').textContent = currentScore;
-            document.getElementById('bestScore').textContent = bestScore;
+            const scoreBoardContainer = document.getElementById('scoreBoardContainer');
+            const scoreBoard = document.getElementById('scoreBoard');
+            scoreBoard.innerHTML = '';
+            scores.forEach((score, index) => {
+                scoreBoard.innerHTML += `<div>Peli ${index + 1}: ${score}</div>`;
+            });
+            if (scores.length >= 5) {
+                const totalScore = scores.reduce((a, b) => a + b, 0);
+                scoreBoard.innerHTML += `<div>____________</div><div>Yhteensä: ${totalScore}</div>`;
+                setTimeout(() => {
+                    window.location.href = 'https://youtu.be/9_gnEP-RWdg';
+                }, 3000);
+            }
+            scoreBoardContainer.style.display = 'block';
         }
 
         function checkAnswer() {
@@ -210,17 +225,21 @@
                 return;
             }
             if (answer === currentWord.toLowerCase()) {
-                currentScore++;
-                if (currentScore > bestScore) {
-                    bestScore = currentScore;
-                }
-                loadNewWord();
-                document.getElementById('answer').value = '';
+                const score = 12 * currentWord.length;
+                scores.push(score);
+                document.body.innerHTML = '<div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">ONNEKSI OLKOON<br>PORNHUB ON TUTTUA<br>SEURAAVA ASIAKAS</div>';
+                let countdown = 5;
+                const interval = setInterval(() => {
+                    countdown--;
+                    document.body.innerHTML = `<div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">ONNEKSI OLKOON<br>PORNHUB ON TUTTUA<br>SEURAAVA ASIAKAS<br>${countdown}</div>`;
+                    if (countdown <= 0) {
+                        clearInterval(interval);
+                        location.reload();
+                    }
+                }, 1000);
                 updateScoreBoard();
             } else {
                 document.getElementById('result').textContent = 'Väärin!';
-                currentScore = 0; // Reset current score if the answer is wrong
-                updateScoreBoard();
             }
         }
 
@@ -243,7 +262,21 @@
                         delay = 100; // Pidempi tauko sanan jälkeen
                     }
                     setTimeout(typeNext, delay);
+                } else {
+                    setTimeout(removeText, 3000);
                 }
+            }
+
+            function removeText() {
+                const interval = setInterval(() => {
+                    if (box.textContent.length > 0) {
+                        const randomIndex = Math.floor(Math.random() * box.textContent.length);
+                        box.textContent = box.textContent.slice(0, randomIndex) + box.textContent.slice(randomIndex + 1);
+                    } else {
+                        clearInterval(interval);
+                        box.remove();
+                    }
+                }, 100);
             }
 
             typeNext();
