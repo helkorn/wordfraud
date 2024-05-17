@@ -61,20 +61,6 @@
             color: #fff;
             text-align: center;
         }
-        button {
-            padding: 5px 10px;
-            font-size: 14px;
-            cursor: pointer;
-            border: 1px solid #333;
-            border-radius: 50px;
-            background-color: #333;
-            color: #fff;
-            transition: background-color 0.3s;
-            margin-top: 10px;
-        }
-        button:hover {
-            background-color: #555;
-        }
         .result {
             margin-top: 20px;
             font-size: 1.2em;
@@ -113,12 +99,24 @@
             white-space: pre-wrap;
             width: 200px; /* Leveys, joka vastaa noin neljää sanaa */
         }
-        .score-board {
+        .score-board-container {
             position: fixed;
-            top: 10px;
-            left: 10px;
+            top: 0;
+            left: 0;
+            background-color: #222;
             color: #fff;
+            width: 200px;
+            height: 100vh;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+            display: none; /* Piilotettu, kunnes ensimmäinen oikea vastaus on saatu */
+        }
+        .score-board {
             font-size: 16px;
+            margin-top: 20px;
+        }
+        .score-board div {
+            margin-bottom: 5px;
         }
     </style>
 </head>
@@ -134,16 +132,20 @@
         <input type="text" id="answer" placeholder="Kirjoita vastaus">
         <div class="result" id="result"></div>
     </div>
-    <div class="score-board" id="scoreBoard">PELAAJA: <span id="playerName"></span></div>
+    <div class="score-board-container" id="scoreBoardContainer">
+        <div>PELAAJA: <span id="playerName"></span></div>
+        <div class="score-board" id="scoreBoard"></div>
+    </div>
 
     <script>
+        const playerNames = ["Jack the Ripper", "Ted Bundy", "Charles Manson", "John Wayne Gacy", "Jeffrey Dahmer"];
         let words = new Set();
         let currentWord = '';
         let timer;
         let timeLeft = 60;
         let gameNumber = 1;
         let scores = [];
-        let playerName = "Mickey Mouse"; // Voit vaihtaa tunnettuun sarjakuvahahmoon
+        let playerName = playerNames[Math.floor(Math.random() * playerNames.length)];
 
         function startTimer() {
             clearInterval(timer);
@@ -177,18 +179,20 @@
         }
 
         function updateScoreBoard() {
+            const scoreBoardContainer = document.getElementById('scoreBoardContainer');
             const scoreBoard = document.getElementById('scoreBoard');
-            scoreBoard.innerHTML = `PELAAJA: <span id="playerName">${playerName}</span>`;
+            scoreBoard.innerHTML = '';
             scores.forEach((score, index) => {
-                scoreBoard.innerHTML += `<div>PELI ${index + 1}</div><div>${score}</div>`;
+                scoreBoard.innerHTML += `<div>Peli ${index + 1}: ${score}</div>`;
             });
-            if (scores.length >= 10) {
-                const highestScore = Math.max(...scores.slice(-10));
-                scoreBoard.innerHTML += `<br><div style="font-size: 24px;">${highestScore}</div>`;
+            if (scores.length >= 5) {
+                const totalScore = scores.reduce((a, b) => a + b, 0);
+                scoreBoard.innerHTML += `<div>____________</div><div>Yhteensä: ${totalScore}</div>`;
                 setTimeout(() => {
                     window.location.href = 'https://youtu.be/9_gnEP-RWdg';
                 }, 3000);
             }
+            scoreBoardContainer.style.display = 'block';
         }
 
         function checkAnswer() {
@@ -219,7 +223,7 @@
             box.id = 'typewriterBox';
             box.className = 'typewriter-box';
             document.body.appendChild(box);
-            const text = 'Analgrammi on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä kuin sinäkin.\n\nMuodosta oikea vastaus sanalla joka on helppo kuin sinä.\n\nKello nopeutuu joka vastauksesta joka on pielessä kuten sinä.\n\nOnnea peliin, joka on kuin Analgrammi.';
+            const text = 'WordPorn on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä kuin sinäkin.\n\nMuodosta kirjaimista sana. Ole arvaamaton ja yllättävä kuten äidillesi sinä.\n\nOnnea peliin WordPorn.\n\nHelppoa kuin sinä.';
             let index = 0;
 
             function typeNext() {
