@@ -230,7 +230,7 @@
                         }, 2000);
                     }
                 }
-            }, 100);
+            }, 150); // Hidastettu poistumistahti
         }
 
         function handleTimeOut() {
@@ -253,27 +253,30 @@
                 if (index < text.length) {
                     box.textContent += text[index];
                     index++;
-                    let delay = 30;  // Nopeampi kirjoitustahti
+                    let delay = 50;  // Hidastettu kirjoitustahti
                     if (text[index - 1] === ' ' || text[index - 1] === '\n') {
-                        delay = 100; // Pidempi tauko sanan jälkeen
+                        delay = 120; // Pidempi tauko sanan jälkeen
                     }
                     setTimeout(typeNext, delay);
                 } else {
                     paused = false; // Päästä kello "PAUSE"-tilasta heti kun teksti on kirjoitettu
-                    setTimeout(removeText, 1000); // Nopeampi tekstin häviämisprosessi
+                    setTimeout(removeText, 2000); // Tauko ennen tekstin häviämisprosessia
                 }
             }
 
             function removeText() {
+                let grayValue = 245; // Alkuperäinen harmaa arvo
                 const interval = setInterval(() => {
                     if (box.textContent.length > 0) {
                         const randomIndex = Math.floor(Math.random() * box.textContent.length);
                         box.textContent = box.textContent.slice(0, randomIndex) + box.textContent.slice(randomIndex + 1);
+                        grayValue -= 5; // Vähennetään harmaan arvoa
+                        box.style.backgroundColor = `rgb(${grayValue}, ${grayValue}, ${grayValue})`;
                     } else {
                         clearInterval(interval);
                         box.remove();
                     }
-                }, 50);
+                }, 100); // Hidastettu poistumistahti
             }
 
             typeNext();
