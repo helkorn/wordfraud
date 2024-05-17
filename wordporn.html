@@ -60,6 +60,9 @@
             background-color: #222;
             color: #fff;
             text-align: center;
+            -webkit-appearance: none; /* Poistaa historian Safari */
+            -moz-appearance: none; /* Poistaa historian Firefox */
+            appearance: none; /* Poistaa historian muissa selaimissa */
         }
         button {
             padding: 5px 10px;
@@ -248,7 +251,7 @@
             box.id = 'typewriterBox';
             box.className = 'typewriter-box';
             document.body.appendChild(box);
-            const text = 'Rakas persehaju,\n\nWordPorn on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä, kuin sinäkin.\n\nMuodosta kirjaimista sana. Ole arvaamaton ja yllättävä, kuten äidillesi sinä.\n\nOnnea peliin WordPorn. Se on helppo kuin sinä.';
+            const text = 'Rakas persehaju,\n\nAnalgrammit on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä, kuin sinäkin.\n\nMuodosta kirjaimista sana. Ole arvaamaton ja yllättävä, kuten äidillesi sinä.\n\nOnnea peliin saatana. WordPorn on helppo kuin sinä.';
             let index = 0;
 
             function typeNext() {
@@ -268,7 +271,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('playerName').textContent = playerName;
-            Papa.parse('https://raw.githubusercontent.com/timosalonen/wordfraud/main/wordpornFI.csv', {
+            Papa.parse('/mnt/data/wordpornFI.csv', {
                 download: true,
                 step: function(results, parser) {
                     if (results.data && results.data.length > 0) {
