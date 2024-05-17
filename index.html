@@ -5,217 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timin WordFraud</title>
     <style>
-        @font-face {
-            font-family: 'C64';
-            src: url('fontC64.ttf') format('truetype');
-        }
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            color: #333333;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: space-between;
-            min-height: 100vh;
-            flex-direction: column;
-            overflow-y: auto;
-            position: relative;
-        }
-        .container {
-            max-width: 600px;
-            text-align: center;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #ffffff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin: 20px auto;
-        }
-        .input-container {
-            max-width: 650px;
-            text-align: center;
-            padding: 25px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #ffffff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin: 20px auto;
-        }
-        h1 {
-            color: #333333;
-            font-size: 2em;
-            margin-bottom: 20px;
-        }
-        input[type="text"] {
-            width: 80%;
-            padding: 10px;
-            font-size: 16px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-            color: #333333;
-            autocomplete: off;
-        }
-        input[type="text"]::placeholder {
-            color: #333333;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border: 1px solid #ccc;
-            border-radius: 50px;
-            background-color: #333333;
-            color: #ffffff;
-            transition: background-color 0.3s;
-            margin-top: 10px;
-        }
-        button:hover {
-            background-color: #555555;
-        }
-        .columns {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-        .column {
-            flex: 1;
-            min-width: 250px;
-            padding: 10px;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-            text-align: left;
-        }
-        li {
-            background: #f9f9f9;
-            margin: 5px 0;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            color: #333333;
-            text-transform: uppercase;
-            cursor: pointer;
-        }
-        li:hover {
-            background-color: #eee;
-        }
-        .reset-button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border: 1px solid #ccc;
-            border-radius: 50px;
-            background-color: #333333;
-            color: #ffffff;
-            transition: background-color 0.3s;
-            margin-top: 10px;
-            display: none;
-        }
-        .reset-button:hover {
-            background-color: #555555;
-        }
-        .result-title {
-            font-size: 1em;
-            margin-top: 20px;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            color: #333333;
-        }
-        .centered {
-            display: flex;
-            justify-content: center;
-            text-align: center;
-        }
-        .no-results {
-            text-align: center;
-            margin: 5px 0;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            background: #f9f9f9;
-            color: #333333;
-            text-transform: capitalize;
-        }
-        .highlight {
-            font-size: 1.2em;
-            margin-top: 5px;
-            color: #333;
-            font-weight: bold;
-        }
-        .super-highlight {
-            font-size: 1.5em;
-            margin-top: 5px;
-            color: red;
-            font-weight: bold;
-        }
-        .full-screen-image {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1000;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .full-screen-image img {
-            max-width: 100%;
-            max-height: 100%;
-        }
-        .link-box {
-            position: fixed;
-            top: 40px; /* Siirretty yhden rivin alaspäin */
-            right: 20px;
-            font-size: 14px;
-            color: #000000;
-            white-space: nowrap;
-            text-align: right; /* Tekstien asemoiminen oikealle */
-        }
-        .link-box a {
-            color: #000000;
-            text-decoration: none;
-        }
-        .link-box a:hover {
-            text-decoration: underline;
-        }
-        .hidden {
-            display: none;
-        }
-        .option-container {
-            margin-top: 10px;
-            text-align: right; /* Tekstien asemoiminen oikealle */
-        }
-        .option-text {
-            color: #000000;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .option-text:hover {
-            text-decoration: underline;
-        }
-        .basic-text {
-            font-family: 'C64';
-            color: #696969; /* Tumman harmaa */
-            white-space: pre-wrap;
-        }
+        /* Your existing CSS here */
     </style>
 </head>
 <body>
     <div class="link-box" id="whatIsThisLink">
-        <a href="javascript:void(0)" onclick="showOptions()">What is this? </a> <!-- Lisätty tyhjä välimerkki -->
+        <a href="javascript:void(0)" onclick="showOptions()">What is this? </a>
     </div>
     <div class="container" id="mainContent">
         <div class="input-container" id="inputContainer">
             <h1>WordFraud 1.0</h1>
-            <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off" disabled>
-            <button id="fraudeloiButton" onclick="findWords()" disabled>Fraudeloi</button>
+            <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off">
+            <button id="fraudeloiButton" onclick="findWords()">Fraudeloi</button>
         </div>
         <div class="container" id="mainContainer" style="display: none;">
             <div class="result-title" id="resultTitle"></div>
@@ -231,282 +32,143 @@
                 <button class="reset-button" id="resetButton" onclick="resetPage()">Uudelleen</button>
             </div>
         </div>
-    
-        <div class="full-screen-image" id="rabbitImage" style="display: none;">
-            <img src="therabbit.png" alt="Jänis">
-        </div>
-
-        <div class="link-box hidden" id="optionsContainer"></div> <!-- Piilotettu alussa -->
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0"></script>
-        <script>
-            let words = new Set();
-            let offensiveWords = new Set();
-            let isDataLoaded = false;
-            let isOffensiveLoaded = false;
-            const medianThreshold = 50; // Oletettu mediaaniarvo huippuhyville löydöille
-            const superThreshold = 75; // Oletettu raja-arvo superlöydölle
-
-            // Ladataan tavalliset sanat CSV-tiedostosta
-            Papa.parse('https://raw.githubusercontent.com/timosalonen/wordfraud/main/wordfraudFI.csv', {
-                download: true,
-                complete: function(results) {
-                    results.data.flat().map(word => word.trim()).filter(Boolean).forEach(word => {
-                        words.add(word.toLowerCase());
-                    });
-                    console.log('Sanat ladattu:', words.size);
-                    isDataLoaded = true;
-                    checkIfAllLoaded();
-                }
-            });
-
-            // Ladataan rivot sanat CSV-tiedostosta
-            Papa.parse('https://raw.githubusercontent.com/timosalonen/wordfraud/main/offensiveFI.csv', {
-                download: true,
-                complete: function(results) {
-                    results.data.flat().map(word => word.trim()).filter(Boolean).forEach(word => {
-                        offensiveWords.add(word.toLowerCase());
-                    });
-                    console.log('Rivot sanat ladattu:', offensiveWords.size);
-                    isOffensiveLoaded = true;
-                    checkIfAllLoaded();
-                }
-            });
-
-            function checkIfAllLoaded() {
-                if (isDataLoaded && isOffensiveLoaded) {
-                    document.getElementById('letters').disabled = false;
-                    document.getElementById('fraudeloiButton').disabled = false;
-                }
-            }
-
-            function isValidWord(word) {
-                return words.has(word);
-            }
-
-            function isOffensiveWord(word) {
-                return offensiveWords.has(word);
-            }
-
-            function getAllCombinations(letters) {
-                let results = new Set();
-
-                function combine(prefix, letters) {
-                    for (let i = 0; i < letters.length; i++) {
-                        let newPrefix = prefix + letters[i];
-                        if (isValidWord(newPrefix)) {
-                            results.add(newPrefix);
-                        }
-                        combine(newPrefix, letters.slice(0, i) + letters.slice(i + 1));
-                    }
-                }
-
-                combine('', letters);
-                return Array.from(results).sort();
-            }
-
-            function showConfetti() {
-                confetti({
-                    particleCount: 100,
-                    spread: 70,
-                    origin: { y: 0.6 }
-                });
-            }
-
-            function findWords() {
-                if (!isDataLoaded || !isOffensiveLoaded) {
-                    alert('Sanat eivät ole vielä latautuneet. Odota hetki ja yritä uudelleen.');
-                    return;
-                }
-
-                const letters = document.getElementById('letters').value.toUpperCase();
-                const column1 = document.getElementById('column1');
-                const column2 = document.getElementById('column2');
-                const resultTitle = document.getElementById('resultTitle');
-                const highlightMessage = document.getElementById('highlightMessage');
-                const superHighlightMessage = document.getElementById('superHighlightMessage');
-                const fraudeloiButton = document.getElementById('fraudeloiButton');
-                const resetButton = document.getElementById('resetButton');
-                const mainContainer = document.getElementById('mainContainer');
-                const inputContainer = document.getElementById('inputContainer');
-                const rabbitImage = document.getElementById('rabbitImage');
-                column1.innerHTML = '';
-                column2.innerHTML = '';
-                resultTitle.style.display = 'none';
-                highlightMessage.style.display = 'none';
-                superHighlightMessage.style.display = 'none';
-                if (letters.length < 2 || letters.length > 7) {
-                    alert("Anna 2-7 kirjainta.");
-                    return;
-                }
-                console.time('findPossibleWords');
-                const possibleWords = getAllCombinations(letters.toLowerCase());
-                console.timeEnd('findPossibleWords');
-
-                const containsOffensive = possibleWords.some(word => isOffensiveWord(word.toLowerCase()));
-
-                if (possibleWords.length === 0) {
-                    const noResults = document.createElement('div');
-                    noResults.textContent = 'Ei löydettyjä sanoja';
-                    noResults.classList.add('no-results');
-                    column1.appendChild(noResults);
-                } else {
-                    possibleWords.forEach((word, index) => {
-                        const li = document.createElement('li');
-                        li.textContent = word.toUpperCase();
-                        li.onclick = () => findWordsForWord(word.toUpperCase());
-                        if (index % 2 === 0) {
-                            column1.appendChild(li);
-                        } else {
-                            column2.appendChild(li);
-                        }
-                    });
-                }
-
-                const resultCount = possibleWords.length - 1;
-
-                if (resultCount > superThreshold) {
-                    superHighlightMessage.style.display = 'block';
-                    showConfetti();
-                    resultTitle.textContent = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
-                } else if (resultCount > medianThreshold) {
-                    highlightMessage.style.display = 'block';
-                    resultTitle.textContent = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
-                } else {
-                    resultTitle.textContent = `Kysyit: ${letters}`;
-                }
-
-                inputContainer.style.display = 'none';
-                mainContainer.style.display = 'block';
-                resultTitle.style.display = 'block';
-                resetButton.style.display = 'block';
-
-                if (letters === 'JÄNIS') {
-                    resultTitle.textContent += ". Onks kello hyvin?";
-                    setTimeout(() => {
-                        rabbitImage.style.display = 'flex';
-                        setTimeout(() => {
-                            rabbitImage.style.display = 'none';
-                            resultTitle.innerHTML = `Kysyit: ${letters}. <a href="https://youtu.be/0wHXcv4Q4Sk" style="color: black; text-decoration: underline;">Hei mikä toi on?</a>`;
-                        }, 1500);
-                    }, 500);
-                }
-
-                window.scrollTo(0, 0);
-            }
-
-            function showOptions() {
-                document.getElementById('whatIsThisLink').style.display = 'none';
-                const optionsContainer = document.getElementById('optionsContainer');
-                optionsContainer.classList.remove('hidden');
-                optionsContainer.style.position = 'fixed';
-                optionsContainer.style.top = '20px';
-                optionsContainer.style.right = '20px';
-                optionsContainer.innerHTML = `
-                    <p>Did you mean..?</p>
-                    <div class="option-container">
-                        <a class="option-text" onclick="chooseOption('this')">What is this</a> or<br>
-                        <a class="option-text" onclick="chooseOption('that')">What is that?</a>
-                    </div>
-                `;
-            }
-
-            function chooseOption(option) {
-                const optionsContainer = document.getElementById('optionsContainer');
-                if (option === 'this') {
-                    optionsContainer.innerHTML = `
-                        <p>This is where you are.</p>
-                        <div class="option-container">
-                            <a class="option-text" href="https://youtu.be/N2ICtCO8TCw">Take That</a><br>
-                            <a class="option-text" onclick="continueOption()">or Continue</a>
-                        </div>
-                    `;
-                } else if (option === 'that') {
-                    optionsContainer.innerHTML = `
-                        <p>That is like an imperfect of this.</p>
-                        <div class="option-container">
-                            <a class="option-text" onclick="lockInAnswer()">Sure thing, I call</a><br>
-                            <a class="option-text" href="https://youtu.be/-crgQGdpZR0">Take a Change</a>
-                        </div>
-                    `;
-                }
-            }
-
-            function continueOption() {
-                document.body.innerHTML = '<canvas></canvas>';
-                var canvas = document.querySelector('canvas');
-                var ctx = canvas.getContext('2d');
-
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-
-                ctx.fillStyle = '#000';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                ctx.font = '20px C64';
-                ctx.fillStyle = '#696969';  // Tumman harmaa
-
-                var lines = [
-                    '',
-                    '',
-                    '** WORDFRAUD V 1.0 **',
-                    'READY.',
-                    '',
-                    'SYS 64738 : REM KILL SWITCH',
-                    'POKE 53280, 0',
-                    'READY.',
-                    '10 INPUT "CHOOSE YOUR PILL 1 or 2:", V',
-                    '20 IF V = 1 THEN GOTO 10',
-                    '30 IF V = 2 THEN GOTO 3000',
-                    '40 IF V <> 1 AND V <> 2 THEN GOSUB 3500',
-                    '50 END',
-                    '',
-                    '3010 LOAD "PACMAN",8,1',
-                    '3020 RUN',
-                    '',
-                    '3500 PRINT "You take the blue pill, the story ends."',
-                    '3510 PRINT "You wake up in your bed and believe whatever you want to believe."',
-                    '3520 PRINT "You take the red pill, you stay in Wonderland,"',
-                    '3530 PRINT "and I show you how deep the rabbit hole goes."',
-                    '3540 END',
-                    'READY.'
-                ];
-
-                var y = 20;
-                var delay = 100;
-
-                lines.forEach((line, index) => {
-                    setTimeout(() => {
-                        ctx.fillText(line, 20, y);
-                        y += 20;  // Move down for next line
-                    }, delay * index);
-                });
-
-                setTimeout(() => {
-                    ctx.fillText('READY.', 20, y);
-                    y += 20;
-                    ctx.fillRect(20, y, 10, 20); // Draw cursor at the end
-                }, delay * lines.length);
-
-                setTimeout(() => {
-                    window.location.href = 'pacman.html';
-                }, delay * lines.length + 4500); // Added 1.5 times more delay
-            }
-
-            function lockInAnswer() {
-                window.location.href = 'wordporn.html';
-            }
-
-            function findWordsForWord(word) {
-                document.getElementById('letters').value = word;
-                findWords();
-            }
-
-            function resetPage() {
-                location.reload();
-            }
-        </script>
     </div>
+
+    <script>
+        let words = new Set();
+        let offensiveWords = new Set();
+        let isDataLoaded = false;
+        let isOffensiveLoaded = false;
+        const medianThreshold = 50;
+        const superThreshold = 75;
+
+        // Load normal words CSV
+        Papa.parse('https://raw.githubusercontent.com/timosalonen/wordfraud/main/wordfraudFI.csv', {
+            download: true,
+            complete: function(results) {
+                results.data.flat().map(word => word.trim()).filter(Boolean).forEach(word => {
+                    words.add(word.toLowerCase());
+                });
+                isDataLoaded = true;
+                checkIfAllLoaded();
+            }
+        });
+
+        // Load offensive words CSV
+        Papa.parse('https://raw.githubusercontent.com/timosalonen/wordfraud/main/offensiveFI.csv', {
+            download: true,
+            complete: function(results) {
+                results.data.flat().map(word => word.trim()).filter(Boolean).forEach(word => {
+                    offensiveWords.add(word.toLowerCase());
+                });
+                isOffensiveLoaded = true;
+                checkIfAllLoaded();
+            }
+        });
+
+        function checkIfAllLoaded() {
+            if (isDataLoaded && isOffensiveLoaded) {
+                document.getElementById('letters').disabled = false;
+                document.getElementById('fraudeloiButton').disabled = false;
+            }
+        }
+
+        function isValidWord(word) {
+            return words.has(word);
+        }
+
+        function isOffensiveWord(word) {
+            return offensiveWords.has(word);
+        }
+
+        function getAllCombinations(letters) {
+            let results = new Set();
+            function combine(prefix, letters) {
+                for (let i = 0; i < letters.length; i++) {
+                    let newPrefix = prefix + letters[i];
+                    if (isValidWord(newPrefix)) {
+                        results.add(newPrefix);
+                    }
+                    combine(newPrefix, letters.slice(0, i) + letters.slice(i + 1));
+                }
+            }
+            combine('', letters);
+            return Array.from(results).sort();
+        }
+
+        function findWords() {
+            if (!isDataLoaded || !isOffensiveLoaded) {
+                alert('Sanat eivät ole vielä latautuneet. Odota hetki ja yritä uudelleen.');
+                return;
+            }
+
+            const letters = document.getElementById('letters').value.toUpperCase();
+            if (letters === 'JÄNIS' || letters === 'TIMPE' || isOffensiveWord(letters.toLowerCase())) {
+                window.location.href = 'easter.html?word=' + encodeURIComponent(letters);
+                return;
+            }
+
+            const column1 = document.getElementById('column1');
+            const column2 = document.getElementById('column2');
+            const resultTitle = document.getElementById('resultTitle');
+            const highlightMessage = document.getElementById('highlightMessage');
+            const superHighlightMessage = document.getElementById('superHighlightMessage');
+            const resetButton = document.getElementById('resetButton');
+            const mainContainer = document.getElementById('mainContainer');
+            const inputContainer = document.getElementById('inputContainer');
+            column1.innerHTML = '';
+            column2.innerHTML = '';
+            resultTitle.style.display = 'none';
+            highlightMessage.style.display = 'none';
+            superHighlightMessage.style.display = 'none';
+            if (letters.length < 2 || letters.length > 7) {
+                alert("Anna 2-7 kirjainta.");
+                return;
+            }
+            const possibleWords = getAllCombinations(letters.toLowerCase());
+            const containsOffensive = possibleWords.some(word => isOffensiveWord(word.toLowerCase()));
+
+            if (possibleWords.length === 0) {
+                const noResults = document.createElement('div');
+                noResults.textContent = 'Ei löydettyjä sanoja';
+                noResults.classList.add('no-results');
+                column1.appendChild(noResults);
+            } else {
+                possibleWords.forEach((word, index) => {
+                    const li = document.createElement('li');
+                    li.textContent = word.toUpperCase();
+                    li.onclick = () => findWordsForWord(word.toUpperCase());
+                    if (index % 2 === 0) {
+                        column1.appendChild(li);
+                    } else {
+                        column2.appendChild(li);
+                    }
+                });
+            }
+
+            const resultCount = possibleWords.length - 1;
+
+            if (resultCount > superThreshold) {
+                superHighlightMessage.style.display = 'block';
+                resultTitle.textContent = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
+            } else if (resultCount > medianThreshold) {
+                highlightMessage.style.display = 'block';
+                resultTitle.textContent = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
+            } else {
+                resultTitle.textContent = `Kysyit: ${letters}`;
+            }
+
+            inputContainer.style.display = 'none';
+            mainContainer.style.display = 'block';
+            resultTitle.style.display = 'block';
+            resetButton.style.display = 'block';
+
+            window.scrollTo(0, 0);
+        }
+
+        function resetPage() {
+            location.reload();
+        }
+    </script>
 </body>
 </html>
