@@ -5,10 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WordPorn</title>
     <style>
+        @font-face {
+            font-family: 'C64';
+            src: url('fontC64.ttf') format('truetype');
+        }
+        @font-face {
+            font-family: 'Typewriter';
+            src: url('fontTW.ttf') format('truetype');
+        }
         body {
             font-family: Arial, sans-serif;
-            background-color: #333333;
-            color: #ffffff;
+            background-color: #000;
+            color: #fff;
             margin: 0;
             padding: 0;
             display: flex;
@@ -16,119 +24,265 @@
             align-items: center;
             min-height: 100vh;
             flex-direction: column;
-            overflow-y: hidden;
+            overflow: hidden;
+            position: relative;
         }
         .container {
-            max-width: 600px;
+            max-width: 800px;
             text-align: center;
             padding: 20px;
-            border: 1px solid #ccc;
+            border: 1px solid #333;
             border-radius: 10px;
-            background-color: #444444;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            margin: 20px auto;
+            background-color: #111;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
         }
         h1 {
-            color: #ffffff;
+            color: #fff;
             font-size: 2em;
             margin-bottom: 20px;
         }
-        .scrambled-word {
-            font-size: 2em;
+        .timer {
+            font-size: 1.5em;
             margin-bottom: 20px;
+        }
+        .shuffled-word {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #fff;
         }
         input[type="text"] {
             width: 80%;
             padding: 10px;
             font-size: 16px;
             margin-bottom: 10px;
-            border: 1px solid #ccc;
+            border: 1px solid #333;
             border-radius: 5px;
-            background-color: #555555;
-            color: #ffffff;
+            background-color: #222;
+            color: #fff;
             text-align: center;
+            -webkit-appearance: none; /* Poistaa historian Safari */
+            -moz-appearance: none; /* Poistaa historian Firefox */
+            appearance: none; /* Poistaa historian muissa selaimissa */
         }
         button {
-            padding: 10px 20px;
-            font-size: 16px;
+            padding: 5px 10px;
+            font-size: 14px;
             cursor: pointer;
-            border: 1px solid #ccc;
+            border: 1px solid #333;
             border-radius: 50px;
-            background-color: #ffffff;
-            color: #333333;
+            background-color: #333;
+            color: #fff;
             transition: background-color 0.3s;
             margin-top: 10px;
         }
         button:hover {
-            background-color: #eeeeee;
+            background-color: #555;
         }
-        .timer {
-            font-size: 1.5em;
-            margin-bottom: 20px;
+        .result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #f00;
+        }
+        .link-box {
+            position: fixed;
+            top: 40px;
+            right: 20px;
+            font-size: 14px;
+            color: #fff;
+            white-space: nowrap;
+            text-align: right;
+        }
+        .link-box a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .link-box a:hover {
+            text-decoration: underline;
+        }
+        .hidden {
+            display: none;
+        }
+        .typewriter-box {
+            position: absolute;
+            top: 40px;
+            right: 20px;
+            background-color: #f5f5f5;
+            color: #000;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            font-family: 'Typewriter', monospace;
+            font-size: 12px; /* Pienennetty fonttikoko */
+            white-space: pre-wrap;
+            width: 200px; /* Leveys, joka vastaa noin neljää sanaa */
+        }
+        .score-board-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #222;
+            color: #fff;
+            width: 200px;
+            height: 100vh;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+            display: none; /* Piilotettu, kunnes ensimmäinen oikea vastaus on saatu */
+        }
+        .score-board {
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        .score-board div {
+            margin-bottom: 5px;
         }
     </style>
 </head>
 <body>
+    <div class="link-box" id="whatIsThisLink">
+        <a href="javascript:void(0)" onclick="showAnalgrammi()">What is this?</a>
+    </div>
     <div class="container">
         <h1>WordPorn</h1>
         <p>Analgrammit. Mitä nyt vittua taas.</p>
-        <div class="scrambled-word" id="scrambledWord"></div>
-        <input type="text" id="answer" placeholder="Kirjoita alkuperäinen sana">
-        <button onclick="checkAnswer()">Ratkaise</button>
-        <div class="timer" id="timer">90</div>
+        <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
+        <div class="timer" id="timer">30</div>
+        <input type="text" id="answer" placeholder="Kirjoita vastaus">
+        <div>
+            <button id="solveButton" onclick="checkAnswer()">PAINAMUASAATANA</button>
+        </div>
+        <div class="result" id="result"></div>
     </div>
+    <div class="score-board-container" id="scoreBoardContainer">
+        <div>PELAAJA: <span id="playerName"></span></div>
+        <div class="score-board" id="scoreBoard"></div>
+    </div>
+
     <script>
+        const playerNames = ["Jack the Ripper", "Ted Bundy", "Charles Manson", "John Wayne Gacy", "Jeffrey Dahmer"];
         let words = [];
         let currentWord = '';
         let timer;
-        let timeLeft = 90;
-
-        // Load the word list
-        fetch('wordpornFI.csv')
-            .then(response => response.text())
-            .then(text => {
-                words = text.split('\n').map(word => word.trim()).filter(Boolean);
-                nextWord();
-                startTimer();
-            });
-
-        function scrambleWord(word) {
-            let scrambled = word.split('').sort(() => Math.random() - 0.5).join('');
-            while (scrambled === word) {
-                scrambled = word.split('').sort(() => Math.random() - 0.5).join('');
-            }
-            return scrambled.toUpperCase();
-        }
-
-        function nextWord() {
-            if (words.length === 0) {
-                return;
-            }
-            currentWord = words[Math.floor(Math.random() * words.length)];
-            document.getElementById('scrambledWord').innerText = scrambleWord(currentWord);
-        }
+        let timeLeft = 30;
+        let gameNumber = 1;
+        let scores = [];
+        let playerName = playerNames[Math.floor(Math.random() * playerNames.length)];
 
         function startTimer() {
+            clearInterval(timer);
             timer = setInterval(() => {
                 timeLeft--;
-                document.getElementById('timer').innerText = timeLeft;
+                document.getElementById('timer').textContent = timeLeft;
                 if (timeLeft <= 0) {
                     clearInterval(timer);
-                    window.location.href = 'index.html';
+                    window.location.href = 'https://timosalonen.github.io/wordfraud/';
                 }
             }, 1000);
         }
 
-        function checkAnswer() {
-            const answer = document.getElementById('answer').value.toLowerCase();
-            if (answer === currentWord.toLowerCase()) {
-                timeLeft = 90;
-                nextWord();
+        function shuffleWord(word) {
+            let shuffledWord = word.split('').sort(() => Math.random() - 0.5).join('');
+            while (shuffledWord === word) {
+                shuffledWord = word.split('').sort(() => Math.random() - 0.5).join('');
+            }
+            return shuffledWord;
+        }
+
+        function loadNewWord() {
+            if (words.length > 0) {
+                currentWord = words[Math.floor(Math.random() * words.length)];
+                const shuffledWord = shuffleWord(currentWord);
+                document.getElementById('shuffledWord').textContent = shuffledWord;
                 document.getElementById('answer').value = '';
+                timeLeft = 30;
+                document.getElementById('timer').textContent = timeLeft;
+                startTimer();
             } else {
-                timeLeft = Math.max(timeLeft - 10, 1);
+                document.getElementById('shuffledWord').textContent = 'Ei sanoja ladattu.';
             }
         }
+
+        function updateScoreBoard() {
+            const scoreBoardContainer = document.getElementById('scoreBoardContainer');
+            const scoreBoard = document.getElementById('scoreBoard');
+            scoreBoard.innerHTML = '';
+            scores.forEach((score, index) => {
+                scoreBoard.innerHTML += `<div>Peli ${index + 1}: ${score}</div>`;
+            });
+            if (scores.length >= 5) {
+                const totalScore = scores.reduce((a, b) => a + b, 0);
+                scoreBoard.innerHTML += `<div>____________</div><div>Yhteensä: ${totalScore}</div>`;
+                setTimeout(() => {
+                    window.location.href = 'https://youtu.be/9_gnEP-RWdg';
+                }, 3000);
+            }
+            scoreBoardContainer.style.display = 'block';
+        }
+
+        function checkAnswer() {
+            const answer = document.getElementById('answer').value.trim().toLowerCase();
+            if (answer === '') {
+                document.getElementById('result').textContent = 'Et antanut vittujakaan.';
+                return;
+            }
+            if (answer === currentWord.toLowerCase()) {
+                const score = 12 * currentWord.length;
+                scores.push(score);
+                document.body.innerHTML = '<div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">ONNEKSI OLKOON<br>PORNHUB ON TUTTUA<br>SEURAAVA ASIAKAS</div>';
+                let countdown = 5;
+                const interval = setInterval(() => {
+                    countdown--;
+                    document.body.innerHTML = `<div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">ONNEKSI OLKOON<br>PORNHUB ON TUTTUA<br>SEURAAVA ASIAKAS<br>${countdown}</div>`;
+                    if (countdown <= 0) {
+                        clearInterval(interval);
+                        location.reload();
+                    }
+                }, 1000);
+                updateScoreBoard();
+            } else {
+                document.getElementById('result').textContent = 'Väärin!';
+            }
+        }
+
+        function showAnalgrammi() {
+            const linkBox = document.getElementById('whatIsThisLink');
+            linkBox.innerHTML = '';
+            const box = document.createElement('div');
+            box.id = 'typewriterBox';
+            box.className = 'typewriter-box';
+            document.body.appendChild(box);
+            const text = 'Rakas persehaju,\n\nWordPorn on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä, kuin sinäkin.\n\nMuodosta kirjaimista sana. Ole arvaamaton ja yllättävä, kuten äidillesi sinä.\n\nOnnea peliin, saatana. Se on helppo kuin sinä.\n\nT. Koiranoksennus johon nussit.';
+            let index = 0;
+
+            function typeNext() {
+                if (index < text.length) {
+                    box.textContent += text[index];
+                    index++;
+                    let delay = 25;  // Nopeampi kirjoitustahti
+                    if (text[index - 1] === ' ' || text[index - 1] === '\n') {
+                        delay = 100; // Pidempi tauko sanan jälkeen
+                    }
+                    setTimeout(typeNext, delay);
+                }
+            }
+
+            typeNext();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('playerName').textContent = playerName;
+            fetch('wordpornFI.csv')
+                .then(response => response.text())
+                .then(text => {
+                    words = text.split('\n').map(word => word.trim()).filter(Boolean);
+                    loadNewWord();
+                });
+        });
+
+        document.getElementById('answer').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
     </script>
 </body>
 </html>
