@@ -63,6 +63,8 @@
             -webkit-appearance: none; /* Poistaa historian Safari */
             -moz-appearance: none; /* Poistaa historian Firefox */
             appearance: none; /* Poistaa historian muissa selaimissa */
+            autocomplete: off; /* Poistaa historian */
+            spellcheck: false; /* Poistaa oikeinkirjoituksen tarkistuksen */
         }
         button {
             padding: 5px 10px;
@@ -127,7 +129,7 @@
         <p>Analgrammit. Mitä nyt vittua taas.</p>
         <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
         <div class="timer" id="timer">30</div>
-        <input type="text" id="answer" placeholder="Kirjoita vastaus">
+        <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
         <div>
             <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
         </div>
@@ -147,7 +149,7 @@
                 document.getElementById('timer').textContent = timeLeft;
                 if (timeLeft <= 0) {
                     clearInterval(timer);
-                    window.location.href = 'https://timosalonen.github.io/wordfraud/';
+                    showTimeUpMessage();
                 }
             }, 1000);
         }
@@ -177,7 +179,7 @@
         function checkAnswer() {
             const answer = document.getElementById('answer').value.trim().toLowerCase();
             if (answer === '') {
-                document.getElementById('result').textContent = 'Et antanut vittujakaan.';
+                document.getElementById('result').textContent = 'Vastaa nyt jotain menee hermo.';
                 return;
             }
             if (answer === currentWord.toLowerCase()) {
@@ -214,6 +216,29 @@
                     }, 2000);
                 }
             }, 200);
+        }
+
+        function showTimeUpMessage() {
+            document.body.innerHTML = '<div id="timeUpMessage" style="background-color: #fff; color: #000; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;"></div>';
+            const message = 'Aika loppui ja kiinnostus suhun. Olisit edes jotain vastannut saatana.';
+            let index = 0;
+
+            function typeMessage() {
+                if (index < message.length) {
+                    document.getElementById('timeUpMessage').textContent += message[index];
+                    index++;
+                    setTimeout(typeMessage, 100);
+                } else {
+                    setTimeout(() => {
+                        document.getElementById('timeUpMessage').textContent = 'Paluu analgrammiin..';
+                        setTimeout(() => {
+                            window.location.href = 'wordporn.html';
+                        }, 2000);
+                    }, 1000);
+                }
+            }
+
+            typeMessage();
         }
 
         function showAnalgrammi() {
