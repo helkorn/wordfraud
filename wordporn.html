@@ -98,8 +98,9 @@
             text-align: right;
         }
         .link-box a {
-            color: #fff;
+            color: #444;
             text-decoration: none;
+            font-weight: bold;
         }
         .link-box a:hover {
             text-decoration: underline;
@@ -121,15 +122,28 @@
             white-space: pre-wrap;
             width: 200px;
         }
+        .waiting {
+            font-size: 0.8em;
+            color: #fff;
+            animation: waitingAnimation 1s infinite;
+        }
+        @keyframes waitingAnimation {
+            0%, 100% {
+                color: #fff;
+            }
+            50% {
+                color: #555;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="link-box" id="whatIsThisLink">
-        <a href="javascript:void(0)" onclick="showAnalgrammi()">What is this?</a>
+        <a href="javascript:void(0)" onclick="showAnalgrammi()">Mikä tämä on?</a>
     </div>
     <div class="container">
         <h1>Word<span>P</span>orn</h1>
-        <p>Analgrammit. Mitä nyt vittua taas.</p>
+        <p>Analgrammi. Mitä nyt vittua taas.</p>
         <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
         <div class="timer" id="timer">20</div>
         <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
@@ -156,6 +170,8 @@
                         clearInterval(timer);
                         handleTimeOut();
                     }
+                } else {
+                    document.getElementById('timer').innerHTML = '<span class="waiting">-waiting-</span>';
                 }
             }, 1000);
         }
@@ -184,7 +200,6 @@
 
         function checkAnswer() {
             paused = true;
-            document.getElementById('timer').style.display = 'none';
             const answer = document.getElementById('answer').value.trim().toLowerCase();
             if (answer === '') {
                 document.getElementById('result').textContent = 'Vastaa nyt jotain menee hermo';
@@ -244,7 +259,7 @@
 
         function showAnalgrammi() {
             paused = true;
-            document.getElementById('timer').style.display = 'none';
+            document.getElementById('timer').innerHTML = '<span class="waiting">-waiting-</span>';
             const linkBox = document.getElementById('whatIsThisLink');
             linkBox.innerHTML = '';
             const box = document.createElement('div');
