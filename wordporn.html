@@ -127,7 +127,7 @@
     <div class="container">
         <h1>WordPorn</h1>
         <p>Analgrammit. Mitä nyt vittua taas.</p>
-        <div class="shuffled-word" id="shuffledWord">Ladataan sanaa...</div>
+        <div class="shuffled-word" id="shuffledWord">Ladataan analgrammia...</div>
         <div class="timer" id="timer">60</div>
         <input type="text" id="answer" placeholder="Kirjoita vastaus">
         <div class="result" id="result"></div>
@@ -169,13 +169,17 @@
 
         function loadNewWord() {
             const wordsArray = Array.from(words);
-            currentWord = wordsArray[Math.floor(Math.random() * wordsArray.length)];
-            const shuffledWord = shuffleWord(currentWord);
-            document.getElementById('shuffledWord').textContent = shuffledWord;
-            document.getElementById('answer').value = '';
-            timeLeft = 60;
-            document.getElementById('timer').textContent = timeLeft;
-            startTimer();
+            if (wordsArray.length > 0) {
+                currentWord = wordsArray[Math.floor(Math.random() * wordsArray.length)];
+                const shuffledWord = shuffleWord(currentWord);
+                document.getElementById('shuffledWord').textContent = shuffledWord;
+                document.getElementById('answer').value = '';
+                timeLeft = 60;
+                document.getElementById('timer').textContent = timeLeft;
+                startTimer();
+            } else {
+                document.getElementById('shuffledWord').textContent = 'Ei sanoja ladattu.';
+            }
         }
 
         function updateScoreBoard() {
@@ -223,7 +227,7 @@
             box.id = 'typewriterBox';
             box.className = 'typewriter-box';
             document.body.appendChild(box);
-            const text = 'WordPorn on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä kuin sinäkin.\n\nMuodosta kirjaimista sana. Ole arvaamaton ja yllättävä kuten äidillesi sinä.\n\nOnnea peliin WordPorn.\n\nHelppoa kuin sinä.';
+            const text = 'WordPorn on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä kuin sinäkin.\n\nMuodosta kirjaimista sana. Ole arvaamaton ja yllättävä kuten äidillesi sinä.\n\nOnnea peliin WordPorn.\n\nHelppo kuin sinä!';
             let index = 0;
 
             function typeNext() {
