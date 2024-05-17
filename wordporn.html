@@ -164,37 +164,53 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-    </script>
-</head>
-<body>
-    <div class="link-box" id="whatIsThisLink">
-        <a href="javascript:void(0)" onclick="showAnalgrammi()">Mikä tämä on?  </a>
-    </div>
-    <div class="container">
-        <h1>Word<span style="color: red;">P</span>orn</h1>
-        <p>Analgrammit. Mitä nyt vittua taas.</p>
-        <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
-        <div class="timer" id="timer">20</div>
-        <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
-        <div>
-            <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
-        </div>
-        <div class="result" id="result"></div>
-    </div>
-    <div class="notification" id="notification">Paskaämpäri pyörähti 0 pistettä kasaan. Pidä perse ylhäällä, koko ajan tulee. Ladataan vaikeampi peli..</div>
 
-    <script>
-        let words = [];
-        let wordGroups = [];
+        let words = {
+            group1: [],
+            group2: [],
+            group3: [],
+            group4: [],
+            group5: [],
+            group6: [],
+            group7: [],
+            bonus: []
+        };
+
         let currentWord = '';
+        let currentGroup = 1;
+        let currentGroupCount = {
+            group1: 3,
+            group2: 2,
+            group3: 1,
+            group4: 1,
+            group5: 1,
+            group6: 1,
+            group7: 1
+        };
+        let currentGroupQuestion = 0;
+        let currentLevel = 0;
         let timer;
-        let timeLeft = 20;
+        let timeLeft = 15;
         let paused = false;
         let points = 0;
         let bestScore = 0;
         let bestPlayer = '';
-        let currentLevel = 0;
-        let lastWord = '';
+
+        // Load words from CSV file
+        function loadWords() {
+            fetch('groupfak.csv')
+                .then(response => response.text())
+                .then(text => {
+                    const lines = text.split('\n');
+                    for (let line of lines) {
+                        const [group, word] = line.split(',');
+                        if (group && word) {
+                            words[`group${group.trim()}`].push(word.trim());
+                        }
+                    }
+                    loadNewWord();
+                });
+        }
 
         // Load best score from Firestore
         function loadBestScore() {
@@ -247,18 +263,24 @@
         }
 
         function loadNewWord() {
-            if (words.length > 0) {
-                let wordList = wordGroups[currentLevel];
-                currentWord = wordList[Math.floor(Math.random() * wordList.length)];
-                lastWord = currentWord;
+            const groupName = `group${currentGroup}`;
+            if (words[groupName].length > 0) {
+                const index = Math.floor(Math.random() * words[groupName].length);
+                currentWord = words[groupName][index];
+                words[groupName].splice(index, 1);
                 const shuffledWord = shuffleWord(currentWord);
                 document.getElementById('shuffledWord').textContent = shuffledWord;
                 document.getElementById('answer').value = '';
-                timeLeft = Math.max(5, 20 - currentLevel);
                 document.getElementById('timer').textContent = timeLeft;
                 startTimer();
             } else {
-                document.getElementById('shuffledWord').textContent = 'Ei sanoja ladattu.';
+                currentGroup++;
+                currentGroupQuestion = 0;
+                if (currentGroup > 7) {
+                    showBonusRound();
+                } else {
+                    loadNewWord();
+                }
             }
         }
 
@@ -271,9 +293,13 @@
             paused = true;
             if (answer === currentWord.toLowerCase()) {
                 points += (points === 0 ? 3 : currentWord.length);  // Add 3 points for the first correct answer
-                currentLevel = Math.min(wordGroups.length - 1, currentLevel + 1);
-                if (points === 3) {
-                    revealCorrectAnswer(showFirstCorrectPage);
+                currentGroupQuestion++;
+                if (currentGroupQuestion >= currentGroupCount[`group${currentGroup}`]) {
+                    currentGroup++;
+                    currentGroupQuestion = 0;
+                }
+                if (currentGroup > 7) {
+                    showBonusRound();
                 } else {
                     revealCorrectAnswer(showNotification);
                 }
@@ -424,18 +450,34 @@
             }, 3000);
         }
 
+        function showBonusRound() {
+            document.body.innerHTML = `
+                <div style="color: grey; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                    Bonusfinaalissa: <br> Hankalat <b>Haukkumanimet</b>
+                </div>`;
+            setTimeout(() => {
+                const box = document.createElement('div');
+                box.className = 'notification';
+                document.body.appendChild(box);
+                loadBonusWord();
+            }, 3000);
+        }
+
+        function loadBonusWord() {
+            if (words.bonus.length > 0) {
+                currentWord = words.bonus.shift();
+                const shuffledWord = shuffleWord(currentWord);
+                document.getElementById('shuffledWord').textContent = shuffledWord;
+                document.getElementById('answer').value = '';
+                document.getElementById('timer').textContent = timeLeft;
+                startTimer();
+            } else {
+                showFailureMessage();
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            fetch('wordpornFI.csv')
-                .then(response => response.text())
-                .then(text => {
-                    words = text.split('\n').map(word => word.trim()).filter(Boolean);
-                    words.sort((a, b) => a.length - b.length);
-                    let step = Math.ceil(words.length / 20);
-                    for (let i = 0; i < 20; i++) {
-                        wordGroups.push(words.slice(i * step, (i + 1) * step));
-                    }
-                    loadNewWord();
-                });
+            loadWords();
             loadBestScore();
         });
 
