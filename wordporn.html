@@ -251,7 +251,7 @@
             }
             paused = true;
             if (answer === currentWord.toLowerCase()) {
-                points += currentWord.length;
+                points += (points === 0 ? 3 : currentWord.length);  // Add 3 points for the first correct answer
                 currentLevel = Math.min(wordGroups.length - 1, currentLevel + 1);
                 revealCorrectAnswer(() => {
                     document.body.innerHTML = `
