@@ -448,51 +448,54 @@
             ctx.font = '20px C64';
             ctx.fillStyle = '#696969';  // Tumman harmaa
 
-            var lines = [
-                '',
-                '',
-                '*** WORDFRAUD V 1.0 ****',
-                'READY.',
-                '',
-                'SYS 64738 : REM KILL SWITCH',
-                'POKE 53280, 0',
-                'READY.',
-                '',
-                '10 INPUT "CHOOSE YOUR PILL 1 or 2:", V',
-                '20 IF V = 1 THEN GOTO 10',
-                '30 IF V = 2 THEN GOTO 3000',
-                '40 IF V <> 1 AND V <> 2 THEN GOSUB 3500',
-                '50 END',
-                '',
-                '3010 LOAD "PACMAN",8,1',
-                '3020 RUN',
-                '',
-                '3500 PRINT "You take the blue pill, the story ends."',
-                '3510 PRINT "You wake up in your bed and believe whatever you want to believe."',
-                '3520 PRINT "You take the red pill, you stay in Wonderland,"',
-                '3530 PRINT "and I show you how deep the rabbit hole goes."',
-                '3540 END'
-            ];
+            // Wait for the font to load
+            document.fonts.load('20px C64').then(() => {
+                var lines = [
+                    '',
+                    '',
+                    '*** WORDFRAUD V 1.0 ***',
+                    'READY.',
+                    '',
+                    'SYS 64738 : REM KILL SWITCH',
+                    'POKE 53280, 0',
+                    'READY.',
+                    '',
+                    '10 INPUT "CHOOSE YOUR PILL 1 or 2:", V',
+                    '20 IF V = 1 THEN GOTO 10',
+                    '30 IF V = 2 THEN GOTO 3000',
+                    '40 IF V <> 1 AND V <> 2 THEN GOSUB 3500',
+                    '50 END',
+                    '',
+                    '3010 LOAD "PACMAN",8,1',
+                    '3020 RUN',
+                    '',
+                    '3500 PRINT "You take the blue pill, the story ends."',
+                    '3510 PRINT "You wake up in your bed and believe whatever you want to believe."',
+                    '3520 PRINT "You take the red pill, you stay in Wonderland,"',
+                    '3530 PRINT "and I show you how deep the rabbit hole goes."',
+                    '3540 END'
+                ];
 
-            var y = 20;
-            var delay = 100;
+                var y = 20;
+                var delay = 100;
 
-            lines.forEach((line, index) => {
+                lines.forEach((line, index) => {
+                    setTimeout(() => {
+                        ctx.fillText(line, 20, y);
+                        y += 20;  // Move down for next line
+                    }, delay * index);
+                });
+
                 setTimeout(() => {
-                    ctx.fillText(line, 20, y);
-                    y += 20;  // Move down for next line
-                }, delay * index);
+                    ctx.fillText('READY.', 20, y);
+                    y += 20;
+                    ctx.fillRect(20, y, 10, 20); // Draw cursor at the end
+                }, delay * lines.length);
+
+                setTimeout(() => {
+                    window.location.href = 'pacman.html';
+                }, delay * lines.length + 4500); // Added 1.5 times more delay
             });
-
-            setTimeout(() => {
-                ctx.fillText('READY.', 20, y);
-                y += 20;
-                ctx.fillRect(20, y, 10, 20); // Draw cursor at the end
-            }, delay * lines.length);
-
-            setTimeout(() => {
-                window.location.href = 'pacman.html';
-            }, delay * lines.length + 4500); // Added 1.5 times more delay
         }
 
         function lockInAnswer() {
