@@ -112,7 +112,7 @@
             border: 1px solid #333;
             border-radius: 5px;
             font-family: 'Typewriter', monospace;
-            font-size: 12px; /* Pienennetty fonttikoko */
+            font-size: 14px; /* Palautettu fonttikoko */
             white-space: pre-wrap;
             width: 200px; /* Leveys, joka vastaa noin neljää sanaa */
         }
@@ -120,20 +120,24 @@
             position: fixed;
             top: 0;
             left: 0;
-            background-color: #222;
+            background-color: #666;
             color: #fff;
-            width: 200px;
+            width: 150px;
             height: 100vh;
             padding: 20px;
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
-            display: none; /* Piilotettu, kunnes ensimmäinen oikea vastaus on saatu */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
         }
         .score-board {
             font-size: 16px;
             margin-top: 20px;
+            text-align: left;
         }
         .score-board div {
-            margin-bottom: 5px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -148,13 +152,13 @@
         <div class="timer" id="timer">30</div>
         <input type="text" id="answer" placeholder="Kirjoita vastaus">
         <div>
-            <button id="solveButton" onclick="checkAnswer()">PAINAMUASAATANA</button>
+            <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
         </div>
         <div class="result" id="result"></div>
     </div>
     <div class="score-board-container" id="scoreBoardContainer">
-        <div>PELAAJA: <span id="playerName"></span></div>
-        <div class="score-board" id="scoreBoard"></div>
+        <div>Vitunhuora: <span id="currentScore">0</span></div>
+        <div>Tavoitepaino: <span id="bestScore">0</span></div>
     </div>
 
     <script>
@@ -166,6 +170,8 @@
         let gameNumber = 1;
         let scores = [];
         let playerName = playerNames[Math.floor(Math.random() * playerNames.length)];
+        let currentScore = 0;
+        let bestScore = 0;
 
         function startTimer() {
             clearInterval(timer);
@@ -202,20 +208,8 @@
         }
 
         function updateScoreBoard() {
-            const scoreBoardContainer = document.getElementById('scoreBoardContainer');
-            const scoreBoard = document.getElementById('scoreBoard');
-            scoreBoard.innerHTML = '';
-            scores.forEach((score, index) => {
-                scoreBoard.innerHTML += `<div>Peli ${index + 1}: ${score}</div>`;
-            });
-            if (scores.length >= 5) {
-                const totalScore = scores.reduce((a, b) => a + b, 0);
-                scoreBoard.innerHTML += `<div>____________</div><div>Yhteensä: ${totalScore}</div>`;
-                setTimeout(() => {
-                    window.location.href = 'https://youtu.be/9_gnEP-RWdg';
-                }, 3000);
-            }
-            scoreBoardContainer.style.display = 'block';
+            document.getElementById('currentScore').textContent = currentScore;
+            document.getElementById('bestScore').textContent = bestScore;
         }
 
         function checkAnswer() {
@@ -225,21 +219,17 @@
                 return;
             }
             if (answer === currentWord.toLowerCase()) {
-                const score = 12 * currentWord.length;
-                scores.push(score);
-                document.body.innerHTML = '<div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">ONNEKSI OLKOON<br>PORNHUB ON TUTTUA<br>SEURAAVA ASIAKAS</div>';
-                let countdown = 5;
-                const interval = setInterval(() => {
-                    countdown--;
-                    document.body.innerHTML = `<div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">ONNEKSI OLKOON<br>PORNHUB ON TUTTUA<br>SEURAAVA ASIAKAS<br>${countdown}</div>`;
-                    if (countdown <= 0) {
-                        clearInterval(interval);
-                        location.reload();
-                    }
-                }, 1000);
+                currentScore++;
+                if (currentScore > bestScore) {
+                    bestScore = currentScore;
+                }
+                loadNewWord();
+                document.getElementById('answer').value = '';
                 updateScoreBoard();
             } else {
                 document.getElementById('result').textContent = 'Väärin!';
+                currentScore = 0; // Reset current score if the answer is wrong
+                updateScoreBoard();
             }
         }
 
@@ -250,7 +240,7 @@
             box.id = 'typewriterBox';
             box.className = 'typewriter-box';
             document.body.appendChild(box);
-            const text = 'Rakas persehaju,\n\nWordPorn on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä, kuin sinäkin.\n\nMuodosta kirjaimista sana. Ole arvaamaton ja yllättävä, kuten äidillesi sinä.\n\nOnnea peliin, saatana. Se on helppo kuin sinä.\n\nT. Koiranoksennus johon nussit.';
+            const text = 'Rakas persehaju,\n\nTämä on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä, kuin sinäkin.\n\nMuodosta kirjaimista sana. Ole arvaamaton ja yllättävä, kuten äidillesi sinä.\n\nOnnea peliin, saatana.\n\nSe on helppo kuin sinä.\n\nT. Koiranoksennus johon nussit.';
             let index = 0;
 
             function typeNext() {
