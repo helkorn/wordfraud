@@ -31,6 +31,20 @@
             background-color: #ffffff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             margin: 20px auto;
+            position: relative;
+        }
+        .container.has-background-image {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.75;
+        }
+        .container.has-background-image .content {
+            position: relative;
+            z-index: 2;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 5px;
         }
         .input-container {
             max-width: 650px;
@@ -101,23 +115,6 @@
             text-transform: uppercase;
             cursor: pointer;
             position: relative;
-        }
-        li.has-background-image {
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            color: #ffffff;
-            opacity: 0.7;
-            padding: 10px;
-        }
-        li.has-background-image span {
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 5px;
-            border-radius: 5px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
         }
         li:hover {
             background-color: #eee;
@@ -239,17 +236,19 @@
             <button id="fraudeloiButton" onclick="findWords()" disabled>Fraudeloi</button>
         </div>
         <div class="container" id="mainContainer" style="display: none;">
-            <div class="result-title" id="resultTitle"></div>
-            <div class="centered">
-                <div class="highlight" id="highlightMessage" style="display: none;">Huippuhyvä löytö!</div>
-                <div class="super-highlight" id="superHighlightMessage" style="display: none;">SUPERLÖYTÖ!</div>
-            </div>
-            <div class="columns">
-                <div class="column" id="column1"></div>
-                <div class="column" id="column2"></div>
-            </div>
-            <div class="centered">
-                <button class="reset-button" id="resetButton" onclick="resetPage()">Uudelleen</button>
+            <div class="content">
+                <div class="result-title" id="resultTitle"></div>
+                <div class="centered">
+                    <div class="highlight" id="highlightMessage" style="display: none;">Huippuhyvä löytö!</div>
+                    <div class="super-highlight" id="superHighlightMessage" style="display: none;">SUPERLÖYTÖ!</div>
+                </div>
+                <div class="columns">
+                    <div class="column" id="column1"></div>
+                    <div class="column" id="column2"></div>
+                </div>
+                <div class="centered">
+                    <button class="reset-button" id="resetButton" onclick="resetPage()">Uudelleen</button>
+                </div>
             </div>
         </div>
     </div>
@@ -440,24 +439,21 @@
             .then(response => response.json())
             .then(data => {
                 const translatedWord = data.data.translations[0].translatedText;
-                fetchImage(word, translatedWord);
+                fetchImage(translatedWord);
             })
             .catch(error => {
                 console.error('Error translating the word:', error);
             });
         }
 
-        function fetchImage(word, translatedWord) {
+        function fetchImage(translatedWord) {
             fetch(`https://api.unsplash.com/photos/random?query=${translatedWord}&client_id=${unsplashAccessKey}`)
                 .then(response => response.json())
                 .then(data => {
                     const imageUrl = data.urls.small;
-                    const wordElement = document.getElementById(`word-${word.toUpperCase()}`);
-                    if (wordElement) {
-                        wordElement.style.backgroundImage = `url(${imageUrl})`;
-                        wordElement.classList.add('has-background-image');
-                        wordElement.innerHTML = `<span>${word.toUpperCase()}</span>`;
-                    }
+                    const mainContainer = document.getElementById('mainContainer');
+                    mainContainer.style.backgroundImage = `url(${imageUrl})`;
+                    mainContainer.classList.add('has-background-image');
                 })
                 .catch(error => {
                     console.error('Error fetching the image:', error);
