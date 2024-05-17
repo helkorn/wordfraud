@@ -118,60 +118,15 @@
             white-space: pre-wrap;
             width: 200px;
         }
-        .suggestion-box {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background-color: #333;
-            color: #fff;
-            padding: 20px;
-            text-align: center;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-        }
-        .suggestion-box input[type="text"] {
-            width: 50%;
-            padding: 10px;
-            font-size: 16px;
-            margin-bottom: 10px;
-            border: 1px solid #555;
-            border-radius: 5px;
-            background-color: #444;
-            color: #fff;
-        }
-        .word-list {
-            margin-top: 10px;
-            text-align: left;
-            width: 80%;
-            max-height: 200px;
-            overflow-y: scroll;
-            border: 1px solid #555;
-            padding: 10px;
-            background-color: #222;
-            color: #fff;
-        }
-        .close-button {
-            background-color: #ff0000;
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 5px;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-        }
     </style>
 </head>
 <body>
     <div class="link-box" id="whatIsThisLink">
-        <a href="javascript:void(0)" onclick="showAnalgrammi()">Mikä tämä on?</a><br>
-        <a href="javascript:void(0)" onclick="showSuggestionBox()">Ehdota sanaa</a>
+        <a href="javascript:void(0)" onclick="showAnalgrammi()">What is this?</a>
     </div>
     <div class="container">
         <h1>WordPorn</h1>
-        <p>Analgrammi. Mitä nyt vittua taas.</p>
+        <p>Analgrammit. Mitä nyt vittua taas.</p>
         <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
         <div class="timer" id="timer">20</div>
         <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
@@ -179,13 +134,6 @@
             <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
         </div>
         <div class="result" id="result"></div>
-    </div>
-
-    <div class="suggestion-box" id="suggestionBox">
-        <button class="close-button" onclick="hideSuggestionBox()">X</button>
-        <input type="text" id="suggestionInput" placeholder="Kirjoita oma sanasi">
-        <button onclick="submitSuggestion()">LÄHETÄ</button>
-        <div class="word-list" id="wordList"></div>
     </div>
 
     <script>
@@ -341,35 +289,6 @@
             }
 
             typeNext();
-        }
-
-        function showSuggestionBox() {
-            paused = true;
-            document.getElementById('timer').textContent = 'PAUSED';
-            const suggestionBox = document.getElementById('suggestionBox');
-            const wordList = document.getElementById('wordList');
-            wordList.innerHTML = words.map(word => `<div>${word}</div>`).join('');
-            suggestionBox.style.display = 'flex';
-        }
-
-        function hideSuggestionBox() {
-            const suggestionBox = document.getElementById('suggestionBox');
-            suggestionBox.style.display = 'none';
-            paused = false;
-            startTimer();
-        }
-
-        function submitSuggestion() {
-            const suggestionInput = document.getElementById('suggestionInput');
-            const newWord = suggestionInput.value.trim();
-            if (newWord && !/(\w)\1\1/.test(newWord)) {
-                words.push(newWord);
-                const wordList = document.getElementById('wordList');
-                wordList.innerHTML += `<div>${newWord}</div>`;
-                suggestionInput.value = '';
-            } else {
-                alert('Tämä sana ei ole sallittu.');
-            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
