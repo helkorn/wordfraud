@@ -299,7 +299,7 @@
 
         // Load best score from Firestore
         function loadBestScore() {
-            db.doc("/wordgame_scores/O0GVUONRTmF65Q9k9CU2").get().then((doc) => {
+            db.doc("/wordporn_scores/O0GVUONRTmF65Q9k9CU2").get().then((doc) => {
                 if (doc.exists) {
                     const data = doc.data();
                     bestScore = data.score;
@@ -315,7 +315,7 @@
 
         // Save best score to Firestore
         function saveBestScore(score, player) {
-            db.doc("/wordgame_scores/O0GVUONRTmF65Q9k9CU2").set({
+            db.doc("/wordporn_scores/O0GVUONRTmF65Q9k9CU2").set({
                 score: score,
                 player: player
             }).then(() => {
