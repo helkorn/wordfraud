@@ -260,9 +260,17 @@
                     }
                     console.log('CSV lines:', lines); // Debugging: Print the loaded lines
                     for (let i = 1; i < lines.length; i++) { // Start from 1 to skip header
-                        const [group, word] = lines[i].split(',');
+                        const line = lines[i].trim();
+                        if (!line) continue; // Skip empty lines
+                        const [group, word] = line.split(',');
                         if (group && word) {
-                            words[`group${group.trim()}`].push(word.trim());
+                            const groupKey = `group${group.trim()}`;
+                            if (words[groupKey]) {
+                                words[groupKey].push(word.trim());
+                            } else {
+                                showError(`Virheellinen ryhmä: ${group.trim()} rivillä ${i + 1}`);
+                                return;
+                            }
                         } else {
                             showError(`Virhe rivillä ${i + 1}: ${lines[i]}`);
                             return;
