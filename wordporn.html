@@ -250,7 +250,9 @@
                     return response.text();
                 })
                 .then(text => {
+                    console.log('Raw CSV text:', text); // Debugging: Print the raw text
                     const decodedText = decodeUTF8(text);
+                    console.log('Decoded CSV text:', decodedText); // Debugging: Print the decoded text
                     const lines = decodedText.split('\n');
                     console.log('CSV lines:', lines); // Debugging: Print the loaded lines
                     for (let i = 1; i < lines.length; i++) { // Start from 1 to skip header
@@ -424,7 +426,7 @@
             const text = `
                 Pisteesi ${points}. Analgrammi ${currentWord.toLowerCase()} oli oikein <span style="color: grey;">${currentWord.toLowerCase()}</span>.<br>
                 Kauden paras ${bestPlayer} johtaa haavissa ${bestScore} doinskia.<br>
-                Eli helvetillinen pettymys jälleen bitch.
+                Eli helvetillinen pettymys jälleen.
             `;
             showTypewriterEffect(text);
         }
@@ -456,7 +458,7 @@
             box.id = 'typewriterBox';
             box.className = 'typewriter-box';
             document.body.appendChild(box);
-            const text = 'Rakas persehaju,\n\nTämä on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä, jos sinäkin.\n\nMuodosta kirjaimista sana. Ole yllättävä kuin äitisi raskaus.\n\nOnnea peliin. Se on helppo kuten sinä.\n\nT Koiranoksennus johon nussit';
+            const text = 'Tämä on helppo peli. Muodosta kirjaimista sana. Onnea peliin.';
             showTypewriterEffect(text, box);
         }
 
