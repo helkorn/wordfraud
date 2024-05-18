@@ -155,6 +155,23 @@
     <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-firestore.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1><span>P</span>WordPorn</h1>
+        <p>Analgrammit. Mitä nyt vittua taas.</p>
+        <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
+        <div class="timer" id="timer">15</div>
+        <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
+        <div>
+            <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
+        </div>
+        <div class="result" id="result"></div>
+        <div id="notification" class="notification"></div>
+    </div>
+    <div class="link-box" id="whatIsThisLink">
+        <a href="javascript:void(0)" onclick="showAnalgrammi()">Mikä tämä on?</a>
+    </div>
     <script>
         // Your web app's Firebase configuration
         var firebaseConfig = {
@@ -231,6 +248,18 @@
                         }
                     }
                     console.log(words); // Debugging: Print the loaded words
+                    document.querySelector('.container').innerHTML = `
+                        <h1><span>P</span>WordPorn</h1>
+                        <p>Analgrammit. Mitä nyt vittua taas.</p>
+                        <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
+                        <div class="timer" id="timer">15</div>
+                        <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
+                        <div>
+                            <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
+                        </div>
+                        <div class="result" id="result"></div>
+                        <div id="notification" class="notification"></div>
+                    `;
                     loadNewWord();
                 })
                 .catch(error => {
@@ -291,6 +320,7 @@
 
         function loadNewWord() {
             const groupName = `group${currentGroup}`;
+            console.log('Current Group:', groupName); // Debugging
             if (words[groupName].length > 0) {
                 const index = Math.floor(Math.random() * words[groupName].length);
                 currentWord = words[groupName][index];
@@ -504,6 +534,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM content loaded');
             loadWords();
             loadBestScore();
         });
