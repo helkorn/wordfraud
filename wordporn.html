@@ -147,6 +147,10 @@
             opacity: 0;
             transition: opacity 0.5s;
         }
+        .error {
+            color: red;
+            font-size: 1.2em;
+        }
     </style>
     <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
@@ -196,10 +200,28 @@
         let bestScore = 0;
         let bestPlayer = '';
 
+        // Show loading indicator
+        function showLoading() {
+            const container = document.querySelector('.container');
+            container.innerHTML = '<p>Ladataan sanoja...</p>';
+        }
+
+        // Show error message
+        function showError(message) {
+            const container = document.querySelector('.container');
+            container.innerHTML = `<p class="error">${message}</p>`;
+        }
+
         // Load words from CSV file
         function loadWords() {
+            showLoading();
             fetch('groupfak.csv')
-                .then(response => response.text())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Verkkovirhe: Sanojen lataaminen epäonnistui.');
+                    }
+                    return response.text();
+                })
                 .then(text => {
                     const lines = text.split('\n');
                     for (let line of lines) {
@@ -211,7 +233,10 @@
                     console.log(words); // Debugging: Print the loaded words
                     loadNewWord();
                 })
-                .catch(error => console.error('Error loading words:', error));
+                .catch(error => {
+                    console.error('Error loading words:', error);
+                    showError('Sanojen lataaminen epäonnistui. Tarkista CSV-tiedosto.');
+                });
         }
 
         // Load best score from Firestore
@@ -355,7 +380,7 @@
 
         function showFailureMessage() {
             const text = `
-                Pisteesi ${points}. Analgrammi ${lastWord.toLowerCase()} oli oikein <span style="color: grey;">${currentWord.toLowerCase()}</span>.<br>
+                Pisteesi ${points}. Analgrammi ${currentWord.toLowerCase()} oli oikein <span style="color: grey;">${currentWord.toLowerCase()}</span>.<br>
                 Kauden paras ${bestPlayer} johtaa haavissa ${bestScore} doinskia.<br>
                 Eli helvetillinen pettymys jälleen bitch.
             `;
