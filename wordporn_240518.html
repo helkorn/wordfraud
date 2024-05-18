@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordPorn</title>
+    <style>
+        @font-face {
+            font-family: 'C64';
+            src: url('fontC64.ttf') format('truetype');
+        }
+        @font-face {
+            font-family: 'Typewriter';
+            src: url('fontTW.ttf') format('truetype');
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+        .container {
+            max-width: 800px;
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #333;
+            border-radius: 10px;
+            background-color: #111;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            margin-bottom: 50px; /* Add margin to lift the container */
+        }
+        h1 {
+            color: #fff;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        h1 span {
+            color: red;
+        }
+        .timer {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        .shuffled-word {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background-color: #222;
+            color: #fff;
+            text-align: center;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            autocomplete: off;
+            spellcheck: false;
+        }
+        button {
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+            border: 1px solid #333;
+            border-radius: 50px;
+            background-color: #333;
+            color: #fff;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #555;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 1em;
+            color: #f00;
+        }
+        .link-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 14px;
+            color: #fff;
+            white-space: nowrap;
+            text-align: right;
+        }
+        .link-box a {
+            color: #888;
+            text-decoration: none;
+            font-weight: bold;
+            padding-right: 20px;
+        }
+        .link-box a:hover {
+            text-decoration: underline;
+        }
+        .hidden {
+            display: none;
+        }
+        .typewriter-box {
+            position: absolute;
+            top: 40px;
+            right: 20px;
+            background-color: #f5f5f5;
+            color: #000;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            font-family: 'Typewriter', monospace;
+            font-size: 14px; /* Increase font size */
+            white-space: pre-wrap;
+            width: 300px; /* Increase width */
+        }
+        .waiting {
+            font-size: 0.8em;
+            color: #fff;
+            animation: waitingAnimation 1.5s infinite;
+        }
+        @keyframes waitingAnimation {
+            0%, 100% {
+                color: #888;
+            }
+            35% {
+                color: #444;
+            }
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: #000;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .error {
+            color: red;
+            font-size: 1.2em;
+        }
+        .points, .final-message, .speed-message {
+            position: absolute;
+            top: 100%; /* Adjust this to position the points text correctly */
+            right: 0;
+            font-size: 1em;
+            color: grey;
+            text-align: right;
+            font-family: 'Typewriter', monospace;
+            white-space: pre-wrap;
+        }
+        .points {
+            top: calc(100% + 10px); /* Adjust the spacing below the container */
+        }
+        .final-message, .speed-message {
+            top: calc(100% + 30px); /* Adjust the spacing below the container */
+        }
+    </style>
+    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-firestore.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Word<span style="color: red;">P</span>orn</h1>
+        <p>Analgrammit. Mitä nyt vittua taas.</p>
+        <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
+        <div class="timer" id="timer">15</div>
+        <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
+        <div>
+            <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
+        </div>
+        <div class="result" id="result"></div>
+        <div class="notification" id="notification"></div>
+        <div id="points" class="points"></div>
+        <div id="finalMessage" class="final-message"></div>
+        <div id="speedMessage" class="speed-message"></div>
+    </div>
+    <div class="link-box" id="whatIsThisLink">
+        <a href="javascript:void(0)" onclick="showAnalgrammi()">Mikä tämä on?</a>
+    </div>
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let words = {
+            group1: [],
+            group2: [],
+            group3: [],
+            group4: [],
+            group5: [],
+            group6: [],
+            group7: [],
+            bonus: [],
+            initial: [] // Group for initial random words before the game starts
+        };
+
+        let currentWord = '';
+        let currentGroup = 1;
+        let currentGroupCount = {
+            group1: 3,
+            group2: 2,
+            group3: 1,
+            group4: 1,
+            group5: 1,
+            group6: 1,
+            group7: 1
+        };
+        let currentGroupQuestion = 0;
+        let currentLevel = 0;
+        let timer;
+        let timeLeft = 15;
+        let paused = false;
+        let points = 0;
+        let bestScore = 0;
+        let bestPlayer = '';
+
+        // Show loading indicator
+        function showLoading() {
+            const container = document.querySelector('.container');
+            container.innerHTML = '<p>Ladataan sanoja...</p>';
+        }
+
+        // Show error message
+        function showError(message) {
+            const container = document.querySelector('.container');
+            container.innerHTML = `<p class="error">${message}</p>`;
+        }
+
+        // Function to decode UTF-8 encoded text
+        function decodeUTF8(text) {
+            try {
+                const decoder = new TextDecoder('utf-8');
+                return decoder.decode(new Uint8Array(text.split('').map(char => char.charCodeAt(0))));
+            } catch (e) {
+                return text;
+            }
+        }
+
+        // Load words from CSV file
+        function loadWords() {
+            showLoading();
+            fetch('wordpornFI.csv') // Fetch words from wordpornFI.csv for initial random words
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Verkkovirhe: Sanojen lataaminen epäonnistui.');
+                    }
+                    return response.text();
+                })
+                .then(text => {
+                    console.log('Raw CSV text:', text); // Debugging: Print the raw text
+                    const decodedText = decodeUTF8(text);
+                    console.log('Decoded CSV text:', decodedText); // Debugging: Print the decoded text
+                    const lines = decodedText.split('\n').filter(line => line.trim() !== '');
+                    if (lines.length < 1) {
+                        showError('CSV-tiedosto ei sisällä riittävästi rivejä.');
+                        return;
+                    }
+                    console.log('CSV lines:', lines); // Debugging: Print the loaded lines
+                    for (let i = 0; i < lines.length; i++) { // Start from 0 for initial words
+                        const line = lines[i].trim();
+                        if (!line) continue; // Skip empty lines
+                        words.initial.push(line);
+                    }
+                    console.log(words); // Debugging: Print the loaded words
+                    document.querySelector('.container').innerHTML = `
+                        <h1>Word<span style="color: red;">P</span>orn</h1>
+                        <p>Analgrammit. Mitä nyt vittua taas.</p>
+                        <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
+                        <div class="timer" id="timer">15</div>
+                        <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
+                        <div>
+                            <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
+                        </div>
+                        <div class="result" id="result"></div>
+                        <div id="notification" class="notification"></div>
+                        <div id="points" class="points"></div>
+                        <div id="finalMessage" class="final-message"></div>
+                        <div id="speedMessage" class="speed-message"></div>
+                    `;
+                    loadNewWord();
+                })
+                .catch(error => {
+                    console.error('Error loading words:', error);
+                    showError('Sanojen lataaminen epäonnistui. Tarkista CSV-tiedosto.');
+                });
+        }
+
+        function loadGroupWords() {
+            fetch('groupfak.csv') // Fetch words from groupfak.csv for game words
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Verkkovirhe: Sanojen lataaminen epäonnistui.');
+                    }
+                    return response.text();
+                })
+                .then(text => {
+                    console.log('Raw CSV text:', text); // Debugging: Print the raw text
+                    const decodedText = decodeUTF8(text);
+                    console.log('Decoded CSV text:', decodedText); // Debugging: Print the decoded text
+                    const lines = decodedText.split('\n').filter(line => line.trim() !== '');
+                    if (lines.length < 2) {
+                        showError('CSV-tiedosto ei sisällä riittävästi rivejä.');
+                        return;
+                    }
+                    console.log('CSV lines:', lines); // Debugging: Print the loaded lines
+                    for (let i = 1; i < lines.length; i++) { // Start from 1 to skip header
+                        const line = lines[i].trim();
+                        if (!line) continue; // Skip empty lines
+                        const [group, word] = line.split(',');
+                        if (group && word) {
+                            const groupKey = `group${group.trim()}`;
+                            if (words.hasOwnProperty(groupKey)) {
+                                words[groupKey].push(word.trim());
+                            } else if (group.trim() === 'bonus') {
+                                words.bonus.push(word.trim());
+                            } else {
+                                showError(`Virheellinen ryhmä: ${group.trim()} rivillä ${i + 1}`);
+                                return;
+                            }
+                        } else {
+                            showError(`Virhe rivillä ${i + 1}: ${lines[i]}`);
+                            return;
+                        }
+                    }
+                    console.log(words); // Debugging: Print the loaded words
+                    startGame();
+                })
+                .catch(error => {
+                    console.error('Error loading words:', error);
+                    showError('Sanojen lataaminen epäonnistui. Tarkista CSV-tiedosto.');
+                });
+        }
+
+        // Load best score from Firestore
+        function loadBestScore() {
+            db.doc("/wordporn_scores/O0GVUONRTmF65Q9k9CU2").get().then((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    bestScore = data.score;
+                    bestPlayer = data.player;
+                } else {
+                    bestScore = 0;
+                    bestPlayer = 'Ei kukaan';
+                }
+            }).catch((error) => {
+                console.error("Error getting best score: ", error);
+            });
+        }
+
+        // Save best score to Firestore
+        function saveBestScore(score, player) {
+            db.doc("/wordporn_scores/O0GVUONRTmF65Q9k9CU2").set({
+                score: score,
+                player: player
+            }).then(() => {
+                console.log("Best score successfully written!");
+            }).catch((error) => {
+                console.error("Error writing best score: ", error);
+            });
+        }
+
+        function startTimer() {
+            clearInterval(timer);
+            timer = setInterval(() => {
+                if (!paused) {
+                    timeLeft--;
+                    if (timeLeft >= 0) {
+                        document.getElementById('timer').textContent = timeLeft;
+                    }
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                        handleTimeOut();
+                    }
+                }
+            }, 1000);
+        }
+
+        function shuffleWord(word) {
+            let shuffledWord = word.split('').sort(() => Math.random() - 0.5).join('');
+            while (shuffledWord === word) {
+                shuffledWord = word.split('').sort(() => Math.random() - 0.5).join('');
+            }
+            return shuffledWord;
+        }
+
+        function loadNewWord() {
+            const groupName = words.initial.length > 0 ? 'initial' : `group${currentGroup}`;
+            console.log('Current Group:', groupName); // Debugging
+            if (words[groupName].length > 0) {
+                const index = Math.floor(Math.random() * words[groupName].length);
+                currentWord = words[groupName][index];
+                words[groupName].splice(index, 1);
+                const shuffledWord = shuffleWord(currentWord);
+                document.getElementById('shuffledWord').textContent = shuffledWord;
+                document.getElementById('shuffledWord').style.color = '#fff'; // Set color to white
+                document.getElementById('answer').value = '';
+                timeLeft = 15; // Reset time left to 15 seconds
+                document.getElementById('timer').textContent = timeLeft;
+                startTimer();
+            } else {
+                currentGroup++;
+                currentGroupQuestion = 0;
+                if (currentGroup > 7) {
+                    showBonusRound();
+                } else {
+                    loadNewWord();
+                }
+            }
+        }
+
+        function checkAnswer() {
+            const answer = document.getElementById('answer').value.trim().toLowerCase();
+            if (answer === '') {
+                document.getElementById('result').textContent = 'Vastaa nyt jotain menee hermo.';
+                return;
+            }
+            paused = true;
+            if (answer === currentWord.toLowerCase()) {
+                points += (points === 0 ? 3 : currentWord.length);  // Add 3 points for the first correct answer
+                timeLeft = Math.max(5, timeLeft - 1); // Decrease time by 1 second, but not below 5 seconds
+                currentGroupQuestion++;
+                if (currentGroupQuestion >= currentGroupCount[`group${currentGroup}`]) {
+                    currentGroup++;
+                    currentGroupQuestion = 0;
+                    document.getElementById('speedMessage').textContent = `Peli nopeutuu ja vaikeutuu`;
+                    setTimeout(() => {
+                        document.getElementById('speedMessage').textContent = '';
+                        document.getElementById('points').textContent = `Pisteet ${points}`;
+                    }, 3000);
+                }
+                if (currentGroup > 7) {
+                    showBonusRound();
+                } else {
+                    revealCorrectAnswer(loadNewWord);
+                }
+            } else {
+                if (points > 0) {
+                    showFinalMessage();
+                } else {
+                    revealCorrectAnswer(loadNewWord);
+                }
+            }
+            if (points > 0) {
+                document.getElementById('points').textContent = `Pisteet ${points}`;
+            }
+            document.getElementById('result').textContent = ''; // Clear the "Vastaa nyt jotain menee hermo." text
+        }
+
+        function revealCorrectAnswer(callback) {
+            const shuffledWordElement = document.getElementById('shuffledWord');
+            shuffledWordElement.style.color = '#FFFF00';
+            let currentIndex = 0;
+
+            const interval = setInterval(() => {
+                if (currentIndex < currentWord.length) {
+                    shuffledWordElement.textContent =
+                        currentWord.slice(0, currentIndex + 1) +
+                        shuffledWordElement.textContent.slice(currentIndex + 1);
+                    currentIndex++;
+                } else {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        shuffledWordElement.style.color = '#fff'; // Reset color to white
+                        callback();
+                        paused = false;
+                    }, 1500);
+                }
+            }, 200);
+        }
+
+        function handleTimeOut() {
+            if (points > 0) {
+                showFinalMessage();
+            } else {
+                revealCorrectAnswer(loadNewWord);
+            }
+        }
+
+        function showFinalMessage() {
+            const finalMessageElement = document.getElementById('finalMessage');
+            const pointsText = `Pisteesi ${points}.`;
+            const correctAnswerText = `Analgrammi ${currentWord.toLowerCase()} oli oikein.`;
+            const bestScoreText = `Kauden paras ${bestPlayer} johtaa haavissa ${bestScore} doinskia.`;
+            const disappointmentText = `Eli helvetillinen pettymys jälleen.`;
+
+            finalMessageElement.innerHTML = pointsText;
+            setTimeout(() => {
+                finalMessageElement.innerHTML = correctAnswerText;
+                setTimeout(() => {
+                    finalMessageElement.innerHTML = bestScoreText;
+                    setTimeout(() => {
+                        finalMessageElement.innerHTML = disappointmentText;
+                        setTimeout(() => {
+                            loadNewWord();
+                        }, 3000);
+                    }, 3000);
+                }, 3000);
+            }, 3000);
+        }
+
+        function showHighScoreInput() {
+            document.getElementById('finalMessage').innerHTML = `
+                Whoop my biatch. Kauden paras tulos ${points}! Kirjoita nimesi alle.
+                <input type="text" id="playerName" placeholder="Pelaaja" style="display: block; margin: 20px auto; padding: 10px; font-size: 16px;">
+                <button onclick="savePlayerName()">LÄHETÄ</button>
+            `;
+        }
+
+        function savePlayerName() {
+            const playerName = document.getElementById('playerName').value.trim();
+            if (playerName === '') {
+                alert('Anna nimi.');
+                return;
+            }
+            saveBestScore(points, playerName);
+        }
+
+        function showAnalgrammi() {
+            paused = true;
+            document.getElementById('timer').innerHTML = '<span class="waiting">-sinulle on postia-</span>';
+            const linkBox = document.getElementById('whatIsThisLink');
+            linkBox.innerHTML = '';
+            const box = document.createElement('div');
+            box.id = 'typewriterBox';
+            box.className = 'typewriter-box';
+            document.body.appendChild(box);
+            const text = 'Rakas persehaju,\n\nTämä on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä, kuin sinäkin.\n\nMuodosta kirjaimista sana. Ole yllättävä kuin äitisi raskaus.\n\nOnnea peliin. Se on helppo kuten sinä.\n\nT Koiranoksennus johon nussit';
+            showTypewriterEffect(text, box);
+        }
+
+        function showTypewriterEffect(text, element) {
+            if (!element) {
+                element = document.createElement('div');
+                element.className = 'typewriter-box';
+                document.body.appendChild(element);
+            }
+            let index = 0;
+            element.textContent = '';
+
+            function typeNext() {
+                if (index < text.length) {
+                    element.textContent += text[index];
+                    index++;
+                    let delay = 40;
+                    if (text[index - 1] === ' ' || text[index - 1] === '\n') {
+                        delay = 100;
+                    }
+                    setTimeout(typeNext, delay);
+                } else {
+                    setTimeout(() => {
+                        removeTextWithEffect(element);
+                        paused = false;
+                        document.getElementById('whatIsThisLink').innerHTML = '<a href="javascript:void(0)" onclick="showAnalgrammi()">Mikä tämä on?</a>';
+                    }, 3500); // Increase time before fading out
+                }
+            }
+            typeNext();
+        }
+
+        function removeTextWithEffect(element) {
+            let grayValue = 245;
+            let upperIndex = 0;
+            const lines = element.textContent.split('\n');
+            const interval = setInterval(() => {
+                if (element.textContent.length > 0) {
+                    if (upperIndex < lines.length) {
+                        lines[upperIndex] = '';
+                        upperIndex++;
+                        element.textContent = lines.join('\n');
+                    } else {
+                        const randomIndex = Math.floor(Math.random() * element.textContent.length);
+                        element.textContent = element.textContent.slice(0, randomIndex) + element.textContent.slice(randomIndex + 1);
+                    }
+                    grayValue -= 5;
+                    element.style.backgroundColor = `rgb(${grayValue}, ${grayValue}, ${grayValue})`;
+                } else {
+                    clearInterval(interval);
+                    element.remove();
+                    loadNewWord();
+                }
+            }, 30);
+        }
+
+        function startGame() {
+            document.querySelector('.container').innerHTML = `
+                <h1>Word<span style="color: red;">P</span>orn</h1>
+                <p>Analgrammit. Mitä nyt vittua taas.</p>
+                <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
+                <div class="timer" id="timer">15</div>
+                <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
+                <div>
+                    <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
+                </div>
+                <div class="result" id="result"></div>
+                <div class="notification" id="notification"></div>
+                <div id="points" class="points"></div>
+                <div id="finalMessage" class="final-message"></div>
+                <div id="speedMessage" class="speed-message"></div>
+            `;
+            loadNewWord();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM content loaded');
+            loadWords();
+            loadBestScore();
+        });
+
+        document.getElementById('answer').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+    </script>
+</body>
+</html>
