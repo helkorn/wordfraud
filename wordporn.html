@@ -37,7 +37,6 @@
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
         }
         h1 {
-            color: #fff;
             font-size: 2em;
             margin-bottom: 20px;
         }
@@ -140,10 +139,10 @@
         <a href="javascript:void(0)" onclick="showAnalgrammi()">Mikä tämä on?  </a>
     </div>
     <div class="container">
-        <h1>WordPorn</h1>
+        <h1>Word<span style="color: red;">P</span>orn</h1>
         <p>Analgrammit. Mitä nyt vittua taas.</p>
         <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
-        <div class="timer" id="timer">20</div>
+        <div class="timer" id="timer">15</div>
         <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
         <div>
             <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
@@ -155,7 +154,7 @@
         let words = [];
         let currentWord = '';
         let timer;
-        let timeLeft = 20;
+        let timeLeft = 15;
         let paused = false;
 
         function startTimer() {
@@ -186,7 +185,7 @@
                 const shuffledWord = shuffleWord(currentWord);
                 document.getElementById('shuffledWord').textContent = shuffledWord;
                 document.getElementById('answer').value = '';
-                timeLeft = 20;
+                timeLeft = 15;
                 document.getElementById('timer').textContent = timeLeft;
                 startTimer();
             } else {
