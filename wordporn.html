@@ -229,6 +229,15 @@
             container.innerHTML = `<p class="error">${message}</p>`;
         }
 
+        // Function to decode UTF-8 encoded text
+        function decodeUTF8(text) {
+            try {
+                return decodeURIComponent(escape(text));
+            } catch (e) {
+                return text;
+            }
+        }
+
         // Load words from CSV file
         function loadWords() {
             showLoading();
@@ -241,10 +250,11 @@
                 })
                 .then(text => {
                     const lines = text.split('\n');
-                    for (let line of lines) {
-                        const [group, word] = line.split(',');
+                    console.log('CSV lines:', lines); // Debugging: Print the loaded lines
+                    for (let i = 1; i < lines.length; i++) { // Start from 1 to skip header
+                        const [group, word] = lines[i].split(',');
                         if (group && word) {
-                            words[`group${group.trim()}`].push(word.trim());
+                            words[`group${group.trim()}`].push(decodeUTF8(word.trim()));
                         }
                     }
                     console.log(words); // Debugging: Print the loaded words
