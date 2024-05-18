@@ -341,7 +341,9 @@
             timer = setInterval(() => {
                 if (!paused) {
                     timeLeft--;
-                    document.getElementById('timer').textContent = timeLeft;
+                    if (timeLeft >= 0) {
+                        document.getElementById('timer').textContent = timeLeft;
+                    }
                     if (timeLeft <= 0) {
                         clearInterval(timer);
                         handleTimeOut();
@@ -369,6 +371,7 @@
                 document.getElementById('shuffledWord').textContent = shuffledWord;
                 document.getElementById('shuffledWord').style.color = '#fff'; // Set color to white
                 document.getElementById('answer').value = '';
+                timeLeft = 15; // Reset time left to 15 seconds
                 document.getElementById('timer').textContent = timeLeft;
                 startTimer();
             } else {
@@ -399,16 +402,13 @@
                 if (currentGroup > 7) {
                     showBonusRound();
                 } else {
-                    revealCorrectAnswer(showNotification);
+                    revealCorrectAnswer(loadNewWord);
                 }
             } else {
                 if (points > 0) {
                     showFailureMessage();
                 } else {
-                    revealCorrectAnswer(() => {
-                        loadNewWord();
-                        paused = false;
-                    });
+                    revealCorrectAnswer(loadNewWord);
                 }
             }
             if (points > 0) {
@@ -429,14 +429,11 @@
                     currentIndex++;
                 } else {
                     clearInterval(interval);
-                    if (callback) {
-                        setTimeout(callback, 1500);
-                    } else {
-                        setTimeout(() => {
-                            loadNewWord();
-                            paused = false;
-                        }, 2000);
-                    }
+                    setTimeout(() => {
+                        shuffledWordElement.style.color = '#fff'; // Reset color to white
+                        callback();
+                        paused = false;
+                    }, 1500);
                 }
             }, 200);
         }
@@ -445,10 +442,7 @@
             if (points > 0) {
                 showFailureMessage();
             } else {
-                revealCorrectAnswer(() => {
-                    loadNewWord();
-                    paused = false;
-                });
+                revealCorrectAnswer(loadNewWord);
             }
         }
 
@@ -552,7 +546,7 @@
 
         function showNotification() {
             const notification = document.getElementById('notification');
-            notification.textContent = `Pisteet ${points} kasassa. Pidä ylhäällä, koko ajan tulee. Ladataan vaikeampi peli..`;
+            notification.textContent = `Pisteet ${points}`;
             notification.style.opacity = 1;
             setTimeout(() => {
                 notification.style.opacity = 0;
@@ -583,6 +577,7 @@
                 document.getElementById('shuffledWord').textContent = shuffledWord;
                 document.getElementById('shuffledWord').style.color = '#fff'; // Set color to white
                 document.getElementById('answer').value = '';
+                timeLeft = 15; // Reset time left to 15 seconds
                 document.getElementById('timer').textContent = timeLeft;
                 startTimer();
             } else {
