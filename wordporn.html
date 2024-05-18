@@ -122,7 +122,7 @@
             font-family: 'Typewriter', monospace;
             font-size: 14px; /* Increase font size */
             white-space: pre-wrap;
-            width: 240px; /* Increase width */
+            width: 300px; /* Increase width */
         }
         .waiting {
             font-size: 0.8em;
@@ -152,7 +152,7 @@
             color: red;
             font-size: 1.2em;
         }
-        .points, .final-message {
+        .points, .final-message, .speed-message {
             position: absolute;
             top: 100%; /* Adjust this to position the points text correctly */
             right: 0;
@@ -165,7 +165,7 @@
         .points {
             top: calc(100% + 10px); /* Adjust the spacing below the container */
         }
-        .final-message {
+        .final-message, .speed-message {
             top: calc(100% + 30px); /* Adjust the spacing below the container */
         }
     </style>
@@ -185,8 +185,9 @@
         </div>
         <div class="result" id="result"></div>
         <div class="notification" id="notification"></div>
-        <div class="points" id="points"></div>
-        <div class="final-message" id="finalMessage"></div>
+        <div id="points" class="points"></div>
+        <div id="finalMessage" class="final-message"></div>
+        <div id="speedMessage" class="speed-message"></div>
     </div>
     <div class="link-box" id="whatIsThisLink">
         <a href="javascript:void(0)" onclick="showAnalgrammi()">Mikä tämä on?</a>
@@ -213,7 +214,8 @@
             group5: [],
             group6: [],
             group7: [],
-            bonus: []
+            bonus: [],
+            initial: [] // Group for initial random words before the game starts
         };
 
         let currentWord = '';
@@ -261,7 +263,54 @@
         // Load words from CSV file
         function loadWords() {
             showLoading();
-            fetch('groupfak.csv')
+            fetch('wordpornFI.csv') // Fetch words from wordpornFI.csv for initial random words
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Verkkovirhe: Sanojen lataaminen epäonnistui.');
+                    }
+                    return response.text();
+                })
+                .then(text => {
+                    console.log('Raw CSV text:', text); // Debugging: Print the raw text
+                    const decodedText = decodeUTF8(text);
+                    console.log('Decoded CSV text:', decodedText); // Debugging: Print the decoded text
+                    const lines = decodedText.split('\n').filter(line => line.trim() !== '');
+                    if (lines.length < 1) {
+                        showError('CSV-tiedosto ei sisällä riittävästi rivejä.');
+                        return;
+                    }
+                    console.log('CSV lines:', lines); // Debugging: Print the loaded lines
+                    for (let i = 0; i < lines.length; i++) { // Start from 0 for initial words
+                        const line = lines[i].trim();
+                        if (!line) continue; // Skip empty lines
+                        words.initial.push(line);
+                    }
+                    console.log(words); // Debugging: Print the loaded words
+                    document.querySelector('.container').innerHTML = `
+                        <h1>Word<span style="color: red;">P</span>orn</h1>
+                        <p>Analgrammit. Mitä nyt vittua taas.</p>
+                        <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
+                        <div class="timer" id="timer">15</div>
+                        <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
+                        <div>
+                            <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
+                        </div>
+                        <div class="result" id="result"></div>
+                        <div id="notification" class="notification"></div>
+                        <div id="points" class="points"></div>
+                        <div id="finalMessage" class="final-message"></div>
+                        <div id="speedMessage" class="speed-message"></div>
+                    `;
+                    loadNewWord();
+                })
+                .catch(error => {
+                    console.error('Error loading words:', error);
+                    showError('Sanojen lataaminen epäonnistui. Tarkista CSV-tiedosto.');
+                });
+        }
+
+        function loadGroupWords() {
+            fetch('groupfak.csv') // Fetch words from groupfak.csv for game words
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Verkkovirhe: Sanojen lataaminen epäonnistui.');
@@ -298,21 +347,7 @@
                         }
                     }
                     console.log(words); // Debugging: Print the loaded words
-                    document.querySelector('.container').innerHTML = `
-                        <h1>Word<span style="color: red;">P</span>orn</h1>
-                        <p>Analgrammit. Mitä nyt vittua taas.</p>
-                        <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
-                        <div class="timer" id="timer">15</div>
-                        <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
-                        <div>
-                            <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
-                        </div>
-                        <div class="result" id="result"></div>
-                        <div id="notification" class="notification"></div>
-                        <div id="points" class="points"></div>
-                        <div id="finalMessage" class="final-message"></div>
-                    `;
-                    loadNewWord();
+                    startGame();
                 })
                 .catch(error => {
                     console.error('Error loading words:', error);
@@ -373,7 +408,7 @@
         }
 
         function loadNewWord() {
-            const groupName = `group${currentGroup}`;
+            const groupName = words.initial.length > 0 ? 'initial' : `group${currentGroup}`;
             console.log('Current Group:', groupName); // Debugging
             if (words[groupName].length > 0) {
                 const index = Math.floor(Math.random() * words[groupName].length);
@@ -411,6 +446,11 @@
                 if (currentGroupQuestion >= currentGroupCount[`group${currentGroup}`]) {
                     currentGroup++;
                     currentGroupQuestion = 0;
+                    document.getElementById('speedMessage').textContent = `Peli nopeutuu ja vaikeutuu`;
+                    setTimeout(() => {
+                        document.getElementById('speedMessage').textContent = '';
+                        document.getElementById('points').textContent = `Pisteet ${points}`;
+                    }, 3000);
                 }
                 if (currentGroup > 7) {
                     showBonusRound();
@@ -533,6 +573,7 @@
                     setTimeout(() => {
                         removeTextWithEffect(element);
                         paused = false;
+                        document.getElementById('whatIsThisLink').innerHTML = '<a href="javascript:void(0)" onclick="showAnalgrammi()">Mikä tämä on?</a>';
                     }, 3000);
                 }
             }
@@ -563,58 +604,23 @@
             }, 30);
         }
 
-        function showFirstCorrectPage() {
-            document.body.innerHTML = `
-                <div style="color: grey; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                    Oikein! Sana oli ${currentWord}. Ladataan uusi peli...
-                    <div id="countdown" style="margin-top: 20px;">3</div>
-                </div>`;
-            let countdown = 3;
-            const interval = setInterval(() => {
-                countdown--;
-                document.getElementById('countdown').textContent = countdown;
-                if (countdown <= 0) {
-                    clearInterval(interval);
-                    location.reload();
-                }
-            }, 1000);
-        }
-
-        function showNotification() {
-            const notification = document.getElementById('notification');
-            notification.textContent = `Pisteet ${points}`;
-            notification.style.opacity = 1;
-            setTimeout(() => {
-                notification.style.opacity = 0;
-            }, 2000);
-            setTimeout(() => {
-                loadNewWord();
-                paused = false;
-            }, 3000);
-        }
-
-        function showBonusRound() {
-            document.getElementById('notification').innerHTML = `
-                Bonusfinaalissa: <br> Hankalat <b>Haukkumanimet</b>
+        function startGame() {
+            document.querySelector('.container').innerHTML = `
+                <h1>Word<span style="color: red;">P</span>orn</h1>
+                <p>Analgrammit. Mitä nyt vittua taas.</p>
+                <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
+                <div class="timer" id="timer">15</div>
+                <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
+                <div>
+                    <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
+                </div>
+                <div class="result" id="result"></div>
+                <div id="notification" class="notification"></div>
+                <div id="points" class="points"></div>
+                <div id="finalMessage" class="final-message"></div>
+                <div id="speedMessage" class="speed-message"></div>
             `;
-            setTimeout(() => {
-                loadBonusWord();
-            }, 3000);
-        }
-
-        function loadBonusWord() {
-            if (words.bonus.length > 0) {
-                currentWord = words.bonus.shift();
-                const shuffledWord = shuffleWord(currentWord);
-                document.getElementById('shuffledWord').textContent = shuffledWord;
-                document.getElementById('shuffledWord').style.color = '#fff'; // Set color to white
-                document.getElementById('answer').value = '';
-                timeLeft = 15; // Reset time left to 15 seconds
-                document.getElementById('timer').textContent = timeLeft;
-                startTimer();
-            } else {
-                showFailureMessage();
-            }
+            loadNewWord();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
