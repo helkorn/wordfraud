@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WordGame</title>
+    <title>WordPorn</title>
     <style>
         @font-face {
             font-family: 'C64';
@@ -151,6 +151,13 @@
             color: red;
             font-size: 1.2em;
         }
+        .points {
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            font-size: 1em;
+            color: grey;
+        }
     </style>
     <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
@@ -158,16 +165,17 @@
 </head>
 <body>
     <div class="container">
-        <h1><span style="color: red;">P</span>WordGame</h1>
-        <p>Anagrammit. Mitä nyt taas.</p>
+        <h1><span style="color: red;">P</span>WordPorn</h1>
+        <p>Analgrammit. Mitä nyt vittua taas.</p>
         <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
-        <div class="timer" id="timer">15</div>
+        <div class="timer" id="timer">20</div>
         <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
         <div>
             <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
         </div>
         <div class="result" id="result"></div>
         <div class="notification" id="notification"></div>
+        <div class="points" id="points"></div>
     </div>
     <div class="link-box" id="whatIsThisLink">
         <a href="javascript:void(0)" onclick="showAnalgrammi()">Mikä tämä on?</a>
@@ -211,7 +219,7 @@
         let currentGroupQuestion = 0;
         let currentLevel = 0;
         let timer;
-        let timeLeft = 15;
+        let timeLeft = 20;
         let paused = false;
         let points = 0;
         let bestScore = 0;
@@ -280,16 +288,17 @@
                     }
                     console.log(words); // Debugging: Print the loaded words
                     document.querySelector('.container').innerHTML = `
-                        <h1><span style="color: red;">P</span>WordGame</h1>
-                        <p>Anagrammit. Mitä nyt taas.</p>
+                        <h1><span style="color: red;">P</span>WordPorn</h1>
+                        <p>Analgrammit. Mitä nyt vittua taas.</p>
                         <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
-                        <div class="timer" id="timer">15</div>
+                        <div class="timer" id="timer">20</div>
                         <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
                         <div>
                             <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
                         </div>
                         <div class="result" id="result"></div>
                         <div id="notification" class="notification"></div>
+                        <div id="points" class="points"></div>
                     `;
                     loadNewWord();
                 })
@@ -401,6 +410,7 @@
                     });
                 }
             }
+            document.getElementById('points').textContent = `Pisteet ${points}`;
         }
 
         function revealCorrectAnswer(callback) {
@@ -475,7 +485,7 @@
             box.id = 'typewriterBox';
             box.className = 'typewriter-box';
             document.body.appendChild(box);
-            const text = 'Tämä on helppo peli. Muodosta kirjaimista sana. Onnea peliin.';
+            const text = 'Rakas persehaju,\n\nTämä on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä, kuin sinäkin.\n\nMuodosta kirjaimista sana. Ole yllättävä kuin äitisi raskaus.\n\nOnnea peliin. Se on helppo kuten sinä.\n\nT Koiranoksennus johon nussit';
             showTypewriterEffect(text, box);
         }
 
