@@ -232,7 +232,8 @@
         // Function to decode UTF-8 encoded text
         function decodeUTF8(text) {
             try {
-                return new TextDecoder("utf-8").decode(new Uint8Array(text.split('').map(char => char.charCodeAt(0))));
+                const decoder = new TextDecoder('utf-8');
+                return decoder.decode(new Uint8Array(text.split('').map(char => char.charCodeAt(0))));
             } catch (e) {
                 return text;
             }
