@@ -120,9 +120,9 @@
             border: 1px solid #333;
             border-radius: 5px;
             font-family: 'Typewriter', monospace;
-            font-size: 13px;
+            font-size: 14px; /* Increase font size */
             white-space: pre-wrap;
-            width: 200px;
+            width: 240px; /* Increase width */
         }
         .waiting {
             font-size: 0.8em;
@@ -482,12 +482,11 @@
         }
 
         function showHighScoreInput() {
-            document.body.innerHTML = `
-                <div style="color: grey; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                    Oho, kauden parhaat ${points}. Kirjoita nimesi alle.
-                    <input type="text" id="playerName" placeholder="Nimesi" style="display: block; margin: 20px auto; padding: 10px; font-size: 16px;">
-                    <button onclick="savePlayerName()">Tallenna</button>
-                </div>`;
+            document.getElementById('finalMessage').innerHTML = `
+                Whoop my biatch. Kauden paras tulos ${points}! Kirjoita nimesi alle.
+                <input type="text" id="playerName" placeholder="Pelaaja" style="display: block; margin: 20px auto; padding: 10px; font-size: 16px;">
+                <button onclick="savePlayerName()">LÄHETÄ</button>
+            `;
         }
 
         function savePlayerName() {
@@ -532,13 +531,36 @@
                     setTimeout(typeNext, delay);
                 } else {
                     setTimeout(() => {
-                        element.remove();
-                        loadNewWord();
+                        removeTextWithEffect(element);
                         paused = false;
                     }, 3000);
                 }
             }
             typeNext();
+        }
+
+        function removeTextWithEffect(element) {
+            let grayValue = 245;
+            let upperIndex = 0;
+            const lines = element.textContent.split('\n');
+            const interval = setInterval(() => {
+                if (element.textContent.length > 0) {
+                    if (upperIndex < lines.length) {
+                        lines[upperIndex] = '';
+                        upperIndex++;
+                        element.textContent = lines.join('\n');
+                    } else {
+                        const randomIndex = Math.floor(Math.random() * element.textContent.length);
+                        element.textContent = element.textContent.slice(0, randomIndex) + element.textContent.slice(randomIndex + 1);
+                    }
+                    grayValue -= 5;
+                    element.style.backgroundColor = `rgb(${grayValue}, ${grayValue}, ${grayValue})`;
+                } else {
+                    clearInterval(interval);
+                    element.remove();
+                    loadNewWord();
+                }
+            }, 30);
         }
 
         function showFirstCorrectPage() {
@@ -572,14 +594,10 @@
         }
 
         function showBonusRound() {
-            document.body.innerHTML = `
-                <div style="color: grey; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                    Bonusfinaalissa: <br> Hankalat <b>Haukkumanimet</b>
-                </div>`;
+            document.getElementById('notification').innerHTML = `
+                Bonusfinaalissa: <br> Hankalat <b>Haukkumanimet</b>
+            `;
             setTimeout(() => {
-                const box = document.createElement('div');
-                box.className = 'notification';
-                document.body.appendChild(box);
                 loadBonusWord();
             }, 3000);
         }
