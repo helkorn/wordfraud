@@ -325,15 +325,9 @@
             }
 
             combine('', letters);
-            return Array.from(results).sort();
-        }
-
-        function showConfetti() {
-            confetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.6 }
-            });
+            
+            // Muunnetaan setti taulukoksi ja lajitellaan ensin pituuden mukaan (pisin ensin) ja sitten aakkosjärjestykseen
+            return Array.from(results).sort((a, b) => b.length - a.length || a.localeCompare(b));
         }
 
         function findWords() {
