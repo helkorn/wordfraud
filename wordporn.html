@@ -459,7 +459,7 @@
                 }
             } else {
                 if (points > 0) {
-                    showFailureMessage();
+                    showFinalMessage();
                 } else {
                     revealCorrectAnswer(loadNewWord);
                 }
@@ -494,25 +494,26 @@
 
         function handleTimeOut() {
             if (points > 0) {
-                showFailureMessage();
+                showFinalMessage();
             } else {
                 revealCorrectAnswer(loadNewWord);
             }
         }
 
-        function showFailureMessage() {
-            const text = `
-                Pisteesi ${points}. Analgrammi ${currentWord.toLowerCase()} oli oikein <span style="color: grey;">${currentWord.toLowerCase()}</span>.<br>
-                Kauden paras ${bestPlayer} johtaa haavissa ${bestScore} doinskia.<br>
-                Eli helvetillinen pettymys jälleen.
-            `;
-            showTypewriterEffect(text);
+        function showFinalMessage() {
+            const finalMessageElement = document.getElementById('finalMessage');
+            const pointsText = `Pisteesi ${points}.`;
+            const correctAnswerText = `Analgrammi ${currentWord.toLowerCase()} oli oikein.`;
+            const bestScoreText = `Kauden paras ${bestPlayer} johtaa haavissa ${bestScore} doinskia.`;
+            const disappointmentText = `Eli helvetillinen pettymys jälleen.`;
+
+            finalMessageElement.innerHTML = pointsText;
             setTimeout(() => {
-                document.getElementById('finalMessage').textContent = `Sehän meni yllättävän nopeasti vituiksi.`;
+                finalMessageElement.innerHTML = correctAnswerText;
                 setTimeout(() => {
-                    document.getElementById('finalMessage').textContent = `Pisteet ${points}. Kauden paras on ${bestPlayer} ${bestScore} doinskilla.`;
+                    finalMessageElement.innerHTML = bestScoreText;
                     setTimeout(() => {
-                        document.getElementById('finalMessage').textContent = `Eli helvetillinen pettymys bitch.`;
+                        finalMessageElement.innerHTML = disappointmentText;
                         setTimeout(() => {
                             loadNewWord();
                         }, 3000);
@@ -574,7 +575,7 @@
                         removeTextWithEffect(element);
                         paused = false;
                         document.getElementById('whatIsThisLink').innerHTML = '<a href="javascript:void(0)" onclick="showAnalgrammi()">Mikä tämä on?</a>';
-                    }, 3000);
+                    }, 3500); // Increase time before fading out
                 }
             }
             typeNext();
@@ -615,7 +616,7 @@
                     <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
                 </div>
                 <div class="result" id="result"></div>
-                <div id="notification" class="notification"></div>
+                <div class="notification" id="notification"></div>
                 <div id="points" class="points"></div>
                 <div id="finalMessage" class="final-message"></div>
                 <div id="speedMessage" class="speed-message"></div>
