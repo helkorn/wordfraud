@@ -232,7 +232,7 @@
         // Function to decode UTF-8 encoded text
         function decodeUTF8(text) {
             try {
-                return decodeURIComponent(escape(text));
+                return new TextDecoder("utf-8").decode(new Uint8Array(text.split('').map(char => char.charCodeAt(0))));
             } catch (e) {
                 return text;
             }
@@ -249,12 +249,13 @@
                     return response.text();
                 })
                 .then(text => {
-                    const lines = text.split('\n');
+                    const decodedText = decodeUTF8(text);
+                    const lines = decodedText.split('\n');
                     console.log('CSV lines:', lines); // Debugging: Print the loaded lines
                     for (let i = 1; i < lines.length; i++) { // Start from 1 to skip header
                         const [group, word] = lines[i].split(',');
                         if (group && word) {
-                            words[`group${group.trim()}`].push(decodeUTF8(word.trim()));
+                            words[`group${group.trim()}`].push(word.trim());
                         }
                     }
                     console.log(words); // Debugging: Print the loaded words
