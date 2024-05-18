@@ -153,7 +153,7 @@
         }
         .points {
             position: absolute;
-            top: 60px;
+            top: 100px; /* Adjust this to position the points text correctly */
             right: 20px;
             font-size: 1em;
             color: grey;
@@ -165,10 +165,10 @@
 </head>
 <body>
     <div class="container">
-        <h1><span style="color: red;">P</span>WordPorn</h1>
+        <h1>Word<span style="color: red;">P</span>orn</h1>
         <p>Analgrammit. Mitä nyt vittua taas.</p>
         <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
-        <div class="timer" id="timer">20</div>
+        <div class="timer" id="timer">15</div>
         <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
         <div>
             <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
@@ -219,7 +219,7 @@
         let currentGroupQuestion = 0;
         let currentLevel = 0;
         let timer;
-        let timeLeft = 20;
+        let timeLeft = 15;
         let paused = false;
         let points = 0;
         let bestScore = 0;
@@ -288,10 +288,10 @@
                     }
                     console.log(words); // Debugging: Print the loaded words
                     document.querySelector('.container').innerHTML = `
-                        <h1><span style="color: red;">P</span>WordPorn</h1>
+                        <h1>Word<span style="color: red;">P</span>orn</h1>
                         <p>Analgrammit. Mitä nyt vittua taas.</p>
                         <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
-                        <div class="timer" id="timer">20</div>
+                        <div class="timer" id="timer">15</div>
                         <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
                         <div>
                             <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
@@ -367,6 +367,7 @@
                 words[groupName].splice(index, 1);
                 const shuffledWord = shuffleWord(currentWord);
                 document.getElementById('shuffledWord').textContent = shuffledWord;
+                document.getElementById('shuffledWord').style.color = '#fff'; // Set color to white
                 document.getElementById('answer').value = '';
                 document.getElementById('timer').textContent = timeLeft;
                 startTimer();
@@ -410,7 +411,9 @@
                     });
                 }
             }
-            document.getElementById('points').textContent = `Pisteet ${points}`;
+            if (points > 0) {
+                document.getElementById('points').textContent = `Pisteet ${points}`;
+            }
         }
 
         function revealCorrectAnswer(callback) {
@@ -456,6 +459,18 @@
                 Eli helvetillinen pettymys jälleen.
             `;
             showTypewriterEffect(text);
+            setTimeout(() => {
+                document.getElementById('points').textContent = `Sehän meni yllättävän nopeasti vituiksi.`;
+                setTimeout(() => {
+                    document.getElementById('points').textContent = `Pisteet ${points}. Kauden paras on ${bestPlayer} ${bestScore} doinskilla.`;
+                    setTimeout(() => {
+                        document.getElementById('points').textContent = `Eli helvetillinen pettymys bitch.`;
+                        setTimeout(() => {
+                            loadNewWord();
+                        }, 2000);
+                    }, 2000);
+                }, 2000);
+            }, 2000);
         }
 
         function showHighScoreInput() {
@@ -566,6 +581,7 @@
                 currentWord = words.bonus.shift();
                 const shuffledWord = shuffleWord(currentWord);
                 document.getElementById('shuffledWord').textContent = shuffledWord;
+                document.getElementById('shuffledWord').style.color = '#fff'; // Set color to white
                 document.getElementById('answer').value = '';
                 document.getElementById('timer').textContent = timeLeft;
                 startTimer();
