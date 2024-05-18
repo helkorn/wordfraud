@@ -167,7 +167,7 @@
             <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
         </div>
         <div class="result" id="result"></div>
-        <div id="notification" class="notification"></div>
+        <div class="notification" id="notification"></div>
     </div>
     <div class="link-box" id="whatIsThisLink">
         <a href="javascript:void(0)" onclick="showAnalgrammi()">Mikä tämä on?</a>
@@ -253,7 +253,7 @@
                     console.log('Raw CSV text:', text); // Debugging: Print the raw text
                     const decodedText = decodeUTF8(text);
                     console.log('Decoded CSV text:', decodedText); // Debugging: Print the decoded text
-                    const lines = decodedText.split('\n');
+                    const lines = decodedText.split('\n').filter(line => line.trim() !== '');
                     if (lines.length < 2) {
                         showError('CSV-tiedosto ei sisällä riittävästi rivejä.');
                         return;
@@ -265,8 +265,10 @@
                         const [group, word] = line.split(',');
                         if (group && word) {
                             const groupKey = `group${group.trim()}`;
-                            if (words[groupKey]) {
+                            if (words.hasOwnProperty(groupKey)) {
                                 words[groupKey].push(word.trim());
+                            } else if (group.trim() === 'bonus') {
+                                words.bonus.push(word.trim());
                             } else {
                                 showError(`Virheellinen ryhmä: ${group.trim()} rivillä ${i + 1}`);
                                 return;
