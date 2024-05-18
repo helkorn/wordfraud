@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WordPorn</title>
+    <title>WordGame</title>
     <style>
         @font-face {
             font-family: 'C64';
@@ -158,8 +158,8 @@
 </head>
 <body>
     <div class="container">
-        <h1><span>P</span>WordPorn</h1>
-        <p>Analgrammit. Mitä nyt vittua taas.</p>
+        <h1><span style="color: red;">P</span>WordGame</h1>
+        <p>Anagrammit. Mitä nyt taas.</p>
         <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
         <div class="timer" id="timer">15</div>
         <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
@@ -254,17 +254,24 @@
                     const decodedText = decodeUTF8(text);
                     console.log('Decoded CSV text:', decodedText); // Debugging: Print the decoded text
                     const lines = decodedText.split('\n');
+                    if (lines.length < 2) {
+                        showError('CSV-tiedosto ei sisällä riittävästi rivejä.');
+                        return;
+                    }
                     console.log('CSV lines:', lines); // Debugging: Print the loaded lines
                     for (let i = 1; i < lines.length; i++) { // Start from 1 to skip header
                         const [group, word] = lines[i].split(',');
                         if (group && word) {
                             words[`group${group.trim()}`].push(word.trim());
+                        } else {
+                            showError(`Virhe rivillä ${i + 1}: ${lines[i]}`);
+                            return;
                         }
                     }
                     console.log(words); // Debugging: Print the loaded words
                     document.querySelector('.container').innerHTML = `
-                        <h1><span>P</span>WordPorn</h1>
-                        <p>Analgrammit. Mitä nyt vittua taas.</p>
+                        <h1><span style="color: red;">P</span>WordGame</h1>
+                        <p>Anagrammit. Mitä nyt taas.</p>
                         <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
                         <div class="timer" id="timer">15</div>
                         <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
@@ -284,7 +291,7 @@
 
         // Load best score from Firestore
         function loadBestScore() {
-            db.doc("/wordporn_scores/O0GVUONRTmF65Q9k9CU2").get().then((doc) => {
+            db.doc("/wordgame_scores/O0GVUONRTmF65Q9k9CU2").get().then((doc) => {
                 if (doc.exists) {
                     const data = doc.data();
                     bestScore = data.score;
@@ -300,7 +307,7 @@
 
         // Save best score to Firestore
         function saveBestScore(score, player) {
-            db.doc("/wordporn_scores/O0GVUONRTmF65Q9k9CU2").set({
+            db.doc("/wordgame_scores/O0GVUONRTmF65Q9k9CU2").set({
                 score: score,
                 player: player
             }).then(() => {
@@ -510,7 +517,7 @@
 
         function showNotification() {
             const notification = document.getElementById('notification');
-            notification.textContent = `Paskaämpäri pyöräytti ${points} pistettä kasaan. Pidä perse ylhäällä, koko ajan tulee. Ladataan vaikeampi peli..`;
+            notification.textContent = `Pisteet ${points} kasassa. Pidä ylhäällä, koko ajan tulee. Ladataan vaikeampi peli..`;
             notification.style.opacity = 1;
             setTimeout(() => {
                 notification.style.opacity = 0;
