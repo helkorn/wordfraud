@@ -128,14 +128,14 @@
             cursor: pointer;
             border: 1px solid #ccc;
             border-radius: 50px;
-            background-color: #333333;
+            background-color: rgba(51, 51, 51, 0.6);
             color: #ffffff;
             transition: background-color 0.3s;
             margin-top: 10px;
             display: none;
         }
         .reset-button:hover {
-            background-color: #555555;
+            background-color: rgba(85, 85, 85, 0.6);
         }
         .result-title {
             font-size: 1em;
@@ -226,6 +226,13 @@
         .image-container {
             display: none;
         }
+        .inline-inputs {
+            display: flex;
+            justify-content: space-between;
+        }
+        .inline-inputs input[type="text"] {
+            width: 48%;
+        }
     </style>
 </head>
 <body>
@@ -236,6 +243,11 @@
         <div class="input-container" id="inputContainer">
             <h1>WordFraud 1.0</h1>
             <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off" disabled>
+            <p>Lisää kirjaimia:</p>
+            <div class="inline-inputs">
+                <input type="text" id="startLetters" placeholder="Alkaa">
+                <input type="text" id="endLetters" placeholder="Loppuu">
+            </div>
             <button id="fraudeloiButton" onclick="findWords()" disabled>Fraudeloi</button>
         </div>
         <div class="container" id="mainContainer" style="display: none;">
@@ -336,7 +348,11 @@
                 return;
             }
 
-            const letters = document.getElementById('letters').value.toUpperCase();
+            let letters = document.getElementById('letters').value.toUpperCase();
+            const startLetters = document.getElementById('startLetters').value.toUpperCase();
+            const endLetters = document.getElementById('endLetters').value.toUpperCase();
+            letters = startLetters + letters + endLetters;
+
             const column1 = document.getElementById('column1');
             const column2 = document.getElementById('column2');
             const resultTitle = document.getElementById('resultTitle');
