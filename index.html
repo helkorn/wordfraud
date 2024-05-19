@@ -226,14 +226,6 @@
         .image-container {
             display: none;
         }
-        .sub-input-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-        .sub-input-container input {
-            width: calc(40% - 20px);
-        }
     </style>
 </head>
 <body>
@@ -244,9 +236,9 @@
         <div class="input-container" id="inputContainer">
             <h1>WordFraud 1.0</h1>
             <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off" disabled>
-            <div class="sub-input-container">
-                <input type="text" id="startLetters" placeholder="Alku">
-                <input type="text" id="endLetters" placeholder="Loppu">
+            <div class="additional-inputs">
+                <input type="text" id="prefix" placeholder="Alkuun" autocomplete="off">
+                <input type="text" id="suffix" placeholder="Loppuun" autocomplete="off">
             </div>
             <button id="fraudeloiButton" onclick="findWords()" disabled>Fraudeloi</button>
         </div>
@@ -349,8 +341,8 @@
             }
 
             const letters = document.getElementById('letters').value.toUpperCase();
-            const startLetters = document.getElementById('startLetters').value.toLowerCase();
-            const endLetters = document.getElementById('endLetters').value.toLowerCase();
+            const prefix = document.getElementById('prefix').value.toLowerCase();
+            const suffix = document.getElementById('suffix').value.toLowerCase();
             const column1 = document.getElementById('column1');
             const column2 = document.getElementById('column2');
             const resultTitle = document.getElementById('resultTitle');
@@ -371,9 +363,16 @@
                 return;
             }
             console.time('findPossibleWords');
-            const possibleWords = getAllCombinations(letters.toLowerCase()).filter(word => {
-                return (startLetters === "" || word.startsWith(startLetters)) && (endLetters === "" || word.endsWith(endLetters));
-            });
+            let possibleWords = getAllCombinations(letters.toLowerCase());
+
+            // Suodatetaan mahdolliset sanat alku- ja loppuliitteiden perusteella
+            if (prefix) {
+                possibleWords = possibleWords.filter(word => word.startsWith(prefix));
+            }
+            if (suffix) {
+                possibleWords = possibleWords.filter(word => word.endsWith(suffix));
+            }
+
             console.timeEnd('findPossibleWords');
 
             const containsOffensive = possibleWords.some(word => isOffensiveWord(word.toLowerCase()));
@@ -551,6 +550,10 @@
                     window.location.href = 'pacman.html';
                 }, delay * lines.length + 4500);
             });
+        }
+
+        function lockInAnswer() {
+            window.location.href = 'wordporn.html';
         }
 
         function findWordsForWord(word) {
