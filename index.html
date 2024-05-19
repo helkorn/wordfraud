@@ -235,12 +235,13 @@
     <div class="container" id="mainContent">
         <div class="input-container" id="inputContainer">
             <h1>WordFraud 1.0</h1>
-            <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off" disabled>
-            <div class="additional-inputs">
-                <input type="text" id="prefix" placeholder="Alkuun" autocomplete="off">
-                <input type="text" id="suffix" placeholder="Loppuun" autocomplete="off">
+            <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off">
+            <div>
+                <label for="startLetters">Voit lisätä: </label>
+                <input type="text" id="startLetters" placeholder="Alkuun">
+                <input type="text" id="endLetters" placeholder="Loppuun">
             </div>
-            <button id="fraudeloiButton" onclick="findWords()" disabled>Fraudeloi</button>
+            <button id="fraudeloiButton" onclick="findWords()">Fraudeloi</button>
         </div>
         <div class="container" id="mainContainer" style="display: none;">
             <div class="result-title" id="resultTitle"></div>
@@ -341,8 +342,8 @@
             }
 
             const letters = document.getElementById('letters').value.toUpperCase();
-            const prefix = document.getElementById('prefix').value.toLowerCase();
-            const suffix = document.getElementById('suffix').value.toLowerCase();
+            const startLetters = document.getElementById('startLetters').value.toLowerCase();
+            const endLetters = document.getElementById('endLetters').value.toLowerCase();
             const column1 = document.getElementById('column1');
             const column2 = document.getElementById('column2');
             const resultTitle = document.getElementById('resultTitle');
@@ -358,21 +359,19 @@
             resultTitle.style.display = 'none';
             highlightMessage.style.display = 'none';
             superHighlightMessage.style.display = 'none';
-            if (letters.length < 2 || letters.length > 7) {
-                alert("Anna 2-7 kirjainta.");
+            if (letters.length < 2) {
+                alert("Anna vähintään 2 kirjainta.");
                 return;
             }
             console.time('findPossibleWords');
             let possibleWords = getAllCombinations(letters.toLowerCase());
 
-            // Suodatetaan mahdolliset sanat alku- ja loppuliitteiden perusteella
-            if (prefix) {
-                possibleWords = possibleWords.filter(word => word.startsWith(prefix));
+            if (startLetters) {
+                possibleWords = possibleWords.filter(word => word.startsWith(startLetters));
             }
-            if (suffix) {
-                possibleWords = possibleWords.filter(word => word.endsWith(suffix));
+            if (endLetters) {
+                possibleWords = possibleWords.filter(word => word.endsWith(endLetters));
             }
-
             console.timeEnd('findPossibleWords');
 
             const containsOffensive = possibleWords.some(word => isOffensiveWord(word.toLowerCase()));
@@ -401,12 +400,12 @@
             if (resultCount > superThreshold) {
                 superHighlightMessage.style.display = 'block';
                 showConfetti();
-                resultTitle.textContent = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
+                resultTitle.textContent = `Kysyit: ${letters}${startLetters ? ' (alku: ' + startLetters.toUpperCase() + ')' : ''}${endLetters ? ' (loppu: ' + endLetters.toUpperCase() + ')' : ''}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
             } else if (resultCount > medianThreshold) {
                 highlightMessage.style.display = 'block';
-                resultTitle.textContent = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
+                resultTitle.textContent = `Kysyit: ${letters}${startLetters ? ' (alku: ' + startLetters.toUpperCase() + ')' : ''}${endLetters ? ' (loppu: ' + endLetters.toUpperCase() + ')' : ''}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
             } else {
-                resultTitle.textContent = `Kysyit: ${letters}`;
+                resultTitle.textContent = `Kysyit: ${letters}${startLetters ? ' (alku: ' + startLetters.toUpperCase() + ')' : ''}${endLetters ? ' (loppu: ' + endLetters.toUpperCase() + ')' : ''}`;
             }
 
             inputContainer.style.display = 'none';
@@ -550,10 +549,6 @@
                     window.location.href = 'pacman.html';
                 }, delay * lines.length + 4500);
             });
-        }
-
-        function lockInAnswer() {
-            window.location.href = 'wordporn.html';
         }
 
         function findWordsForWord(word) {
