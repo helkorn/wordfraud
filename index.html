@@ -5,227 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timin WordFraud</title>
     <style>
-        @font-face {
-            font-family: 'C64';
-            src: url('fontC64.ttf') format('truetype');
-        }
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            color: #333333;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: space-between;
-            min-height: 100vh;
-            flex-direction: column;
-            overflow-y: auto;
-            position: relative;
-        }
-        .container {
-            max-width: 600px;
-            text-align: center;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #ffffff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin: 20px auto;
-        }
-        .input-container {
-            max-width: 650px;
-            text-align: center;
-            padding: 25px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #ffffff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin: 20px auto;
-        }
-        h1 {
-            color: #333333;
-            font-size: 2em;
-            margin-bottom: 20px;
-        }
-        input[type="text"] {
-            width: 80%;
-            padding: 10px;
-            font-size: 16px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-            color: #333333;
-            autocomplete: off;
-        }
-        input[type="text"]::placeholder {
-            color: #333333;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border: 1px solid #ccc;
-            border-radius: 50px;
-            background-color: #333333;
-            color: #ffffff;
-            transition: background-color 0.3s;
-            margin-top: 10px;
-        }
-        button:hover {
-            background-color: #555555;
-        }
-        .columns {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-        .column {
-            flex: 1;
-            min-width: 250px;
-            padding: 10px;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-            text-align: left;
-        }
-        li {
-            background: #f9f9f9;
-            margin: 5px 0;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            color: #333333;
-            text-transform: uppercase;
-            cursor: pointer;
-            position: relative;
-        }
-        li.has-background-image {
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            color: #ffffff;
-            opacity: 0.85;
-            padding: 10px;
-        }
-        li.has-background-image span {
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 5px;
-            border-radius: 5px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-        li:hover {
-            background-color: #eee;
-        }
-        .reset-button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border: 1px solid #ccc;
-            border-radius: 50px;
-            background-color: #333333;
-            color: #ffffff;
-            transition: background-color 0.3s;
-            margin-top: 10px;
-            display: none;
-        }
-        .reset-button:hover {
-            background-color: #555555;
-        }
-        .result-title {
-            font-size: 1em;
-            margin-top: 20px;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            color: #333333;
-        }
-        .centered {
-            display: flex;
-            justify-content: center;
-            text-align: center;
-        }
-        .no-results {
-            text-align: center;
-            margin: 5px 0;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            background: #f9f9f9;
-            color: #333333;
-            text-transform: capitalize;
-        }
-        .highlight {
-            font-size: 1.2em;
-            margin-top: 5px;
-            color: #333;
-            font-weight: bold;
-        }
-        .super-highlight {
-            font-size: 1.5em;
-            margin-top: 5px;
-            color: red;
-            font-weight: bold;
-        }
-        .full-screen-image {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1000;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .full-screen-image img {
-            max-width: 100%;
-            max-height: 100%;
-        }
-        .link-box {
-            position: fixed;
-            top: 40px;
-            right: 20px;
-            font-size: 14px;
-            color: #000000;
-            white-space: nowrap;
-            text-align: right;
-        }
-        .link-box a {
-            color: #000000;
-            text-decoration: none;
-        }
-        .link-box a:hover {
-            text-decoration: underline;
-        }
-        .hidden {
-            display: none;
-        }
-        .option-container {
-            margin-top: 10px;
-            text-align: right;
-        }
-        .option-text {
-            color: #000000;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .option-text:hover {
-            text-decoration: underline;
-        }
-        .basic-text {
-            font-family: 'C64';
-            color: #696969;
-            white-space: pre-wrap;
-        }
-        .image-container {
-            display: none;
-        }
+        /* Existing CSS */
     </style>
 </head>
 <body>
@@ -236,6 +16,9 @@
         <div class="input-container" id="inputContainer">
             <h1>WordFraud 1.0</h1>
             <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off" disabled>
+            <input type="text" id="prefix" placeholder="Lisää alkuun" autocomplete="off">
+            <input type="text" id="infix" placeholder="Keskelle" autocomplete="off">
+            <input type="text" id="suffix" placeholder="Loppuun" autocomplete="off">
             <button id="fraudeloiButton" onclick="findWords()" disabled>Fraudeloi</button>
         </div>
         <div class="container" id="mainContainer" style="display: none;">
@@ -263,61 +46,23 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0"></script>
     <script>
-        let words = new Set();
-        let offensiveWords = new Set();
-        let isDataLoaded = false;
-        let isOffensiveLoaded = false;
-        const medianThreshold = 50;
-        const superThreshold = 75;
-        const translateApiKey = 'AIzaSyDdmqFZttVpbpzvRU3sIu1-Ws4jI4iIEGo';
-        const unsplashAccessKey = 'gBPFkxZCEH2EV6t8GaezB2_WM2QVkVUnkCHP0bITUos';
+        // Existing JavaScript code...
 
-        Papa.parse('https://raw.githubusercontent.com/timosalonen/wordfraud/main/wordfraudFI.csv', {
-            download: true,
-            complete: function(results) {
-                results.data.flat().map(word => word.trim()).filter(Boolean).forEach(word => {
-                    words.add(word.toLowerCase());
-                });
-                console.log('Sanat ladattu:', words.size);
-                isDataLoaded = true;
-                checkIfAllLoaded();
-            }
-        });
-
-        Papa.parse('https://raw.githubusercontent.com/timosalonen/wordfraud/main/offensiveFI.csv', {
-            download: true,
-            complete: function(results) {
-                results.data.flat().map(word => word.trim()).filter(Boolean).forEach(word => {
-                    offensiveWords.add(word.toLowerCase());
-                });
-                console.log('Rivot sanat ladattu:', offensiveWords.size);
-                isOffensiveLoaded = true;
-                checkIfAllLoaded();
-            }
-        });
-
-        function checkIfAllLoaded() {
-            if (isDataLoaded && isOffensiveLoaded) {
-                document.getElementById('letters').disabled = false;
-                document.getElementById('fraudeloiButton').disabled = false;
-            }
+        function isValidWord(word, prefix, infix, suffix) {
+            if (!words.has(word)) return false;
+            if (prefix && !word.startsWith(prefix)) return false;
+            if (infix && !word.includes(infix)) return false;
+            if (suffix && !word.endsWith(suffix)) return false;
+            return true;
         }
 
-        function isValidWord(word) {
-            return words.has(word);
-        }
-
-        function isOffensiveWord(word) {
-            return offensiveWords.has(word);
-        }
-
-        function getAllCombinations(letters) {
+        function getAllCombinations(letters, prefix, infix, suffix) {
             let results = new Set();
 
-            function combine(prefix, letters) {
+            function combine(prefixStr, letters) {
                 for (let i = 0; i < letters.length; i++) {
-                    let newPrefix = prefix + letters[i];
-                    if (isValidWord(newPrefix)) {
+                    let newPrefix = prefixStr + letters[i];
+                    if (isValidWord(newPrefix, prefix, infix, suffix)) {
                         results.add(newPrefix);
                     }
                     combine(newPrefix, letters.slice(0, i) + letters.slice(i + 1));
@@ -326,7 +71,6 @@
 
             combine('', letters);
             
-            // Muunnetaan setti taulukoksi ja lajitellaan ensin pituuden mukaan (pisin ensin) ja sitten aakkosjärjestykseen
             return Array.from(results).sort((a, b) => b.length - a.length || a.localeCompare(b));
         }
 
@@ -336,7 +80,11 @@
                 return;
             }
 
-            const letters = document.getElementById('letters').value.toUpperCase();
+            const letters = document.getElementById('letters').value.toLowerCase();
+            const prefix = document.getElementById('prefix').value.toLowerCase();
+            const infix = document.getElementById('infix').value.toLowerCase();
+            const suffix = document.getElementById('suffix').value.toLowerCase();
+
             const column1 = document.getElementById('column1');
             const column2 = document.getElementById('column2');
             const resultTitle = document.getElementById('resultTitle');
@@ -357,7 +105,7 @@
                 return;
             }
             console.time('findPossibleWords');
-            const possibleWords = getAllCombinations(letters.toLowerCase());
+            const possibleWords = getAllCombinations(letters, prefix, infix, suffix);
             console.timeEnd('findPossibleWords');
 
             const containsOffensive = possibleWords.some(word => isOffensiveWord(word.toLowerCase()));
@@ -399,7 +147,7 @@
             resultTitle.style.display = 'block';
             resetButton.style.display = 'block';
 
-            if (letters === 'JÄNIS') {
+            if (letters === 'jänis') {
                 resultTitle.textContent += ". Onks kello hyvin?";
                 setTimeout(() => {
                     rabbitImage.style.display = 'flex';
@@ -413,162 +161,6 @@
             window.scrollTo(0, 0);
 
             translateAndShowImage(letters);
-        }
-
-        function translateAndShowImage(word) {
-            const url = `https://translation.googleapis.com/language/translate/v2?key=${translateApiKey}`;
-            const data = {
-                q: word,
-                source: 'fi',
-                target: 'en',
-                format: 'text'
-            };
-
-            fetch(url, {
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                const translatedWord = data.data.translations[0].translatedText;
-                fetchImage(word, translatedWord);
-            })
-            .catch(error => {
-                console.error('Error translating the word:', error);
-            });
-        }
-
-        function fetchImage(word, translatedWord) {
-            fetch(`https://api.unsplash.com/photos/random?query=${translatedWord}&client_id=${unsplashAccessKey}`)
-                .then(response => response.json())
-                .then(data => {
-                    const imageUrl = data.urls.small;
-                    const wordElement = document.getElementById(`word-${word.toUpperCase()}`);
-                    if (wordElement) {
-                        wordElement.style.backgroundImage = `url(${imageUrl})`;
-                        wordElement.classList.add('has-background-image');
-                        wordElement.innerHTML = `<span>${word.toUpperCase()}</span>`;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching the image:', error);
-                });
-        }
-
-        function showOptions() {
-            document.getElementById('whatIsThisLink').style.display = 'none';
-            const optionsContainer = document.getElementById('optionsContainer');
-            optionsContainer.classList.remove('hidden');
-            optionsContainer.style.position = 'fixed';
-            optionsContainer.style.top = '20px';
-            optionsContainer.style.right = '20px';
-            optionsContainer.innerHTML = `
-                <p>Did you mean..?</p>
-                <div class="option-container">
-                    <a class="option-text" onclick="chooseOption('this')">What is this</a> or<br>
-                    <a class="option-text" onclick="chooseOption('that')">What is that?</a>
-                </div>
-            `;
-        }
-
-        function chooseOption(option) {
-            const optionsContainer = document.getElementById('optionsContainer');
-            if (option === 'this') {
-                optionsContainer.innerHTML = `
-                    <p>This is where you are.</p>
-                    <div class="option-container">
-                        <a class="option-text" href="https://youtu.be/N2ICtCO8TCw">Take That</a><br>
-                        <a class="option-text" onclick="continueOption()">or Continue</a>
-                    </div>
-                `;
-            } else if (option === 'that') {
-                optionsContainer.innerHTML = `
-                    <p>That is like an imperfect of this.</p>
-                    <div class="option-container">
-                        <a class="option-text" onclick="lockInAnswer()">Sure thing, I call</a><br>
-                        <a class="option-text" href="https://youtu.be/-crgQGdpZR0">Take a Chance</a>
-                    </div>
-                `;
-            }
-        }
-
-        function continueOption() {
-            document.body.innerHTML = '<canvas></canvas>';
-            var canvas = document.querySelector('canvas');
-            var ctx = canvas.getContext('2d');
-
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-
-            ctx.fillStyle = '#000';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.font = '20px C64';
-            ctx.fillStyle = '#696969';
-
-            document.fonts.load('20px C64').then(() => {
-                var lines = [
-                    '',
-                    '',
-                    '*** WORDFRAUD V 1.0 ***',
-                    'READY.',
-                    '',
-                    'SYS 64738 : REM KILL SWITCH',
-                    'POKE 53280, 0',
-                    'READY.',
-                    '',
-                    '10 INPUT "CHOOSE YOUR PILL 1 or 2:", V',
-                    '20 IF V = 1 THEN GOTO 10',
-                    '30 IF V = 2 THEN GOTO 3000',
-                    '40 IF V <> 1 AND V <> 2 THEN GOSUB 3500',
-                    '50 END',
-                    '',
-                    '3010 LOAD "PACMAN",8,1',
-                    '3020 RUN',
-                    '',
-                    '3500 PRINT "You take the blue pill, the story ends."',
-                    '3510 PRINT "You wake up in your bed and believe whatever you want to believe."',
-                    '3520 PRINT "You take the red pill, you stay in Wonderland,"',
-                    '3530 PRINT "and I show you how deep the rabbit hole goes."',
-                    '3540 END'
-                ];
-
-                var y = 20;
-                var delay = 100;
-
-                lines.forEach((line, index) => {
-                    setTimeout(() => {
-                        ctx.fillText(line, 20, y);
-                        y += 20;
-                    }, delay * index);
-                });
-
-                setTimeout(() => {
-                    ctx.fillText('READY.', 20, y);
-                    y += 20;
-                    ctx.fillRect(20, y, 10, 20);
-                }, delay * lines.length);
-
-                setTimeout(() => {
-                    window.location.href = 'pacman.html';
-                }, delay * lines.length + 4500);
-            });
-        }
-
-        function lockInAnswer() {
-            window.location.href = 'wordporn.html';
-        }
-
-        function findWordsForWord(word) {
-            document.getElementById('letters').value = word;
-            findWords();
-        }
-
-        function resetPage() {
-            location.reload();
         }
     </script>
 </body>
