@@ -237,7 +237,8 @@
 </head>
 <body>
     <div class="link-box" id="whatIsThisLink">
-        <a href="javascript:void(0)" onclick="showOptions()">What is this? </a>
+        <a href="wordporn.html">What is this? </a>
+        <a href="javascript:void(0)" onclick="continueOption()">What is that?</a>
     </div>
     <div class="container" id="mainContent">
         <div class="input-container" id="inputContainer">
@@ -351,7 +352,6 @@
             let letters = document.getElementById('letters').value.toUpperCase();
             const startLetters = document.getElementById('startLetters').value.toUpperCase();
             const endLetters = document.getElementById('endLetters').value.toUpperCase();
-            letters = startLetters + letters + endLetters;
 
             const column1 = document.getElementById('column1');
             const column2 = document.getElementById('column2');
@@ -368,23 +368,30 @@
             resultTitle.style.display = 'none';
             highlightMessage.style.display = 'none';
             superHighlightMessage.style.display = 'none';
-            if (letters.length < 2 || letters.length > 7) {
+
+            const fullLetters = startLetters + letters + endLetters;
+            if (fullLetters.length < 2 || fullLetters.length > 7) {
                 alert("Anna 2-7 kirjainta.");
                 return;
             }
             console.time('findPossibleWords');
-            const possibleWords = getAllCombinations(letters.toLowerCase());
+            const possibleWords = getAllCombinations(fullLetters.toLowerCase());
             console.timeEnd('findPossibleWords');
 
-            const containsOffensive = possibleWords.some(word => isOffensiveWord(word.toLowerCase()));
+            const filteredWords = possibleWords.filter(word => {
+                const wordUpper = word.toUpperCase();
+                return wordUpper.startsWith(startLetters) && wordUpper.endsWith(endLetters);
+            });
 
-            if (possibleWords.length === 0) {
+            const containsOffensive = filteredWords.some(word => isOffensiveWord(word.toLowerCase()));
+
+            if (filteredWords.length === 0) {
                 const noResults = document.createElement('div');
                 noResults.textContent = 'Ei löydettyjä sanoja';
                 noResults.classList.add('no-results');
                 column1.appendChild(noResults);
             } else {
-                possibleWords.forEach((word, index) => {
+                filteredWords.forEach((word, index) => {
                     const li = document.createElement('li');
                     li.textContent = word.toUpperCase();
                     li.onclick = () => findWordsForWord(word.toUpperCase());
@@ -397,7 +404,7 @@
                 });
             }
 
-            const resultCount = possibleWords.length - 1;
+            const resultCount = filteredWords.length - 1;
 
             if (resultCount > superThreshold) {
                 superHighlightMessage.style.display = 'block';
@@ -484,31 +491,10 @@
             optionsContainer.innerHTML = `
                 <p>Did you mean..?</p>
                 <div class="option-container">
-                    <a class="option-text" onclick="chooseOption('this')">What is this</a> or<br>
-                    <a class="option-text" onclick="chooseOption('that')">What is that?</a>
+                    <a class="option-text" href="wordporn.html">What is this</a> or<br>
+                    <a class="option-text" onclick="continueOption()">What is that?</a>
                 </div>
             `;
-        }
-
-        function chooseOption(option) {
-            const optionsContainer = document.getElementById('optionsContainer');
-            if (option === 'this') {
-                optionsContainer.innerHTML = `
-                    <p>This is where you are.</p>
-                    <div class="option-container">
-                        <a class="option-text" href="https://youtu.be/N2ICtCO8TCw">Take That</a><br>
-                        <a class="option-text" onclick="continueOption()">or Continue</a>
-                    </div>
-                `;
-            } else if (option === 'that') {
-                optionsContainer.innerHTML = `
-                    <p>That is like an imperfect of this.</p>
-                    <div class="option-container">
-                        <a class="option-text" onclick="lockInAnswer()">Sure thing, I call</a><br>
-                        <a class="option-text" href="https://youtu.be/-crgQGdpZR0">Take a Chance</a>
-                    </div>
-                `;
-            }
         }
 
         function continueOption() {
