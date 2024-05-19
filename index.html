@@ -61,6 +61,13 @@
         input[type="text"]::placeholder {
             color: #333333;
         }
+        .additional-inputs {
+            display: flex;
+            justify-content: space-around;
+        }
+        .additional-inputs input[type="text"] {
+            width: 40%;
+        }
         button {
             padding: 10px 20px;
             font-size: 16px;
@@ -236,8 +243,7 @@
         <div class="input-container" id="inputContainer">
             <h1>WordFraud 1.0</h1>
             <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off">
-            <div>
-                <label for="startLetters">Voit lisätä: </label>
+            <div class="additional-inputs">
                 <input type="text" id="startLetters" placeholder="Alkuun">
                 <input type="text" id="endLetters" placeholder="Loppuun">
             </div>
@@ -430,6 +436,7 @@
 
             window.scrollTo(0, 0);
 
+            localStorage.setItem('lastQuery', letters.toUpperCase());
             translateAndShowImage(letters);
         }
 
@@ -562,6 +569,13 @@
 
         function resetPage() {
             location.reload();
+        }
+
+        window.onload = function() {
+            const lastQuery = localStorage.getItem('lastQuery');
+            if (lastQuery) {
+                document.getElementById('letters').value = lastQuery;
+            }
         }
     </script>
 </body>
