@@ -237,8 +237,8 @@
 </head>
 <body>
     <div class="link-box" id="whatIsThisLink">
-        <a href="wordporn.html">What is this? </a>
-        <a href="javascript:void(0)" onclick="continueOption()">What is that?</a>
+        <a href="wordporn.html">Mikä tämä on? </a>
+        <a href="javascript:void(0)" onclick="continueOption()">Mikä tuo on?</a>
     </div>
     <div class="container" id="mainContent">
         <div class="input-container" id="inputContainer">
@@ -481,22 +481,6 @@
                 });
         }
 
-        function showOptions() {
-            document.getElementById('whatIsThisLink').style.display = 'none';
-            const optionsContainer = document.getElementById('optionsContainer');
-            optionsContainer.classList.remove('hidden');
-            optionsContainer.style.position = 'fixed';
-            optionsContainer.style.top = '20px';
-            optionsContainer.style.right = '20px';
-            optionsContainer.innerHTML = `
-                <p>Did you mean..?</p>
-                <div class="option-container">
-                    <a class="option-text" href="wordporn.html">What is this</a> or<br>
-                    <a class="option-text" onclick="continueOption()">What is that?</a>
-                </div>
-            `;
-        }
-
         function continueOption() {
             document.body.innerHTML = '<canvas></canvas>';
             var canvas = document.querySelector('canvas');
@@ -558,10 +542,6 @@
                     window.location.href = 'pacman.html';
                 }, delay * lines.length + 4500);
             });
-        }
-
-        function lockInAnswer() {
-            window.location.href = 'wordporn.html';
         }
 
         function findWordsForWord(word) {
