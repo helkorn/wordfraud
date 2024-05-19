@@ -341,9 +341,11 @@
                 return;
             }
 
-            const letters = document.getElementById('letters').value.toUpperCase();
+            const letters = document.getElementById('letters').value.toLowerCase();
             const startLetters = document.getElementById('startLetters').value.toLowerCase();
             const endLetters = document.getElementById('endLetters').value.toLowerCase();
+            const combinedLetters = startLetters + letters + endLetters;
+
             const column1 = document.getElementById('column1');
             const column2 = document.getElementById('column2');
             const resultTitle = document.getElementById('resultTitle');
@@ -359,12 +361,14 @@
             resultTitle.style.display = 'none';
             highlightMessage.style.display = 'none';
             superHighlightMessage.style.display = 'none';
+
             if (letters.length < 2) {
                 alert("Anna vähintään 2 kirjainta.");
                 return;
             }
+
             console.time('findPossibleWords');
-            let possibleWords = getAllCombinations(letters.toLowerCase());
+            let possibleWords = getAllCombinations(combinedLetters);
 
             if (startLetters) {
                 possibleWords = possibleWords.filter(word => word.startsWith(startLetters));
@@ -400,12 +404,12 @@
             if (resultCount > superThreshold) {
                 superHighlightMessage.style.display = 'block';
                 showConfetti();
-                resultTitle.textContent = `Kysyit: ${letters}${startLetters ? ' (alku: ' + startLetters.toUpperCase() + ')' : ''}${endLetters ? ' (loppu: ' + endLetters.toUpperCase() + ')' : ''}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
+                resultTitle.textContent = `Kysyit: ${letters.toUpperCase()}${startLetters ? ' (alku: ' + startLetters.toUpperCase() + ')' : ''}${endLetters ? ' (loppu: ' + endLetters.toUpperCase() + ')' : ''}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
             } else if (resultCount > medianThreshold) {
                 highlightMessage.style.display = 'block';
-                resultTitle.textContent = `Kysyit: ${letters}${startLetters ? ' (alku: ' + startLetters.toUpperCase() + ')' : ''}${endLetters ? ' (loppu: ' + endLetters.toUpperCase() + ')' : ''}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
+                resultTitle.textContent = `Kysyit: ${letters.toUpperCase()}${startLetters ? ' (alku: ' + startLetters.toUpperCase() + ')' : ''}${endLetters ? ' (loppu: ' + endLetters.toUpperCase() + ')' : ''}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
             } else {
-                resultTitle.textContent = `Kysyit: ${letters}${startLetters ? ' (alku: ' + startLetters.toUpperCase() + ')' : ''}${endLetters ? ' (loppu: ' + endLetters.toUpperCase() + ')' : ''}`;
+                resultTitle.textContent = `Kysyit: ${letters.toUpperCase()}${startLetters ? ' (alku: ' + startLetters.toUpperCase() + ')' : ''}${endLetters ? ' (loppu: ' + endLetters.toUpperCase() + ')' : ''}`;
             }
 
             inputContainer.style.display = 'none';
@@ -413,13 +417,13 @@
             resultTitle.style.display = 'block';
             resetButton.style.display = 'block';
 
-            if (letters === 'JÄNIS') {
+            if (letters === 'jänis') {
                 resultTitle.textContent += ". Onks kello hyvin?";
                 setTimeout(() => {
                     rabbitImage.style.display = 'flex';
                     setTimeout(() => {
                         rabbitImage.style.display = 'none';
-                        resultTitle.innerHTML = `Kysyit: ${letters}. <a href="https://youtu.be/0wHXcv4Q4Sk" style="color: black; text-decoration: underline;">Hei mikä toi on?</a>`;
+                        resultTitle.innerHTML = `Kysyit: ${letters.toUpperCase()}. <a href="https://youtu.be/0wHXcv4Q4Sk" style="color: black; text-decoration: underline;">Hei mikä toi on?</a>`;
                     }, 1500);
                 }, 500);
             }
