@@ -226,6 +226,14 @@
         .image-container {
             display: none;
         }
+        .sub-input-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .sub-input-container input {
+            width: calc(40% - 20px);
+        }
     </style>
 </head>
 <body>
@@ -236,8 +244,10 @@
         <div class="input-container" id="inputContainer">
             <h1>WordFraud 1.0</h1>
             <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off" disabled>
-            <input type="text" id="startLetters" placeholder="Alku" autocomplete="off" style="width: 10ch; display: block; margin: 10px auto;">
-            <input type="text" id="endLetters" placeholder="Loppu" autocomplete="off" style="width: 10ch; display: block; margin: 10px auto;">
+            <div class="sub-input-container">
+                <input type="text" id="startLetters" placeholder="Alku">
+                <input type="text" id="endLetters" placeholder="Loppu">
+            </div>
             <button id="fraudeloiButton" onclick="findWords()" disabled>Fraudeloi</button>
         </div>
         <div class="container" id="mainContainer" style="display: none;">
@@ -328,6 +338,7 @@
 
             combine('', letters);
             
+            // Muunnetaan setti taulukoksi ja lajitellaan ensin pituuden mukaan (pisin ensin) ja sitten aakkosjärjestykseen
             return Array.from(results).sort((a, b) => b.length - a.length || a.localeCompare(b));
         }
 
@@ -338,8 +349,8 @@
             }
 
             const letters = document.getElementById('letters').value.toUpperCase();
-            const startLetters = document.getElementById('startLetters').value.toUpperCase();
-            const endLetters = document.getElementById('endLetters').value.toUpperCase();
+            const startLetters = document.getElementById('startLetters').value.toLowerCase();
+            const endLetters = document.getElementById('endLetters').value.toLowerCase();
             const column1 = document.getElementById('column1');
             const column2 = document.getElementById('column2');
             const resultTitle = document.getElementById('resultTitle');
@@ -360,16 +371,10 @@
                 return;
             }
             console.time('findPossibleWords');
-            let possibleWords = getAllCombinations(letters.toLowerCase());
+            const possibleWords = getAllCombinations(letters.toLowerCase()).filter(word => {
+                return (startLetters === "" || word.startsWith(startLetters)) && (endLetters === "" || word.endsWith(endLetters));
+            });
             console.timeEnd('findPossibleWords');
-
-            if (startLetters) {
-                possibleWords = possibleWords.filter(word => word.startsWith(startLetters.toLowerCase()));
-            }
-
-            if (endLetters) {
-                possibleWords = possibleWords.filter(word => word.endsWith(endLetters.toLowerCase()));
-            }
 
             const containsOffensive = possibleWords.some(word => isOffensiveWord(word.toLowerCase()));
 
@@ -480,9 +485,72 @@
                 <p>Did you mean..?</p>
                 <div class="option-container">
                     <a class="option-text" href="wordporn.html">What is this</a> or<br>
-                    <a class="option-text" href="pacman.html">What is that?</a>
+                    <a class="option-text" onclick="continueOption()">What is that?</a>
                 </div>
             `;
+        }
+
+        function continueOption() {
+            document.body.innerHTML = '<canvas></canvas>';
+            var canvas = document.querySelector('canvas');
+            var ctx = canvas.getContext('2d');
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.font = '20px C64';
+            ctx.fillStyle = '#696969';
+
+            document.fonts.load('20px C64').then(() => {
+                var lines = [
+                    '',
+                    '',
+                    '*** WORDFRAUD V 1.0 ***',
+                    'READY.',
+                    '',
+                    'SYS 64738 : REM KILL SWITCH',
+                    'POKE 53280, 0',
+                    'READY.',
+                    '',
+                    '10 INPUT "CHOOSE YOUR PILL 1 or 2:", V',
+                    '20 IF V = 1 THEN GOTO 10',
+                    '30 IF V = 2 THEN GOTO 3000',
+                    '40 IF V <> 1 AND V <> 2 THEN GOSUB 3500',
+                    '50 END',
+                    '',
+                    '3010 LOAD "PACMAN",8,1',
+                    '3020 RUN',
+                    '',
+                    '3500 PRINT "You take the blue pill, the story ends."',
+                    '3510 PRINT "You wake up in your bed and believe whatever you want to believe."',
+                    '3520 PRINT "You take the red pill, you stay in Wonderland,"',
+                    '3530 PRINT "and I show you how deep the rabbit hole goes."',
+                    '3540 END'
+                ];
+
+                var y = 20;
+                var delay = 100;
+
+                lines.forEach((line, index) => {
+                    setTimeout(() => {
+                        ctx.fillText(line, 20, y);
+                        y += 20;
+                    }, delay * index);
+                });
+
+                setTimeout(() => {
+                    ctx.fillText('READY.', 20, y);
+                    y += 20;
+                    ctx.fillRect(20, y, 10, 20);
+                }, delay * lines.length);
+
+                setTimeout(() => {
+                    window.location.href = 'pacman.html';
+                }, delay * lines.length + 4500);
+            });
         }
 
         function findWordsForWord(word) {
