@@ -235,8 +235,8 @@
     <div class="container" id="mainContent">
         <div class="input-container" id="inputContainer">
             <h1>WordFraud 1.0</h1>
-            <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off">
-            <button id="fraudeloiButton" onclick="findWords()">Fraudeloi</button>
+            <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off" disabled>
+            <button id="fraudeloiButton" onclick="findWords()" disabled>Fraudeloi</button>
         </div>
         <div class="container" id="mainContainer" style="display: none;">
             <div class="result-title" id="resultTitle"></div>
@@ -352,7 +352,7 @@
             resultTitle.style.display = 'none';
             highlightMessage.style.display = 'none';
             superHighlightMessage.style.display = 'none';
-            
+
             console.time('findPossibleWords');
             const possibleWords = getAllCombinations(letters.toLowerCase());
             console.timeEnd('findPossibleWords');
@@ -386,7 +386,7 @@
                 resultTitle.textContent = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
             } else if (resultCount > medianThreshold) {
                 highlightMessage.style.display = 'block';
-                resultTitle.textContent = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
+                resultTitle.textContent = `Kysyit: ${letters}. ${letters.length kirjainta ja ${resultCount} sanaa`;
             } else {
                 resultTitle.textContent = `Kysyit: ${letters}`;
             }
