@@ -242,7 +242,7 @@
             <div class="result-title" id="resultTitle"></div>
             <div class="centered">
                 <div class="highlight" id="highlightMessage" style="display: none;">Huippuhyvä löytö!</div>
-                <div class="super-highlight" id="superHighlightMessage" style="display: none;">SUPERLÖYTÖ!</div>
+                <div class="super-highlight" id="superHighlightMessage" style="display: 'none;">SUPERLÖYTÖ!</div>
             </div>
             <div class="columns">
                 <div class="column" id="column1"></div>
@@ -352,7 +352,7 @@
             resultTitle.style.display = 'none';
             highlightMessage.style.display = 'none';
             superHighlightMessage.style.display = 'none';
-            if (letters.length < 2 || letters.length > 10) {
+            if (letters.length < 2 || letters.length > 10) {  // Updated limit
                 alert("Anna 2-10 kirjainta.");
                 return;
             }
