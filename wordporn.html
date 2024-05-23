@@ -37,6 +37,7 @@
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
         }
         h1 {
+            color: #fff;
             font-size: 2em;
             margin-bottom: 20px;
         }
@@ -139,10 +140,11 @@
         <a href="javascript:void(0)" onclick="showAnalgrammi()">Mikä tämä on?  </a>
     </div>
     <div class="container">
-        <h1>Word<span style="color: red;">P</span>orn</h1>
+        <h1>WordPorn</h1>
         <p>Analgrammit. Mitä nyt vittua taas.</p>
+        <p id="score">Pisteesi: 0</p>
         <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
-        <div class="timer" id="timer">15</div>
+        <div class="timer" id="timer">20</div>
         <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
         <div>
             <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
@@ -154,8 +156,9 @@
         let words = [];
         let currentWord = '';
         let timer;
-        let timeLeft = 15;
+        let timeLeft = 20;
         let paused = false;
+        let score = 0;
 
         function startTimer() {
             clearInterval(timer);
@@ -185,7 +188,7 @@
                 const shuffledWord = shuffleWord(currentWord);
                 document.getElementById('shuffledWord').textContent = shuffledWord;
                 document.getElementById('answer').value = '';
-                timeLeft = 15;
+                timeLeft = 20;
                 document.getElementById('timer').textContent = timeLeft;
                 startTimer();
             } else {
@@ -201,6 +204,8 @@
             }
             paused = true;
             if (answer === currentWord.toLowerCase()) {
+                score += currentWord.length;
+                document.getElementById('score').textContent = `Pisteesi: ${score}`;
                 revealCorrectAnswer(() => {
                     document.body.innerHTML = `
                         <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
@@ -261,7 +266,7 @@
             box.id = 'typewriterBox';
             box.className = 'typewriter-box';
             document.body.appendChild(box);
-            const text = 'Rakas persehaju,\n\nTämä on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä, kuin sinäkin.\n\nMuodosta kirjaimista sana. Ole yllättävä kuin äitisi raskaus.\n\nOnnea peliin. Se on helppo, kuten jokainen kumppanisi.\n\nT Koiranoksennus johon nussit';
+            const text = 'Rakas persehaju,\n\nTämä on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä, kuin sinäkin.\n\nMuodosta kirjaimista sana. Ole yllättävä kuin äitisi raskaus.\n\nOnnea peliin. Se on helppo kuten jokainen kumppanisi.\n\nT. Koiranoksennus johon nussit';
             let index = 0;
 
             function typeNext() {
