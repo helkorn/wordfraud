@@ -235,10 +235,8 @@
     <div class="container" id="mainContent">
         <div class="input-container" id="inputContainer">
             <h1>WordFraud 1.0</h1>
-            <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off">
-            <input type="text" id="prefix" placeholder="Alkuun" maxlength="8">
-            <input type="text" id="suffix" placeholder="Loppuun" maxlength="8">
-            <button id="fraudeloiButton" onclick="findWords()">Fraudeloi</button>
+            <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off" disabled>
+            <button id="fraudeloiButton" onclick="findWords()" disabled>Fraudeloi</button>
         </div>
         <div class="container" id="mainContainer" style="display: none;">
             <div class="result-title" id="resultTitle"></div>
@@ -345,8 +343,6 @@
             }
 
             const letters = document.getElementById('letters').value.toUpperCase();
-            const prefix = document.getElementById('prefix').value.toUpperCase();
-            const suffix = document.getElementById('suffix').value.toUpperCase();
             const column1 = document.getElementById('column1');
             const column2 = document.getElementById('column2');
             const resultTitle = document.getElementById('resultTitle');
@@ -372,21 +368,13 @@
 
             const containsOffensive = possibleWords.some(word => isOffensiveWord(word.toLowerCase()));
 
-            let results = possibleWords;
-            if (prefix) {
-                results = results.map(word => prefix + word);
-            }
-            if (suffix) {
-                results = results.map(word => word + suffix);
-            }
-
-            if (results.length === 0) {
+            if (possibleWords.length === 0) {
                 const noResults = document.createElement('div');
                 noResults.textContent = 'Ei löydettyjä sanoja';
                 noResults.classList.add('no-results');
                 column1.appendChild(noResults);
             } else {
-                results.forEach((word, index) => {
+                possibleWords.forEach((word, index) => {
                     const li = document.createElement('li');
                     li.textContent = word.toUpperCase();
                     li.onclick = () => findWordsForWord(word.toUpperCase());
@@ -399,7 +387,7 @@
                 });
             }
 
-            const resultCount = results.length - 1;
+            const resultCount = possibleWords.length - 1;
 
             if (resultCount > superThreshold) {
                 superHighlightMessage.style.display = 'block';
