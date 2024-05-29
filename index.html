@@ -460,100 +460,13 @@
             optionsContainer.style.top = '20px';
             optionsContainer.style.right = '20px';
             optionsContainer.innerHTML = `
+                <p>This is where you are.</p>
                 <p>Did you mean..?</p>
                 <div class="option-container">
-                    <a class="option-text" onclick="chooseOption('this')">What is this</a> or<br>
-                    <a class="option-text" onclick="chooseOption('that')">What is that?</a>
+                    <a class="option-text" href="pacman.html">What is this</a> or<br>
+                    <a class="option-text" href="wordporn.html">What is that?</a>
                 </div>
             `;
-        }
-
-        function chooseOption(option) {
-            const optionsContainer = document.getElementById('optionsContainer');
-            if (option === 'this') {
-                optionsContainer.innerHTML = `
-                    <p>This is where you are.</p>
-                    <div class="option-container">
-                        <a class="option-text" href="https://youtu.be/N2ICtCO8TCw">Take That</a><br>
-                        <a class="option-text" onclick="continueOption()">or Continue</a>
-                    </div>
-                `;
-            } else if (option === 'that') {
-                optionsContainer.innerHTML = `
-                    <p>That is like an imperfect of this.</p>
-                    <div class="option-container">
-                        <a class="option-text" onclick="lockInAnswer()">Sure thing, I call</a><br>
-                        <a class="option-text" href="https://youtu.be/-crgQGdpZR0">Take a Chance</a>
-                    </div>
-                `;
-            }
-        }
-
-        function continueOption() {
-            document.body.innerHTML = '<canvas></canvas>';
-            var canvas = document.querySelector('canvas');
-            var ctx = canvas.getContext('2d');
-
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-
-            ctx.fillStyle = '#000';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.font = '20px C64';
-            ctx.fillStyle = '#696969';
-
-            document.fonts.load('20px C64').then(() => {
-                var lines = [
-                    '',
-                    '',
-                    '*** WORDFRAUD V 1.0 ***',
-                    'READY.',
-                    '',
-                    'SYS 64738 : REM KILL SWITCH',
-                    'POKE 53280, 0',
-                    'READY.',
-                    '',
-                    '10 INPUT "CHOOSE YOUR PILL 1 or 2:", V',
-                    '20 IF V = 1 THEN GOTO 10',
-                    '30 IF V = 2 THEN GOTO 3000',
-                    '40 IF V <> 1 AND V <> 2 THEN GOSUB 3500',
-                    '50 END',
-                    '',
-                    '3010 LOAD "PACMAN",8,1',
-                    '3020 RUN',
-                    '',
-                    '3500 PRINT "You take the blue pill, the story ends."',
-                    '3510 PRINT "You wake up in your bed and believe whatever you want to believe."',
-                    '3520 PRINT "You take the red pill, you stay in Wonderland,"',
-                    '3530 PRINT "and I show you how deep the rabbit hole goes."',
-                    '3540 END'
-                ];
-
-                var y = 20;
-                var delay = 100;
-
-                lines.forEach((line, index) => {
-                    setTimeout(() => {
-                        ctx.fillText(line, 20, y);
-                        y += 20;
-                    }, delay * index);
-                });
-
-                setTimeout(() => {
-                    ctx.fillText('READY.', 20, y);
-                    y += 20;
-                    ctx.fillRect(20, y, 10, 20);
-                }, delay * lines.length);
-
-                setTimeout(() => {
-                    window.location.href = 'pacman.html';
-                }, delay * lines.length + 4500);
-            });
-        }
-
-        function lockInAnswer() {
-            window.location.href = 'wordporn.html';
         }
 
         function findWordsForWord(word) {
