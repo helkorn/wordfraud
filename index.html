@@ -270,7 +270,9 @@
         const medianThreshold = 50;
         const superThreshold = 75;
         const translateApiKey = 'AIzaSyDdmqFZttVpbpzvRU3sIu1-Ws4jI4iIEGo';
-        const unsplashAccessKey = 'gBPFkxZCEH2EV6t8GaezB2_WM2QVkVUnkCHP0bITUos';
+        const unsplashAccessKey = 'gBPFkxZCEH2EV6t8Ga
+
+ezB2_WM2QVkVUnkCHP0bITUos';
 
         Papa.parse('https://raw.githubusercontent.com/timosalonen/wordfraud/main/wordfraudFI.csv', {
             download: true,
@@ -358,10 +360,7 @@
             resultTitle.style.display = 'none';
             highlightMessage.style.display = 'none';
             superHighlightMessage.style.display = 'none';
-            if (letters.length < 2 || letters.length > 7) {
-                alert("Anna 2-7 kirjainta.");
-                return;
-            }
+
             console.time('findPossibleWords');
             const possibleWords = getAllCombinations(letters.toLowerCase());
             console.timeEnd('findPossibleWords');
@@ -523,7 +522,9 @@
                     'READY.',
                     '',
                     'SYS 64738 : REM KILL SWITCH',
-                    'POKE 53280, 0',
+                    '
+
+POKE 53280, 0',
                     'READY.',
                     '',
                     '10 INPUT "CHOOSE YOUR PILL 1 or 2:", V',
