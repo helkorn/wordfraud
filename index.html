@@ -235,7 +235,7 @@
     <div class="container" id="mainContent">
         <div class="input-container" id="inputContainer">
             <h1>WordFraud 1.0</h1>
-            <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off" disabled>
+            <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off" disabled onkeypress="handleKeyPress(event)">
             <button id="fraudeloiButton" onclick="findWords()" disabled>Fraudeloi</button>
         </div>
         <div class="container" id="mainContainer" style="display: none;">
@@ -333,12 +333,13 @@
             });
         }
 
-        function findWords() {
-            if (!isDataLoaded || !isOffensiveLoaded) {
-                alert('Sanat eivät ole vielä latautuneet. Odota hetki ja yritä uudelleen.');
-                return;
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                findWords();
             }
+        }
 
+        function findWords() {
             const letters = document.getElementById('letters').value.toUpperCase();
             const resultColumn = document.getElementById('resultColumn');
             const resultTitle = document.getElementById('resultTitle');
@@ -399,7 +400,7 @@
             resetButton.style.display = 'block';
 
             if (letters === 'JÄNIS') {
-                resultTitle.textContent += ". Onks kello hyvin?";
+                resultTitle.textContent += '. Onks kello hyvin? <a href="javascript:void(0)" onclick="rabbitLinkAction()" style="color: inherit; text-decoration: none;">rabbbit</a>';
                 setTimeout(() => {
                     rabbitImage.style.display = 'flex';
                     setTimeout(() => {
@@ -412,6 +413,11 @@
             window.scrollTo(0, 0);
 
             translateAndShowImage(letters);
+        }
+
+        function rabbitLinkAction() {
+            document.getElementById('letters').value = 'jänis';
+            findWords();
         }
 
         function translateAndShowImage(word) {
