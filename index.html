@@ -244,13 +244,9 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0"></script>
     <script>
         let words = new Set();
-        let offensiveWords = new Set();
         let isDataLoaded = false;
         const medianThreshold = 50;
         const superThreshold = 75;
-        const translateApiKey = 'AIzaSyDdmqFZttVpbpzvRU3sIu1-Ws4jI4iIEGo';
-        const unsplashAccessKey = 'gBPFkxZCEH2EV6t8GaezB2_WM2QVkVUnkCHP0bITUos';
-
         const suomenkielisetKirjaimet = 'abcdefghijklmnopqrstuvwxyzåäö';
 
         Papa.parse('https://raw.githubusercontent.com/timosalonen/wordfraud/main/wordfraudFI.csv', {
@@ -357,12 +353,12 @@
             if (resultCount > superThreshold) {
                 superHighlightMessage.style.display = 'block';
                 showConfetti();
-                resultTitle.textContent = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
+                resultTitle.innerHTML = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa <button onclick="copyToClipboard('${letters}')">Kopioi</button>`;
             } else if (resultCount > medianThreshold) {
                 highlightMessage.style.display = 'block';
-                resultTitle.textContent = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
+                resultTitle.innerHTML = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa <button onclick="copyToClipboard('${letters}')">Kopioi</button>`;
             } else {
-                resultTitle.textContent = `Kysyit: ${letters}`;
+                resultTitle.innerHTML = `Kysyit: ${letters} <button onclick="copyToClipboard('${letters}')">Kopioi</button>`;
             }
 
             inputContainer.style.display = 'none';
@@ -371,6 +367,15 @@
             resetButton.style.display = 'block';
 
             window.scrollTo(0, 0);
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                alert('Kopioitu: ' + text);
+                resetPage();
+            }, function(err) {
+                console.error('Kopiointi epäonnistui: ', err);
+            });
         }
 
         function showOptions() {
@@ -382,7 +387,7 @@
             optionsContainer.style.right = '20px';
             optionsContainer.innerHTML = `
                 <p>This is where you are:</p>
-                <p>Joker letter is '-'.</p>
+                <p>The joker letter is '-'.</p>
                 <p>Did you mean.</p>
                 <div class="option-container">
                     <a class="option-text" onclick="showBasicChoice()">What is here</a> or<br>
