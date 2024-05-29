@@ -206,6 +206,15 @@
             color: #696969;
             white-space: pre-wrap;
         }
+        .message-box {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
         .image-container {
             display: none;
         }
@@ -246,7 +255,6 @@
         let words = new Set();
         let offensiveWords = new Set();
         let isDataLoaded = false;
-        let isOffensiveLoaded = false;
         const medianThreshold = 50;
         const superThreshold = 75;
         const translateApiKey = 'AIzaSyDdmqFZttVpbpzvRU3sIu1-Ws4jI4iIEGo';
@@ -266,20 +274,8 @@
             }
         });
 
-        Papa.parse('https://raw.githubusercontent.com/timosalonen/wordfraud/main/offensiveFI.csv', {
-            download: true,
-            complete: function(results) {
-                results.data.flat().map(word => word.trim()).filter(Boolean).forEach(word => {
-                    offensiveWords.add(word.toLowerCase());
-                });
-                console.log('Rivot sanat ladattu:', offensiveWords.size);
-                isOffensiveLoaded = true;
-                checkIfAllLoaded();
-            }
-        });
-
         function checkIfAllLoaded() {
-            if (isDataLoaded && isOffensiveLoaded) {
+            if (isDataLoaded) {
                 document.getElementById('letters').disabled = false;
                 document.getElementById('fraudeloiButton').disabled = false;
             }
@@ -287,10 +283,6 @@
 
         function isValidWord(word) {
             return words.has(word);
-        }
-
-        function isOffensiveWord(word) {
-            return offensiveWords.has(word);
         }
 
         function getAllCombinations(letters) {
@@ -398,7 +390,10 @@
             optionsContainer.style.top = '20px';
             optionsContainer.style.right = '20px';
             optionsContainer.innerHTML = `
-                <p>This is where you are.</p>
+                <div class="message-box">
+                    <p>This is where you are.</p>
+                    <p>2-9 letters, "-" means any suomenkielinen kirjain.</p>
+                </div>
                 <p>Did you mean.</p>
                 <div class="option-container">
                     <a class="option-text" onclick="showBasicChoice()">What is here</a> or<br>
