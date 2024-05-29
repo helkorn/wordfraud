@@ -244,10 +244,7 @@
                 <div class="highlight" id="highlightMessage" style="display: none;">Huippuhyvä löytö!</div>
                 <div class="super-highlight" id="superHighlightMessage" style="display: none;">SUPERLÖYTÖ!</div>
             </div>
-            <div class="columns">
-                <div class="column" id="column1"></div>
-                <div class="column" id="column2"></div>
-            </div>
+            <div class="column" id="resultColumn"></div>
             <div class="centered">
                 <button class="reset-button" id="resetButton" onclick="resetPage()">Uudelleen</button>
             </div>
@@ -270,9 +267,7 @@
         const medianThreshold = 50;
         const superThreshold = 75;
         const translateApiKey = 'AIzaSyDdmqFZttVpbpzvRU3sIu1-Ws4jI4iIEGo';
-        const unsplashAccessKey = 'gBPFkxZCEH2EV6t8Ga
-
-ezB2_WM2QVkVUnkCHP0bITUos';
+        const unsplashAccessKey = 'gBPFkxZCEH2EV6t8GaezB2_WM2QVkVUnkCHP0bITUos';
 
         Papa.parse('https://raw.githubusercontent.com/timosalonen/wordfraud/main/wordfraudFI.csv', {
             download: true,
@@ -327,7 +322,7 @@ ezB2_WM2QVkVUnkCHP0bITUos';
             }
 
             combine('', letters);
-            return Array.from(results).sort();
+            return Array.from(results).sort((a, b) => a.length - b.length);
         }
 
         function showConfetti() {
@@ -345,8 +340,7 @@ ezB2_WM2QVkVUnkCHP0bITUos';
             }
 
             const letters = document.getElementById('letters').value.toUpperCase();
-            const column1 = document.getElementById('column1');
-            const column2 = document.getElementById('column2');
+            const resultColumn = document.getElementById('resultColumn');
             const resultTitle = document.getElementById('resultTitle');
             const highlightMessage = document.getElementById('highlightMessage');
             const superHighlightMessage = document.getElementById('superHighlightMessage');
@@ -355,8 +349,7 @@ ezB2_WM2QVkVUnkCHP0bITUos';
             const mainContainer = document.getElementById('mainContainer');
             const inputContainer = document.getElementById('inputContainer');
             const rabbitImage = document.getElementById('rabbitImage');
-            column1.innerHTML = '';
-            column2.innerHTML = '';
+            resultColumn.innerHTML = '';
             resultTitle.style.display = 'none';
             highlightMessage.style.display = 'none';
             superHighlightMessage.style.display = 'none';
@@ -371,18 +364,14 @@ ezB2_WM2QVkVUnkCHP0bITUos';
                 const noResults = document.createElement('div');
                 noResults.textContent = 'Ei löydettyjä sanoja';
                 noResults.classList.add('no-results');
-                column1.appendChild(noResults);
+                resultColumn.appendChild(noResults);
             } else {
-                possibleWords.forEach((word, index) => {
+                possibleWords.forEach(word => {
                     const li = document.createElement('li');
                     li.textContent = word.toUpperCase();
                     li.onclick = () => findWordsForWord(word.toUpperCase());
                     li.id = `word-${word.toUpperCase()}`;
-                    if (index % 2 === 0) {
-                        column1.appendChild(li);
-                    } else {
-                        column2.appendChild(li);
-                    }
+                    resultColumn.appendChild(li);
                 });
             }
 
@@ -522,9 +511,7 @@ ezB2_WM2QVkVUnkCHP0bITUos';
                     'READY.',
                     '',
                     'SYS 64738 : REM KILL SWITCH',
-                    '
-
-POKE 53280, 0',
+                    'POKE 53280, 0',
                     'READY.',
                     '',
                     '10 INPUT "CHOOSE YOUR PILL 1 or 2:", V',
