@@ -322,7 +322,7 @@
             }
 
             combine('', letters);
-            return Array.from(results).sort((a, b) => a.length - b.length);
+            return Array.from(results).sort((a, b) => b.length - a.length);
         }
 
         function showConfetti() {
@@ -364,8 +364,6 @@
             const possibleWords = getAllCombinations(letters.toLowerCase());
             console.timeEnd('findPossibleWords');
 
-            const containsOffensive = possibleWords.some(word => isOffensiveWord(word.toLowerCase()));
-
             if (possibleWords.length === 0) {
                 const noResults = document.createElement('div');
                 noResults.textContent = 'Ei löydettyjä sanoja';
@@ -378,6 +376,7 @@
                     li.onclick = () => findWordsForWord(word.toUpperCase());
                     li.id = `word-${word.toUpperCase()}`;
                     resultColumn.appendChild(li);
+                    fetchImage(word, li);
                 });
             }
 
@@ -400,7 +399,7 @@
             resetButton.style.display = 'block';
 
             if (letters === 'JÄNIS') {
-                resultTitle.textContent += '. Onks kello hyvin? <a href="javascript:void(0)" onclick="rabbitLinkAction()" style="color: inherit; text-decoration: none;">rabbbit</a>';
+                resultTitle.textContent += '. Onks kello hyvin? <a href="javascript:void(0)" onclick="rabbitLinkAction()" style="color: inherit; text-decoration: none;">rabbit</a>';
                 setTimeout(() => {
                     rabbitImage.style.display = 'flex';
                     setTimeout(() => {
@@ -411,8 +410,6 @@
             }
 
             window.scrollTo(0, 0);
-
-            translateAndShowImage(letters);
         }
 
         function rabbitLinkAction() {
@@ -420,42 +417,16 @@
             findWords();
         }
 
-        function translateAndShowImage(word) {
-            const url = `https://translation.googleapis.com/language/translate/v2?key=${translateApiKey}`;
-            const data = {
-                q: word,
-                source: 'fi',
-                target: 'en',
-                format: 'text'
-            };
-
-            fetch(url, {
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                const translatedWord = data.data.translations[0].translatedText;
-                fetchImage(word, translatedWord);
-            })
-            .catch(error => {
-                console.error('Error translating the word:', error);
-            });
-        }
-
-        function fetchImage(word, translatedWord) {
+        function fetchImage(word, element) {
+            const translatedWord = word; // Using the word itself as the search term for simplicity
             fetch(`https://api.unsplash.com/photos/random?query=${translatedWord}&client_id=${unsplashAccessKey}`)
                 .then(response => response.json())
                 .then(data => {
                     const imageUrl = data.urls.small;
-                    const wordElement = document.getElementById(`word-${word.toUpperCase()}`);
-                    if (wordElement) {
-                        wordElement.style.backgroundImage = `url(${imageUrl})`;
-                        wordElement.classList.add('has-background-image');
-                        wordElement.innerHTML = `<span>${word.toUpperCase()}</span>`;
+                    if (element) {
+                        element.style.backgroundImage = `url(${imageUrl})`;
+                        element.classList.add('has-background-image');
+                        element.innerHTML = `<span>${word.toUpperCase()}</span>`;
                     }
                 })
                 .catch(error => {
