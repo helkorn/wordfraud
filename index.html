@@ -354,8 +354,8 @@
             highlightMessage.style.display = 'none';
             superHighlightMessage.style.display = 'none';
 
-            if (letters.length < 2 || letters.length > 7) {
-                alert("Anna 2-7 kirjainta.");
+            if (letters.length < 2 || letters.length > 9) {
+                alert("Anna 2-9 kirjainta.");
                 return;
             }
 
@@ -465,7 +465,8 @@
             optionsContainer.style.top = '20px';
             optionsContainer.style.right = '20px';
             optionsContainer.innerHTML = `
-                <p>This is where you are. Did you mean..?</p>
+                <p>This is where you are.</p>
+                <p>Did you mean..?</p>
                 <div class="option-container">
                     <a class="option-text" onclick="continueOption()">What is here</a> or<br>
                     <a class="option-text" href="wordporn.html">What is that?</a>
