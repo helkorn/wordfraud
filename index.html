@@ -350,16 +350,17 @@
 
             const resultCount = possibleWords.length - 1;
 
-            if (resultCount > superThreshold) {
+            /* if (resultCount > superThreshold) {
                 superHighlightMessage.style.display = 'block';
                 showConfetti();
-                resultTitle.innerHTML = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa <button onclick="copyToClipboard('${letters}')">Kopioi</button>`;
+                resultTitle.innerHTML = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
             } else if (resultCount > medianThreshold) {
                 highlightMessage.style.display = 'block';
-                resultTitle.innerHTML = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa <button onclick="copyToClipboard('${letters}')">Kopioi</button>`;
+                resultTitle.innerHTML = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
             } else {
-                resultTitle.innerHTML = `Kysyit: ${letters} <button onclick="copyToClipboard('${letters}')">Kopioi</button>`;
-            }
+                resultTitle.innerHTML = `Kysyit: ${letters}`;
+            } */
+            resultTitle.innerHTML = `Kysyit: ${letters}`;
 
             inputContainer.style.display = 'none';
             mainContainer.style.display = 'block';
@@ -367,15 +368,6 @@
             resetButton.style.display = 'block';
 
             window.scrollTo(0, 0);
-        }
-
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(function() {
-                alert('Kopioitu: ' + text);
-                resetPage();
-            }, function(err) {
-                console.error('Kopiointi epäonnistui: ', err);
-            });
         }
 
         function showOptions() {
@@ -387,7 +379,7 @@
             optionsContainer.style.right = '20px';
             optionsContainer.innerHTML = `
                 <p>This is where you are:</p>
-                <p>The joker letter is '-'.</p>
+                <p>Joker letter is '-'.</p>
                 <p>Did you mean.</p>
                 <div class="option-container">
                     <a class="option-text" onclick="showBasicChoice()">What is here</a> or<br>
@@ -463,8 +455,32 @@
                 } else if (event.key === '2') {
                     window.location.href = 'https://youtu.be/zE7PKRjrid4';
                 } else {
-                    showBasicChoice();
+                    showInvalidChoice();
                 }
+            });
+        }
+
+        function showInvalidChoice() {
+            document.body.innerHTML = '<canvas></canvas>';
+            var canvas = document.querySelector('canvas');
+            var ctx = canvas.getContext('2d');
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.font = '20px C64';
+            ctx.fillStyle = '#696969';
+
+            document.fonts.load('20px C64').then(() => {
+                ctx.fillText('Invalid choice. Please choose 1 or 2.', 20, 20);
+                ctx.fillText('SYS 64738', 20, 40);
+
+                setTimeout(() => {
+                    showBasicChoice();
+                }, 2000);
             });
         }
 
@@ -474,7 +490,10 @@
         }
 
         function resetPage() {
-            location.reload();
+            const previousLetters = document.getElementById('resultTitle').textContent.split(': ')[1];
+            document.getElementById('letters').value = previousLetters;
+            document.getElementById('mainContainer').style.display = 'none';
+            document.getElementById('inputContainer').style.display = 'block';
         }
     </script>
 </body>
