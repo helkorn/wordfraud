@@ -381,7 +381,8 @@
             optionsContainer.style.top = '20px';
             optionsContainer.style.right = '20px';
             optionsContainer.innerHTML = `
-                <p>This is where you are.</p>
+                <p>This is where you are:</p>
+                <p>Joker letter is '-'.</p>
                 <p>Did you mean.</p>
                 <div class="option-container">
                     <a class="option-text" onclick="showBasicChoice()">What is here</a> or<br>
@@ -411,9 +412,24 @@
                     '*** WORDFRAUD V 1.0 ***',
                     'READY.',
                     '',
-                    '10 PRINT "HELLO WORLD!"',
-                    '20 PRINT "LET\'S PLAY PAC-MAN"',
-                    '30 END'
+                    'SYS 64738 : REM KILL SWITCH',
+                    'POKE 53280, 0',
+                    'READY.',
+                    '',
+                    '10 INPUT "CHOOSE YOUR PILL 1 or 2:", V',
+                    '20 IF V = 1 THEN GOTO 3000',
+                    '30 IF V = 2 THEN GOTO 4000',
+                    '40 IF V <> 1 AND V <> 2 THEN GOSUB 3500',
+                    '50 END',
+                    '',
+                    '3000 LOAD "PACMAN",8,1',
+                    '3010 RUN',
+                    '',
+                    '3500 PRINT "Invalid choice. Please choose 1 or 2."',
+                    '3510 RETURN',
+                    '',
+                    '4000 OPEN "https://youtu.be/zE7PKRjrid4" FOR INPUT AS FILE',
+                    '4010 RUN'
                 ];
 
                 var y = 20;
@@ -430,11 +446,8 @@
                     ctx.fillText('READY.', 20, y);
                     y += 20;
                     ctx.fillRect(20, y, 10, 20);
+                    waitForChoice();
                 }, delay * lines.length);
-
-                setTimeout(() => {
-                    window.location.href = 'pacman.html';
-                }, delay * lines.length + 2000);
             });
         }
 
