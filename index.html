@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Timin WordFraud</title>
+    <title>Timin pikku sanapeliapuri</title>
     <style>
         @font-face {
             font-family: 'C64';
@@ -213,11 +213,11 @@
 </head>
 <body>
     <div class="link-box" id="whatIsThisLink">
-        <a href="javascript:void(0)" onclick="showOptions()">What is this?</a>
+        <a href="javascript:void(0)" onclick="showOptions()">Mikä tämä on?</a>
     </div>
     <div class="container" id="mainContent">
         <div class="input-container" id="inputContainer">
-            <h1>WordFraud 1.0</h1>
+            <h1>Timin pikku sanapeliapuri</h1>
             <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off" disabled onkeypress="handleKeyPress(event)">
             <button id="fraudeloiButton" onclick="findWords()" disabled>Fraudeloi</button>
         </div>
@@ -378,11 +378,11 @@
             optionsContainer.style.top = '20px';
             optionsContainer.style.right = '20px';
             optionsContainer.innerHTML = `
-                <p>This is the joker letter: -</p>
-                <p>Did you mean.</p>
+                <p>Jokerikirjain on väliviiva.</p>
+                <p>Vai tarkoititko kuitenkin:</p>
                 <div class="option-container">
-                    <a class="option-text" onclick="showBasicChoice()">What is here</a> or<br>
-                    <a class="option-text" href="wordporn.html">What is that?</a>
+                    <a class="option-text" onclick="showBasicChoice()">What is here?</a> tai<br>
+                    <a class="option-text" href="wordporn.html">What is there?</a>
                 </div>
             `;
         }
