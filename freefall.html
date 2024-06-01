@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freefall Simulation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #add8e6;
+            color: #000;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        .container {
+            max-width: 800px;
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #333;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background-color: #f0f0f0;
+            text-align: center;
+            appearance: none;
+            autocomplete: off;
+            spellcheck: false;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #555;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #f00;
+        }
+        .flying-person {
+            position: absolute;
+            background-color: #000;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+        }
+        @keyframes fall {
+            0% { top: 0; }
+            100% { top: 100vh; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Freefall Simulation</h1>
+        <p>Enter a height in meters to calculate the impact speed.</p>
+        <input type="text" id="heightInput" placeholder="Height in meters">
+        <button onclick="calculateSpeed()">Calculate</button>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function createFlyingPerson() {
+            const person = document.createElement('div');
+            person.className = 'flying-person';
+            person.style.top = Math.random() * 100 + 'vh';
+            person.style.left = Math.random() * 100 + 'vw';
+            document.body.appendChild(person);
+        }
+
+        for (let i = 0; i < 50; i++) {
+            createFlyingPerson();
+        }
+
+        function calculateSpeed() {
+            const height = parseFloat(document.getElementById('heightInput').value);
+            if (isNaN(height) || height <= 0) {
+                document.getElementById('result').textContent = 'Please enter a valid height.';
+                return;
+            }
+            const g = 9.81;
+            const velocity = Math.sqrt(2 * g * height);
+            const velocityKmh = (velocity * 3.6).toFixed(2);
+
+            document.getElementById('result').textContent = `Impact speed: ${velocityKmh} km/h`;
+
+            const people = document.querySelectorAll('.flying-person');
+            const person = people[Math.floor(Math.random() * people.length)];
+            person.style.animation = 'fall 2s linear forwards';
+        }
+    </script>
+</body>
+</html>
