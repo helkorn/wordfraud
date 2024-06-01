@@ -18,6 +18,53 @@
             </div>
         </div>
     </div>
+    <div class="container hidden" id="content">
+        <h1>Freefall</h1>
+        <div>
+            <label for="laiva">Valitse laiva:</label>
+            <select id="laiva" onchange="updateKannet()">
+                <option value="Viking MS Isabella">Viking MS Isabella</option>
+                <option value="Silja Serenade">Silja Serenade</option>
+                <option value="Viking Grace">Viking Grace</option>
+                <option value="Tallink Megastar">Tallink Megastar</option>
+                <option value="Eckerö Line Finlandia">Eckerö Line Finlandia</option>
+                <option value="Tallink Silja Europa">Tallink Silja Europa</option>
+                <option value="Viking Amorella">Viking Amorella</option>
+                <option value="Finnlines Star">Finnlines Star</option>
+                <option value="Viking Gabriella">Viking Gabriella</option>
+                <option value="Viking Rosella">Viking Rosella</option>
+                <option value="Baltic Princess">Baltic Princess</option>
+                <option value="Silja Symphony">Silja Symphony</option>
+                <option value="SeaWind Line">SeaWind Line</option>
+            </select>
+        </div>
+        <div>
+            <label for="kansi">Valitse kansi:</label>
+            <select id="kansi">
+                <!-- Kannet täytetään JavaScriptillä -->
+            </select>
+        </div>
+        <div>
+            <label for="kaide">Seisotko kaiteen päällä?</label>
+            <select id="kaide">
+                <option value="ei">Ei</option>
+                <option value="kyllä">Kyllä</option>
+            </select>
+        </div>
+        <div>
+            <label for="huutavatko">Huutavatko ihmiset?</label>
+            <select id="huutavatko" onchange="checkHuutavatko()">
+                <option value="ei">Ei</option>
+                <option value="kyllä">Kyllä</option>
+            </select>
+        </div>
+        <button onclick="laskeKorkeus()">Hyppää</button>
+        <div id="result" class="result"></div>
+        <div id="helicopter" class="image-container hidden">
+            <img src="helicopter.png" alt="Helikopteri">
+            <div id="sakkolappu" class="c64-font"></div>
+        </div>
+    </div>
     <script>
         const laivat = {
             "Viking MS Isabella": { kannet: 11, vedenAlapuolella: 2 },
@@ -32,8 +79,7 @@
             "Viking Rosella": { kannet: 9, vedenAlapuolella: 1 },
             "Baltic Princess": { kannet: 12, vedenAlapuolella: 3 },
             "Silja Symphony": { kannet: 13, vedenAlapuolella: 3 },
-            "SeaWind Line": { kannet: 8, vedenAlapuolella: 2 },
-            // Lisää lisää laivoja tarpeen mukaan
+            "SeaWind Line": { kannet: 8, vedenAlapuolella: 2 }
         };
 
         function updateKannet() {
@@ -65,7 +111,36 @@
             resultDiv.textContent = `Hyppykorkeus on ${hyppyKorkeus} kerrosta merenpintaan.`;
         }
 
-        $(document).ready(function() {
+        function checkHuutavatko() {
+            const huutavatkoValinta = document.getElementById('huutavatko').value;
+            if (huutavatkoValinta === 'kyllä') {
+                showHelicopterAndSakkolappu();
+            }
+        }
+
+        function showHelicopterAndSakkolappu() {
+            document.getElementById('helicopter').classList.remove('hidden');
+            typeWriter('Sakkolappu: 480 €', 0, 'sakkolappu');
+        }
+
+        function typeWriter(text, i, elementId) {
+            if (i < text.length) {
+                document.getElementById(elementId).innerHTML += text.charAt(i);
+                setTimeout(function() {
+                    typeWriter(text, i + 1, elementId)
+                }, 50);
+            }
+        }
+
+        function startTextAnimation() {
+            typeWriter('*** COMMODORE 64 BASIC V2 ***\n\n64K RAM SYSTEM  38911 BASIC BYTES FREE\n\nREADY.\n\n', 0, function() {
+                document.getElementById("content").classList.remove("hidden");
+                typeWriter('Freefall\n\nValitse laiva, kansi ja kaide.', 0, 'output');
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            startTextAnimation();
             updateKannet();
         });
     </script>
