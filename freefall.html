@@ -4,99 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Freefall</title>
-    <style>
-        @font-face {
-            font-family: 'C64';
-            src: url('C64_TrueType_v1.2.1-STYLE/c64_style.ttf') format('truetype');
-        }
-        body {
-            font-family: 'C64', monospace;
-            background-color: #0000A0;
-            color: #FFFFFF;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            flex-direction: column;
-        }
-        .container {
-            max-width: 600px;
-            text-align: center;
-            padding: 20px;
-            background-color: #0000A0;
-            color: #FFFFFF;
-        }
-        .content {
-            display: none;
-        }
-        .result {
-            margin-top: 20px;
-            font-size: 1.5em;
-        }
-        .hidden {
-            display: none;
-        }
-        .image-container {
-            display: none;
-            margin-top: 20px;
-        }
-        .image-container img {
-            width: 200px;
-            height: auto;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="style/style.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+    <script src="https://cdn.rawgit.com/johnboker/jquery.blink/master/jquery.blink.js"></script>
 </head>
 <body>
-    <div class="container">
-        <div id="output"></div>
-        <div id="content" class="content">
-            <h1>Freefall</h1>
-            <div>
-                <label for="laiva">Valitse laiva:</label>
-                <select id="laiva" onchange="updateKannet()">
-                    <option value="Viking MS Isabella">Viking MS Isabella</option>
-                    <option value="Silja Serenade">Silja Serenade</option>
-                    <option value="Viking Grace">Viking Grace</option>
-                    <option value="Tallink Megastar">Tallink Megastar</option>
-                    <option value="Eckerö Line Finlandia">Eckerö Line Finlandia</option>
-                    <option value="Tallink Silja Europa">Tallink Silja Europa</option>
-                    <option value="Viking Amorella">Viking Amorella</option>
-                    <option value="Finnlines Star">Finnlines Star</option>
-                    <option value="Viking Gabriella">Viking Gabriella</option>
-                    <option value="Viking Rosella">Viking Rosella</option>
-                    <option value="Baltic Princess">Baltic Princess</option>
-                    <option value="Silja Symphony">Silja Symphony</option>
-                    <option value="SeaWind Line">SeaWind Line</option>
-                    <!-- Lisää lisää laivoja tarpeen mukaan -->
-                </select>
-            </div>
-            <div>
-                <label for="kansi">Valitse kansi:</label>
-                <select id="kansi">
-                    <!-- Kannet täytetään JavaScriptillä -->
-                </select>
-            </div>
-            <div>
-                <label for="kaide">Seisotko kaiteen päällä?</label>
-                <select id="kaide">
-                    <option value="ei">Ei</option>
-                    <option value="kyllä">Kyllä</option>
-                </select>
-            </div>
-            <div>
-                <label for="huutavatko">Huutavatko ihmiset?</label>
-                <select id="huutavatko" onchange="checkHuutavatko()">
-                    <option value="ei">Ei</option>
-                    <option value="kyllä">Kyllä</option>
-                </select>
-            </div>
-            <button onclick="laskeKorkeus()">Hyppää</button>
-            <div id="result" class="result"></div>
-            <div id="helicopter" class="image-container">
-                <img src="helicopter.png" alt="Helikopteri">
-                <div id="sakkolappu" class="c64-font"></div>
+    <div id="c64">
+        <div id="c64-startup">
+            <div id="c64-startup-header" class="c64-font">**** COMMODORE 64 BASIC V2 ****<br /><br />64K RAM SYSTEM &nbsp;38911 BASIC BYTES FREE</div>
+            <div id="c64-startup-prompt" class="c64-font">READY.<br /><span class="typewriter">LOAD"FREEFALL",8,1</span><span class="blink">█</span></div>
+            <div id="c64-startup-footnote">
+                <a href="https://github.com/kambrium/c64-startup-screen">c64-startup-screen@GitHub</a>
             </div>
         </div>
     </div>
@@ -147,40 +65,9 @@
             resultDiv.textContent = `Hyppykorkeus on ${hyppyKorkeus} kerrosta merenpintaan.`;
         }
 
-        function checkHuutavatko() {
-            const huutavatkoValinta = document.getElementById('huutavatko').value;
-            if (huutavatkoValinta === 'kyllä') {
-                showHelicopterAndSakkolappu();
-            }
-        }
-
-        function showHelicopterAndSakkolappu() {
-            document.getElementById('helicopter').style.display = 'block';
-            typeWriter('Sakkolappu: 480 €', 0, 'sakkolappu');
-        }
-
-        function typeWriter(text, i, elementId) {
-            if (i < text.length) {
-                document.getElementById(elementId).innerHTML += text.charAt(i);
-                setTimeout(function() {
-                    typeWriter(text, i + 1, elementId)
-                }, 50);
-            }
-        }
-
-        function startTextAnimation() {
-            typeWriter('*** COMMODORE 64 BASIC V2 ***\n\n64K RAM SYSTEM  38911 BASIC BYTES FREE\n\nREADY.\n\n', 0, function() {
-                document.getElementById("content").style.display = "block";
-                typeWriter('Freefall\n\nValitse laiva, kansi ja kaide.', 0, 'output');
-            });
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            startTextAnimation();
+        $(document).ready(function() {
+            updateKannet();
         });
-
-        // Päivitä kannet alussa valitulle laivalle
-        updateKannet();
     </script>
 </body>
 </html>
