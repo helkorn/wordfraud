@@ -73,12 +73,20 @@
             position: absolute;
             width: 32px;
             height: 32px;
-            background-image: url('p1_front.png'); /* Käytetään vihreää hahmoa */
+            background-image: url('p1_jump.png');
             background-size: cover;
         }
+        .ground {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background-color: #0f0;
+        }
         @keyframes fall {
-            0% { top: 0; }
-            100% { top: 100vh; }
+            0% { transform: translateY(0); }
+            100% { transform: translateY(calc(100vh - 42px)); }
         }
     </style>
 </head>
@@ -90,8 +98,12 @@
         <button onclick="calculateSpeed()">Calculate</button>
         <div class="result" id="result"></div>
     </div>
+    <div class="ground"></div>
 
     <script>
+        const g = 9.81;
+        const terminalVelocity = 53; // Terminal velocity in m/s (assuming 190 km/h)
+
         function createFlyingPerson() {
             const person = document.createElement('div');
             person.className = 'flying-person';
@@ -110,15 +122,22 @@
                 document.getElementById('result').textContent = 'Please enter a valid height.';
                 return;
             }
-            const g = 9.81;
-            const velocity = Math.sqrt(2 * g * height);
+
+            let velocity = Math.sqrt(2 * g * height);
+            if (velocity > terminalVelocity) {
+                velocity = terminalVelocity;
+            }
             const velocityKmh = (velocity * 3.6).toFixed(2);
 
             document.getElementById('result').textContent = `Impact speed: ${velocityKmh} km/h`;
 
             const people = document.querySelectorAll('.flying-person');
             const person = people[Math.floor(Math.random() * people.length)];
-            person.style.animation = 'fall 2s linear forwards';
+            person.style.animation = `fall ${Math.min(velocity / g, 5)}s linear forwards`;
+
+            person.addEventListener('animationend', () => {
+                person.style.backgroundImage = 'url("p1_hurt.png")';
+            });
         }
     </script>
 </body>
