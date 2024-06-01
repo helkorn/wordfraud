@@ -95,92 +95,148 @@
         <h1>Freefall Simulation</h1>
         <p>Enter a height in meters to calculate the impact speed.</p>
         <input type="text" id="heightInput" placeholder="Height in meters">
-        <button onclick="calculateSpeed()">Calculate</button>
-        <div class="result" id="result"></div>
+        <button onclick="calculateSpeed()">Calculate</button><!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freefall</title>
+    <style>
+        @font-face {
+            font-family: 'C64';
+            src: url('fontC64.ttf') format('truetype');
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+        .container {
+            max-width: 600px;
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+        }
+        h1 {
+            color: #333333;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        select, button {
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            color: #333333;
+        }
+        button {
+            cursor: pointer;
+            border-radius: 50px;
+            background-color: #333333;
+            color: #ffffff;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #555555;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 1.5em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Freefall</h1>
+        <div>
+            <label for="laiva">Valitse laiva:</label>
+            <select id="laiva" onchange="updateKannet()">
+                <option value="Viking MS Isabella">Viking MS Isabella</option>
+                <option value="Silja Serenade">Silja Serenade</option>
+                <option value="Viking Grace">Viking Grace</option>
+                <option value="Tallink Megastar">Tallink Megastar</option>
+                <option value="Eckerö Line Finlandia">Eckerö Line Finlandia</option>
+                <option value="Tallink Silja Europa">Tallink Silja Europa</option>
+                <option value="Viking Amorella">Viking Amorella</option>
+                <option value="Finnlines Star">Finnlines Star</option>
+                <option value="Viking Gabriella">Viking Gabriella</option>
+                <option value="Viking Rosella">Viking Rosella</option>
+                <option value="Baltic Princess">Baltic Princess</option>
+                <option value="Silja Symphony">Silja Symphony</option>
+                <option value="SeaWind Line">SeaWind Line</option>
+                <!-- Lisää lisää laivoja tarpeen mukaan -->
+            </select>
+        </div>
+        <div>
+            <label for="kansi">Valitse kansi:</label>
+            <select id="kansi">
+                <!-- Kannet täytetään JavaScriptillä -->
+            </select>
+        </div>
+        <button onclick="laskeKorkeus()">Hyppää</button>
+        <div id="result" class="result"></div>
     </div>
-    <div class="ground"></div>
-
     <script>
-        const g = 9.81;
-        const terminalVelocity = 53; // Terminal velocity in m/s (assuming 190 km/h)
+        const laivat = {
+            "Viking MS Isabella": { kannet: 11, vedenAlapuolella: 2 },
+            "Silja Serenade": { kannet: 13, vedenAlapuolella: 3 },
+            "Viking Grace": { kannet: 12, vedenAlapuolella: 2 },
+            "Tallink Megastar": { kannet: 10, vedenAlapuolella: 1 },
+            "Eckerö Line Finlandia": { kannet: 9, vedenAlapuolella: 2 },
+            "Tallink Silja Europa": { kannet: 14, vedenAlapuolella: 3 },
+            "Viking Amorella": { kannet: 10, vedenAlapuolella: 2 },
+            "Finnlines Star": { kannet: 12, vedenAlapuolella: 2 },
+            "Viking Gabriella": { kannet: 11, vedenAlapuolella: 2 },
+            "Viking Rosella": { kannet: 9, vedenAlapuolella: 1 },
+            "Baltic Princess": { kannet: 12, vedenAlapuolella: 3 },
+            "Silja Symphony": { kannet: 13, vedenAlapuolella: 3 },
+            "SeaWind Line": { kannet: 8, vedenAlapuolella: 2 },
+            // Lisää lisää laivoja tarpeen mukaan
+        };
 
-        function createFlyingPerson() {
-            const person = document.createElement('div');
-            person.className = 'flying-person';
-            person.style.top = Math.random() * 100 + 'vh';
-            person.style.left = Math.random() * 100 + 'vw';
-            document.body.appendChild(person);
-        }
+        function updateKannet() {
+            const laivaValinta = document.getElementById('laiva').value;
+            const kannet = laivat[laivaValinta].kannet;
+            const kansiSelect = document.getElementById('kansi');
+            kansiSelect.innerHTML = '';
 
-        for (let i = 0; i < 50; i++) {
-            createFlyingPerson();
-        }
-
-        function calculateSpeed() {
-            const height = parseFloat(document.getElementById('heightInput').value);
-            if (isNaN(height) || height <= 0) {
-                document.getElementById('result').textContent = 'Please enter a valid height.';
-                return;
+            for (let i = 1; i <= kannet; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.text = `Kansi ${i}`;
+                kansiSelect.appendChild(option);
             }
+        }
 
-            let velocity = Math.sqrt(2 * g * height);
-            if (velocity > terminalVelocity) {
-                velocity = terminalVelocity;
+        function laskeKorkeus() {
+            const laivaValinta = document.getElementById('laiva').value;
+            const valittuKansi = document.getElementById('kansi').value;
+            const vedenAlapuolella = laivat[laivaValinta].vedenAlapuolella;
+            const hyppyKorkeus = valittuKansi - vedenAlapuolella;
+
+            const resultDiv = document.getElementById('result');
+            if (hyppyKorkeus > 0) {
+                resultDiv.textContent = `Hyppykorkeus on ${hyppyKorkeus} kerrosta merenpintaan.`;
+            } else {
+                resultDiv.textContent = 'Valittu kansi on veden alla, valitse korkeampi kansi.';
             }
-            const velocityKmh = (velocity * 3.6).toFixed(2);
-
-            document.getElementById('result').textContent = `Impact speed: ${velocityKmh} km/h`;
-
-            const people = document.querySelectorAll('.flying-person');
-            const person = people[Math.floor(Math.random() * people.length)];
-            person.style.animation = `fall ${Math.min(velocity / g, 5)}s linear forwards`;
-
-            person.addEventListener('animationend', () => {
-                person.style.backgroundImage = 'url("p1_hurt.png")';
-            });
-        }
-    </script>
-</body>
-</html>
-    <script>
-        const g = 9.81;
-        const terminalVelocity = 53; // Terminal velocity in m/s (assuming 190 km/h)
-
-        function createFlyingPerson() {
-            const person = document.createElement('div');
-            person.className = 'flying-person';
-            person.style.top = Math.random() * 100 + 'vh';
-            person.style.left = Math.random() * 100 + 'vw';
-            document.body.appendChild(person);
         }
 
-        for (let i = 0; i < 50; i++) {
-            createFlyingPerson();
-        }
-
-        function calculateSpeed() {
-            const height = parseFloat(document.getElementById('heightInput').value);
-            if (isNaN(height) || height <= 0) {
-                document.getElementById('result').textContent = 'Please enter a valid height.';
-                return;
-            }
-
-            let velocity = Math.sqrt(2 * g * height);
-            if (velocity > terminalVelocity) {
-                velocity = terminalVelocity;
-            }
-            const velocityKmh = (velocity * 3.6).toFixed(2);
-
-            document.getElementById('result').textContent = `Impact speed: ${velocityKmh} km/h`;
-
-            const people = document.querySelectorAll('.flying-person');
-            const person = people[Math.floor(Math.random() * people.length)];
-            person.style.animation = `fall ${Math.min(velocity / g, 5)}s linear forwards`;
-
-            person.addEventListener('animationend', () => {
-                person.style.backgroundImage = 'url("p1_hurt.png")';
-            });
-        }
+        // Päivitä kannet alussa valitulle laivalle
+        updateKannet();
     </script>
 </body>
 </html>
