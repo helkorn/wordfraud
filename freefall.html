@@ -142,3 +142,45 @@
     </script>
 </body>
 </html>
+    <script>
+        const g = 9.81;
+        const terminalVelocity = 53; // Terminal velocity in m/s (assuming 190 km/h)
+
+        function createFlyingPerson() {
+            const person = document.createElement('div');
+            person.className = 'flying-person';
+            person.style.top = Math.random() * 100 + 'vh';
+            person.style.left = Math.random() * 100 + 'vw';
+            document.body.appendChild(person);
+        }
+
+        for (let i = 0; i < 50; i++) {
+            createFlyingPerson();
+        }
+
+        function calculateSpeed() {
+            const height = parseFloat(document.getElementById('heightInput').value);
+            if (isNaN(height) || height <= 0) {
+                document.getElementById('result').textContent = 'Please enter a valid height.';
+                return;
+            }
+
+            let velocity = Math.sqrt(2 * g * height);
+            if (velocity > terminalVelocity) {
+                velocity = terminalVelocity;
+            }
+            const velocityKmh = (velocity * 3.6).toFixed(2);
+
+            document.getElementById('result').textContent = `Impact speed: ${velocityKmh} km/h`;
+
+            const people = document.querySelectorAll('.flying-person');
+            const person = people[Math.floor(Math.random() * people.length)];
+            person.style.animation = `fall ${Math.min(velocity / g, 5)}s linear forwards`;
+
+            person.addEventListener('animationend', () => {
+                person.style.backgroundImage = 'url("p1_hurt.png")';
+            });
+        }
+    </script>
+</body>
+</html>
