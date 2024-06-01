@@ -388,7 +388,7 @@
         }
 
         function showBasicChoice() {
-            document.body.innerHTML = '<canvas></canvas>';
+            document.body.innerHTML = '<canvas></canvas><div id="buttonContainer" style="text-align: center; margin-top: 20px;"></div>';
             var canvas = document.querySelector('canvas');
             var ctx = canvas.getContext('2d');
 
@@ -445,14 +445,31 @@
                     waitForChoice();
                 }, delay * lines.length);
             });
+
+            // Lisää painikkeet mobiililaitteille
+            var buttonContainer = document.getElementById('buttonContainer');
+            buttonContainer.innerHTML = `
+                <button onclick="handleChoice(1)">1</button>
+                <button onclick="handleChoice(2)">2</button>
+            `;
+        }
+
+        function handleChoice(choice) {
+            if (choice === 1) {
+                window.location.href = 'pacman.html';
+            } else if (choice === 2) {
+                window.location.href = 'https://youtu.be/zE7PKRjrid4';
+            } else {
+                showInvalidChoice();
+            }
         }
 
         function waitForChoice() {
             document.addEventListener('keydown', function(event) {
                 if (event.key === '1') {
-                    window.location.href = 'pacman.html';
+                    handleChoice(1);
                 } else if (event.key === '2') {
-                    window.location.href = 'https://youtu.be/zE7PKRjrid4';
+                    handleChoice(2);
                 } else {
                     showInvalidChoice();
                 }
