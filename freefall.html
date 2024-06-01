@@ -3,103 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Freefall Simulation</title>
-    <style>
-        @font-face {
-            font-family: 'C64';
-            src: url('fontC64.ttf') format('truetype');
-        }
-        body {
-            font-family: 'C64', monospace;
-            background-color: #000;
-            color: #0f0;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
-            position: relative;
-        }
-        .container {
-            max-width: 800px;
-            text-align: center;
-            padding: 20px;
-            border: 1px solid #0f0;
-            border-radius: 10px;
-            background-color: #000;
-            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-        }
-        h1 {
-            color: #0f0;
-            font-size: 2em;
-            margin-bottom: 20px;
-        }
-        input[type="text"] {
-            width: 80%;
-            padding: 10px;
-            font-size: 16px;
-            margin-bottom: 10px;
-            border: 1px solid #0f0;
-            border-radius: 5px;
-            background-color: #000;
-            color: #0f0;
-            text-align: center;
-            appearance: none;
-            autocomplete: off;
-            spellcheck: false;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border: 1px solid #0f0;
-            border-radius: 5px;
-            background-color: #000;
-            color: #0f0;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #0f0;
-            color: #000;
-        }
-        .result {
-            margin-top: 20px;
-            font-size: 1.2em;
-            color: #f00;
-        }
-        .flying-person {
-            position: absolute;
-            width: 32px;
-            height: 32px;
-            background-image: url('p1_jump.png');
-            background-size: cover;
-        }
-        .ground {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 10px;
-            background-color: #0f0;
-        }
-        @keyframes fall {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(calc(100vh - 42px)); }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Freefall Simulation</h1>
-        <p>Enter a height in meters to calculate the impact speed.</p>
-        <input type="text" id="heightInput" placeholder="Height in meters">
-        <button onclick="calculateSpeed()">Calculate</button><!DOCTYPE html>
-<html lang="fi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Freefall</title>
     <style>
         @font-face {
@@ -107,11 +10,11 @@
             src: url('fontC64.ttf') format('truetype');
         }
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            color: #333333;
+            font-family: 'C64', monospace;
+            background-color: #0000A0;
+            color: #FFFFFF;
             margin: 0;
-            padding: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -122,35 +25,11 @@
             max-width: 600px;
             text-align: center;
             padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #ffffff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin: 20px auto;
+            background-color: #0000A0;
+            color: #FFFFFF;
         }
-        h1 {
-            color: #333333;
-            font-size: 2em;
-            margin-bottom: 20px;
-        }
-        select, button {
-            padding: 10px;
-            font-size: 16px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-            color: #333333;
-        }
-        button {
-            cursor: pointer;
-            border-radius: 50px;
-            background-color: #333333;
-            color: #ffffff;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #555555;
+        .content {
+            display: none;
         }
         .result {
             margin-top: 20px;
@@ -160,34 +39,44 @@
 </head>
 <body>
     <div class="container">
-        <h1>Freefall</h1>
-        <div>
-            <label for="laiva">Valitse laiva:</label>
-            <select id="laiva" onchange="updateKannet()">
-                <option value="Viking MS Isabella">Viking MS Isabella</option>
-                <option value="Silja Serenade">Silja Serenade</option>
-                <option value="Viking Grace">Viking Grace</option>
-                <option value="Tallink Megastar">Tallink Megastar</option>
-                <option value="Eckerö Line Finlandia">Eckerö Line Finlandia</option>
-                <option value="Tallink Silja Europa">Tallink Silja Europa</option>
-                <option value="Viking Amorella">Viking Amorella</option>
-                <option value="Finnlines Star">Finnlines Star</option>
-                <option value="Viking Gabriella">Viking Gabriella</option>
-                <option value="Viking Rosella">Viking Rosella</option>
-                <option value="Baltic Princess">Baltic Princess</option>
-                <option value="Silja Symphony">Silja Symphony</option>
-                <option value="SeaWind Line">SeaWind Line</option>
-                <!-- Lisää lisää laivoja tarpeen mukaan -->
-            </select>
+        <div id="output"></div>
+        <div id="content" class="content">
+            <h1>Freefall</h1>
+            <div>
+                <label for="laiva">Valitse laiva:</label>
+                <select id="laiva" onchange="updateKannet()">
+                    <option value="Viking MS Isabella">Viking MS Isabella</option>
+                    <option value="Silja Serenade">Silja Serenade</option>
+                    <option value="Viking Grace">Viking Grace</option>
+                    <option value="Tallink Megastar">Tallink Megastar</option>
+                    <option value="Eckerö Line Finlandia">Eckerö Line Finlandia</option>
+                    <option value="Tallink Silja Europa">Tallink Silja Europa</option>
+                    <option value="Viking Amorella">Viking Amorella</option>
+                    <option value="Finnlines Star">Finnlines Star</option>
+                    <option value="Viking Gabriella">Viking Gabriella</option>
+                    <option value="Viking Rosella">Viking Rosella</option>
+                    <option value="Baltic Princess">Baltic Princess</option>
+                    <option value="Silja Symphony">Silja Symphony</option>
+                    <option value="SeaWind Line">SeaWind Line</option>
+                    <!-- Lisää lisää laivoja tarpeen mukaan -->
+                </select>
+            </div>
+            <div>
+                <label for="kansi">Valitse kansi:</label>
+                <select id="kansi">
+                    <!-- Kannet täytetään JavaScriptillä -->
+                </select>
+            </div>
+            <div>
+                <label for="kaide">Seisotko kaiteen päällä?</label>
+                <select id="kaide">
+                    <option value="ei">Ei</option>
+                    <option value="kyllä">Kyllä</option>
+                </select>
+            </div>
+            <button onclick="laskeKorkeus()">Hyppää</button>
+            <div id="result" class="result"></div>
         </div>
-        <div>
-            <label for="kansi">Valitse kansi:</label>
-            <select id="kansi">
-                <!-- Kannet täytetään JavaScriptillä -->
-            </select>
-        </div>
-        <button onclick="laskeKorkeus()">Hyppää</button>
-        <div id="result" class="result"></div>
     </div>
     <script>
         const laivat = {
@@ -209,11 +98,11 @@
 
         function updateKannet() {
             const laivaValinta = document.getElementById('laiva').value;
-            const kannet = laivat[laivaValinta].kannet;
+            const laiva = laivat[laivaValinta];
             const kansiSelect = document.getElementById('kansi');
             kansiSelect.innerHTML = '';
 
-            for (let i = 1; i <= kannet; i++) {
+            for (let i = laiva.vedenAlapuolella + 1; i <= laiva.kannet; i++) {
                 const option = document.createElement('option');
                 option.value = i;
                 option.text = `Kansi ${i}`;
@@ -225,15 +114,38 @@
             const laivaValinta = document.getElementById('laiva').value;
             const valittuKansi = document.getElementById('kansi').value;
             const vedenAlapuolella = laivat[laivaValinta].vedenAlapuolella;
-            const hyppyKorkeus = valittuKansi - vedenAlapuolella;
+            let hyppyKorkeus = valittuKansi - vedenAlapuolella;
+
+            const kaideValinta = document.getElementById('kaide').value;
+            if (kaideValinta === 'kyllä') {
+                hyppyKorkeus += 1; // Lisää yksi metri jos seisotaan kaiteen päällä
+            }
 
             const resultDiv = document.getElementById('result');
-            if (hyppyKorkeus > 0) {
-                resultDiv.textContent = `Hyppykorkeus on ${hyppyKorkeus} kerrosta merenpintaan.`;
-            } else {
-                resultDiv.textContent = 'Valittu kansi on veden alla, valitse korkeampi kansi.';
+            resultDiv.textContent = `Hyppykorkeus on ${hyppyKorkeus} kerrosta merenpintaan.`;
+        }
+
+        function typeWriter(text, i, fnCallback) {
+            if (i < text.length) {
+                document.getElementById("output").innerHTML += text.charAt(i);
+                setTimeout(function() {
+                    typeWriter(text, i + 1, fnCallback)
+                }, 50);
+            } else if (typeof fnCallback == 'function') {
+                setTimeout(fnCallback, 700);
             }
         }
+
+        function startTextAnimation() {
+            typeWriter('*** COMMODORE 64 BASIC V2 ***\n\n64K RAM SYSTEM  38911 BASIC BYTES FREE\n\nREADY.\n\n', 0, function() {
+                document.getElementById("content").style.display = "block";
+                typeWriter('Freefall\n\nValitse laiva, kansi ja kaide.', 0);
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            startTextAnimation();
+        });
 
         // Päivitä kannet alussa valitulle laivalle
         updateKannet();
