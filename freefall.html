@@ -51,13 +51,6 @@
                 <option value="kyllä">Kyllä</option>
             </select>
         </div>
-        <div>
-            <label for="huutavatko">Huutavatko ihmiset?</label>
-            <select id="huutavatko" onchange="checkHuutavatko()">
-                <option value="ei">Ei</option>
-                <option value="kyllä">Kyllä</option>
-            </select>
-        </div>
         <button onclick="laskeKorkeus()">Hyppää</button>
         <div id="result" class="result"></div>
         <div id="helicopter" class="image-container hidden">
@@ -109,18 +102,6 @@
 
             const resultDiv = document.getElementById('result');
             resultDiv.textContent = `Hyppykorkeus on ${hyppyKorkeus} kerrosta merenpintaan.`;
-        }
-
-        function checkHuutavatko() {
-            const huutavatkoValinta = document.getElementById('huutavatko').value;
-            if (huutavatkoValinta === 'kyllä') {
-                showHelicopterAndSakkolappu();
-            }
-        }
-
-        function showHelicopterAndSakkolappu() {
-            document.getElementById('helicopter').classList.remove('hidden');
-            typeWriter('Sakkolappu: 480 €', 0, 'sakkolappu');
         }
 
         function typeWriter(text, i, elementId) {
