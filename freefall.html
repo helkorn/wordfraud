@@ -137,10 +137,8 @@
         }
 
         function startTextAnimation() {
-            typeWriter('*** COMMODORE 64 BASIC V2 ***\n\n64K RAM SYSTEM  38911 BASIC BYTES FREE\n\nREADY.\n\n', 0, function() {
-                document.getElementById("content").style.display = "block";
-                typeWriter('Freefall\n\nValitse laiva, kansi ja kaide.', 0);
-            });
+            document.getElementById("content").style.display = "block";
+            typeWriter('Valitse laiva, kansi ja kaide.', 0);
         }
 
         document.addEventListener("DOMContentLoaded", function() {
