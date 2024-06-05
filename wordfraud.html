@@ -355,7 +355,7 @@
         const textElement = document.getElementById('changingText');
         const texts = [
             { text: 'WordFraud 1.0', size: '2em', color: '#333333' },
-            { text: 'Väliviiva on jokeri', size: '1.5em', color: '#808080' }
+            { text: 'väliviiva on jokeri', size: '1.5em', color: '#808080' }
         ];
         let currentTextIndex = 0;
 
@@ -383,7 +383,12 @@
             updateText();
         }
 
-        setInterval(changeText, 5000);
+        setInterval(() => {
+            changeText();
+            if (texts[currentTextIndex].text === 'väliviiva on jokeri') {
+                setTimeout(changeText, 1000); // Väliviiva on jokeri näkyvissä 1 sekunnin ajan
+            }
+        }, 5000);
     </script>
 </body>
 </html>
