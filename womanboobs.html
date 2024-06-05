@@ -239,18 +239,20 @@
             const imagePath = `titpics/${currentWord}.png`;
             document.body.innerHTML = `
                 <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                    Ihan oikein, hienoa!<br>
-                    <img src="${imagePath}" alt="${currentWord}" style="max-width: 100%; margin-top: 20px;"><br>
-                    Ladataan uudestaan..
+                    Oikein<br>
+                    <img src="${imagePath}" alt="${currentWord}" style="max-width: 300px; width: 100%; margin-top: 20px;"><br>
+                    <div style="font-size: 0.8em; color: #888; text-align: left; margin-top: 10px;">© 2024 Antti Järvinen Studiot</div><br>
+                    Ladataan uudelleen..<br>${countdown}
                 </div>`;
             let countdown = 5;
             const interval = setInterval(() => {
                 countdown--;
                 document.body.innerHTML = `
                     <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                        Ihan oikein, hienoa!<br>
-                        <img src="${imagePath}" alt="${currentWord}" style="max-width: 100%; margin-top: 20px;"><br>
-                        Ladataan uudestaan..<br>${countdown}
+                        Oikein<br>
+                        <img src="${imagePath}" alt="${currentWord}" style="max-width: 300px; width: 100%; margin-top: 20px;"><br>
+                        <div style="font-size: 0.8em; color: #888; text-align: left; margin-top: 10px;">© 2024 Antti Järvinen Studiot</div><br>
+                        Ladataan uudelleen..<br>${countdown}
                     </div>`;
                 if (countdown <= 0) {
                     clearInterval(interval);
