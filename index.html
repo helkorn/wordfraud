@@ -87,11 +87,8 @@
         }
 
         function showInvalidChoice() {
-            document.getElementById('basicText').innerHTML += `
-                Invalid choice. Please choose 1, 2 or 3.
-                READY.
-                10 INPUT "CHOOSE YOUR PILL 1, 2 or 3:", V
-            `;
+            const basicTextDiv = document.getElementById('basicText');
+            basicTextDiv.innerHTML += '\nInvalid choice. Please choose 1, 2 or 3.\nREADY.\n10 INPUT "CHOOSE YOUR PILL 1, 2 or 3:", V';
             waitForChoice();
         }
 
