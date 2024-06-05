@@ -12,7 +12,7 @@
         body {
             font-family: 'C64';
             background-color: #000;
-            color: #696969;
+            color: #696969';
             margin: 0;
             padding: 20px;
             white-space: pre-wrap;
@@ -25,38 +25,59 @@
     </style>
 </head>
 <body>
-    <div class="basic-text" id="basicText">
-        *** WORDFRAUD V 1.0 ***
-        READY.
-
-        SYS 64738 : REM KILL SWITCH
-        POKE 53280, 0
-        READY.
-
-        10 INPUT "CHOOSE YOUR PILL 1, 2 or 3:", V
-        20 IF V = 1 THEN GOTO 3000
-        30 IF V = 2 THEN GOTO 4000
-        40 IF V = 3 THEN GOTO 5000
-        50 IF V <> 1 AND V <> 2 AND V <> 3 THEN GOSUB 3500
-        60 END
-
-        3000 PRINT "Loading WordFraud 1.0..."
-        3010 OPEN "https://timosalonen.github.io/wordfraud/wordfraud.html" FOR INPUT AS FILE
-        3020 RUN
-
-        3500 PRINT "Invalid choice. Please choose 1, 2 or 3."
-        3510 RETURN
-
-        4000 PRINT "Loading WordPorn..."
-        4010 OPEN "https://timosalonen.github.io/wordfraud/wordporn.html" FOR INPUT AS FILE
-        4020 RUN
-
-        5000 PRINT "Loading WomanBoobs..."
-        5010 OPEN "https://timosalonen.github.io/wordfraud/womanboobs.html" FOR INPUT AS FILE
-        5020 RUN
-    </div>
+    <div class="basic-text" id="basicText"></div>
 
     <script>
+        function showBasicChoice() {
+            const basicText = document.getElementById('basicText');
+            const lines = [
+                '',
+                '',
+                '*** WORDFRAUD V 1.0 ***',
+                'READY.',
+                '',
+                'SYS 64738 : REM KILL SWITCH',
+                'POKE 53280, 0',
+                'READY.',
+                '',
+                '10 INPUT "CHOOSE YOUR PILL 1, 2 or 3:", V',
+                '20 IF V = 1 THEN GOTO 3000',
+                '30 IF V = 2 THEN GOTO 4000',
+                '40 IF V = 3 THEN GOTO 5000',
+                '50 IF V <> 1 AND V <> 2 AND V <> 3 THEN GOSUB 3500',
+                '60 END',
+                '',
+                '3000 PRINT "Loading WordFraud 1.0..."',
+                '3010 OPEN "WORDFRAUD" FOR INPUT AS FILE',
+                '3020 RUN',
+                '',
+                '3500 PRINT "Invalid choice. Please choose 1, 2 or 3."',
+                '3510 RETURN',
+                '',
+                '4000 PRINT "Loading WordPorn..."',
+                '4010 OPEN "WORDPORN" FOR INPUT AS FILE',
+                '4020 RUN',
+                '',
+                '5000 PRINT "Loading WomanBoobs..."',
+                '5010 OPEN "WOMANBOOBS" FOR INPUT AS FILE',
+                '5020 RUN'
+            ];
+
+            let y = 20;
+            const delay = 100;
+
+            lines.forEach((line, index) => {
+                setTimeout(() => {
+                    basicText.textContent += line + '\n';
+                }, delay * index);
+            });
+
+            setTimeout(() => {
+                basicText.textContent += 'READY.\n';
+                waitForChoice();
+            }, delay * lines.length);
+        }
+
         function handleChoice(choice) {
             if (choice === '1') {
                 window.location.href = 'https://timosalonen.github.io/wordfraud/wordfraud.html';
@@ -87,12 +108,12 @@
         }
 
         function showInvalidChoice() {
-            const basicTextDiv = document.getElementById('basicText');
-            basicTextDiv.innerHTML += '\nInvalid choice. Please choose 1, 2 or 3.\nREADY.\n10 INPUT "CHOOSE YOUR PILL 1, 2 or 3:", V';
+            const basicText = document.getElementById('basicText');
+            basicText.textContent += '\nInvalid choice. Please choose 1, 2 or 3.\nREADY.\n10 INPUT "CHOOSE YOUR PILL 1, 2 or 3:", V';
             waitForChoice();
         }
 
-        waitForChoice();
+        showBasicChoice();
     </script>
 </body>
 </html>
