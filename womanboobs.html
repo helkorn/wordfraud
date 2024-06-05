@@ -243,6 +243,7 @@
                     Oikein<br>
                     <img src="${imagePath}" alt="${currentWord}" style="max-width: 300px; width: 100%; margin-top: 20px;"><br>
                     <div style="font-size: 0.8em; color: #888; text-align: left; margin-top: 10px;">© 2024 Antti Järvinen Studiot</div><br>
+                    <img src="titpics/Pink_ribbon.svg" alt="Pink Ribbon" style="max-width: 200px; width: 100%; margin-top: 10px;"><br>
                     Ladataan uudelleen..<br>${countdown}
                 </div>`;
             const interval = setInterval(() => {
@@ -252,6 +253,7 @@
                         Oikein<br>
                         <img src="${imagePath}" alt="${currentWord}" style="max-width: 300px; width: 100%; margin-top: 20px;"><br>
                         <div style="font-size: 0.8em; color: #888; text-align: left; margin-top: 10px;">© 2024 Antti Järvinen Studiot</div><br>
+                        <img src="titpics/Pink_ribbon.svg" alt="Pink Ribbon" style="max-width: 200px; width: 100%; margin-top: 10px;"><br>
                         Ladataan uudelleen..<br>${countdown}
                     </div>`;
                 if (countdown <= 0) {
@@ -274,7 +276,7 @@
             box.id = 'typewriterBox';
             box.className = 'typewriter-box';
             document.body.appendChild(box);
-            const text = "'Pohjoisen korpimetsän radiokanavalta kuului tissikuvaajan kutsu. Ammattikuvaaja ikuistaa radioaseman naisia studiossa, editissä, respassa, ja paitojen teksteissä näkyy väkevä viesti.\n\nOmien rintojesi lempinimi voi olla vieras, jollekin humorisinen ja jossain arkipäivää, mutta kaikki niitä rakastavat: Rinnat, daisarit ja tuutit, eli suomeksi: Tissit!\n\nRatkaise rintojen lempinimi ja ole osa tissikuvaajan arkea. Lokakuussa alkava Roosa nauha-kampanja joka promotoi rintasyöpätietoisuuden puolesta maalimanlaajuisesti.\n\nOnnea peliin. Tissit mainittu!'";
+            const text = 'Pohjoisen korpimetsän radiokanavalta kuului tissikuvaajan kutsu. Ammattikuvaaja ikuistaa radioaseman naisia, ja paitojen tekstit puhutelevat.\n\nEtsi pelissä oikea rintojen lempinimi ja saat kuvan näkyviin.\n\nSe voi olla hauska tai jossain arkipäivää, mutta kaikki niitä rakastavat: Rinnat, daisarit ja tuutit, eli suomeksi: Tissit!\n\nRatkaise anagrammi ja ole mukana lokakuussa alkavassa Roosa nauha-kampanjassa tuomassa rintasyöpätietoisuutta esiin.\n\nOnnea peliin. Tissit mainittu!';
             let index = 0;
 
             function typeNext() {
