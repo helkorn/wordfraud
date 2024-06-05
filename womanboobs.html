@@ -204,22 +204,7 @@
             paused = true;
             if (answer === currentWord.toLowerCase()) {
                 revealCorrectAnswer(() => {
-                    document.body.innerHTML = `
-                        <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                            Ihan oikein, hienoa!<br>Ladataan uudestaan..
-                        </div>`;
-                    let countdown = 5;
-                    const interval = setInterval(() => {
-                        countdown--;
-                        document.body.innerHTML = `
-                            <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                                Ihan oikein, hienoa!<br>Ladataan uudestaan..<br>${countdown}
-                            </div>`;
-                        if (countdown <= 0) {
-                            clearInterval(interval);
-                            location.reload();
-                        }
-                    }, 1000);
+                    showCongratulationsPage();
                 });
             } else {
                 revealCorrectAnswer();
@@ -248,6 +233,30 @@
                     }
                 }
             }, 200);
+        }
+
+        function showCongratulationsPage() {
+            const imagePath = `titpics/${currentWord}.png`;
+            document.body.innerHTML = `
+                <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                    Ihan oikein, hienoa!<br>
+                    <img src="${imagePath}" alt="${currentWord}" style="max-width: 100%; margin-top: 20px;"><br>
+                    Ladataan uudestaan..
+                </div>`;
+            let countdown = 5;
+            const interval = setInterval(() => {
+                countdown--;
+                document.body.innerHTML = `
+                    <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                        Ihan oikein, hienoa!<br>
+                        <img src="${imagePath}" alt="${currentWord}" style="max-width: 100%; margin-top: 20px;"><br>
+                        Ladataan uudestaan..<br>${countdown}
+                    </div>`;
+                if (countdown <= 0) {
+                    clearInterval(interval);
+                    location.reload();
+                }
+            }, 1000);
         }
 
         function handleTimeOut() {
