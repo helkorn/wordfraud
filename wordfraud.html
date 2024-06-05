@@ -99,7 +99,7 @@
             border: 1px solid #ccc;
             color: #333333;
             text-transform: uppercase;
-            cursor: pointer;
+            cursor: default;
             position: relative;
         }
         li:hover {
@@ -321,7 +321,7 @@
                 possibleWords.forEach(word => {
                     const li = document.createElement('li');
                     li.textContent = word.toUpperCase();
-                    li.onclick = () => findWordsForWord(word.toUpperCase());
+                    // li.onclick = () => findWordsForWord(word.toUpperCase()); // REM-tilaan
                     li.id = `word-${word.toUpperCase()}`;
                     resultColumn.appendChild(li);
                 });
@@ -354,14 +354,15 @@
         // Tekstin vaihtuminen
         const textElement = document.getElementById('changingText');
         const texts = [
-            { text: 'WordFraud 1.0', size: '2em' },
-            { text: 'Väliviiva on jokeri', size: '1.5em' }
+            { text: 'WordFraud 1.0', size: '2em', color: '#333333' },
+            { text: 'Väliviiva on jokeri', size: '1.5em', color: '#808080' }
         ];
         let currentTextIndex = 0;
 
         function changeText() {
             currentTextIndex = (currentTextIndex + 1) % texts.length;
             textElement.style.fontSize = texts[currentTextIndex].size;
+            textElement.style.color = texts[currentTextIndex].color;
             const newText = texts[currentTextIndex].text;
             let currentText = textElement.textContent;
             let newTextArray = newText.split('');
@@ -373,7 +374,8 @@
                     currentTextArray[randomIndex] = newTextArray[randomIndex];
                     newTextArray.splice(randomIndex, 1);
                     textElement.textContent = currentTextArray.join('');
-                    setTimeout(updateText, 100);
+                    textElement.style.color = `rgb(${Math.floor(Math.random() * 256)},${Math.floor(Math.random() * 256)},${Math.floor(Math.random() * 256)})`;
+                    setTimeout(updateText, 50); // Nopeutettu kirjainten vaihtumistahti
                 } else {
                     textElement.textContent = newText;
                 }
@@ -381,7 +383,7 @@
             updateText();
         }
 
-        setInterval(changeText, 10000);
+        setInterval(changeText, 5000);
     </script>
 </body>
 </html>
