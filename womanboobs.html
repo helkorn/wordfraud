@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Womanboobs</title>
+    <title>WomanBoobs24</title>
     <style>
         @font-face {
             font-family: 'C64';
@@ -133,6 +133,13 @@
                 color: #444;
             }
         }
+        .corner-image {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            width: 100px;
+            height: auto;
+        }
     </style>
 </head>
 <body>
@@ -140,7 +147,7 @@
         <a href="javascript:void(0)" onclick="showAnalgrammi()">Mikä tämä on?  </a>
     </div>
     <div class="container">
-        <h1>Womanboobs'24</h1>
+        <h1>WomanBoobs24</h1>
         <p>Mammografianagrammi. Ratkaise!</p>
         <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
         <div class="timer" id="timer">20</div>
@@ -150,6 +157,7 @@
         </div>
         <div class="result" id="result"></div>
     </div>
+    <img src="titpics/Pink_ribbon.svg" alt="Pink Ribbon" class="corner-image">
 
     <script>
         let words = [];
@@ -157,6 +165,7 @@
         let timer;
         let timeLeft = 20;
         let paused = false;
+        let randomCounter = 0;
 
         function startTimer() {
             clearInterval(timer);
@@ -198,6 +207,9 @@
             const answer = document.getElementById('answer').value.trim().toLowerCase();
             if (answer === '') {
                 let randomIndex = Math.floor(Math.random() * words.length);
+                if (++randomCounter % 5 === 0) {
+                    randomIndex = words.indexOf(currentWord);
+                }
                 document.getElementById('result').textContent = `Voisiko se olla ${words[randomIndex]}?`;
                 return;
             }
@@ -237,30 +249,11 @@
 
         function showCongratulationsPage() {
             const imagePath = `titpics/${currentWord}.png`;
-            let countdown = 5;
             document.body.innerHTML = `
-                <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                    Oikein<br>
-                    <img src="${imagePath}" alt="${currentWord}" style="max-width: 300px; width: 100%; margin-top: 20px;"><br>
-                    <div style="font-size: 0.8em; color: #888; text-align: left; margin-top: 10px;">© 2024 Antti Järvinen Studiot</div><br>
-                    <img src="titpics/Pink_ribbon.svg" alt="Pink Ribbon" style="max-width: 200px; width: 100%; margin-top: 10px;"><br>
-                    Ladataan uudelleen..<br>${countdown}
+                <div style="color: #fff; text-align: center; font-size: 1.5em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                    <img src="${imagePath}" alt="${currentWord}" style="max-width: 200px; width: 100%; margin-top: 20px;"><br>
+                    <div style="font-size: 0.16em; color: #888; text-align: left; margin-top: 10px;">© 2024 Antti Järvinen Studiot</div>
                 </div>`;
-            const interval = setInterval(() => {
-                countdown--;
-                document.body.innerHTML = `
-                    <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                        Oikein<br>
-                        <img src="${imagePath}" alt="${currentWord}" style="max-width: 300px; width: 100%; margin-top: 20px;"><br>
-                        <div style="font-size: 0.8em; color: #888; text-align: left; margin-top: 10px;">© 2024 Antti Järvinen Studiot</div><br>
-                        <img src="titpics/Pink_ribbon.svg" alt="Pink Ribbon" style="max-width: 200px; width: 100%; margin-top: 10px;"><br>
-                        Ladataan uudelleen..<br>${countdown}
-                    </div>`;
-                if (countdown <= 0) {
-                    clearInterval(interval);
-                    location.reload();
-                }
-            }, 1000);
         }
 
         function handleTimeOut() {
@@ -276,7 +269,7 @@
             box.id = 'typewriterBox';
             box.className = 'typewriter-box';
             document.body.appendChild(box);
-            const text = 'Pohjoisen korpimetsän radiokanavalta kuului tissikuvaajan kutsu. Ammattikuvaaja ikuistaa radioaseman naisia, ja paitojen tekstit puhutelevat.\n\nEtsi pelissä oikea rintojen lempinimi ja saat kuvan näkyviin.\n\nSe voi olla hauska tai jossain arkipäivää, mutta kaikki niitä rakastavat: Rinnat, daisarit ja tuutit, eli suomeksi: Tissit!\n\nRatkaise anagrammi ja ole mukana lokakuussa alkavassa Roosa nauha-kampanjassa tuomassa rintasyöpätietoisuutta esiin.\n\nOnnea peliin. Tissit mainittu!';
+            const text = "Pohjoisen korpimetsän radiokanavalta kuului tissikuvaajan kutsu.\n\nAmmattikuvaaja ikuistaa radioasemalla naisia työn äärellä.\n\nTissit korostettuna.\n\nPelaa oikea rintojen lempinimi, ja saat kuvan näkyviin!\n\nSamalla tuet hauskalla tavalla Roosa nauha-kampanjaa joka jalkautuu katukuvaan jälleen lokakuussa.\n\nSe on osa maailmanlaajuista liikettä kampanjoiden rintasyöpätietoisuuden puolesta.\n\nOnnea peliin. Tissit mainittu!";
             let index = 0;
 
             function typeNext() {
