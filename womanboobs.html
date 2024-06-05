@@ -140,11 +140,6 @@
             height: 50px;
             width: auto;
         }
-        .mosaic-piece {
-            position: absolute;
-            background-size: cover;
-            z-index: 10;
-        }
     </style>
 </head>
 <body>
@@ -246,7 +241,7 @@
                     } else {
                         setTimeout(() => {
                             window.location.href = 'https://timosalonen.github.io/wordfraud/womanboobs.html';
-                        }, 5000); // 5-second delay before redirect
+                        }, 5000);
                     }
                 }
             }, 200);
@@ -256,45 +251,9 @@
             const imagePath = `titpics/${currentWord}.png`;
             document.body.innerHTML = `
                 <div style="color: #fff; text-align: center; font-size: 1.5em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                    <img src="${imagePath}" alt="${currentWord}" style="height: 600px; max-width: 100%; margin-top: 20px;" id="congratulationsImage"><br>
+                    <img src="${imagePath}" alt="${currentWord}" style="max-height: 600px; height: 100%; margin-top: 20px;"><br>
                     <div style="font-size: 0.32em; color: #888; text-align: left; margin-top: 10px;">© 2024 Timin Photography Ltd</div>
                 </div>`;
-            initiateMosaicEffect();
-        }
-
-        function initiateMosaicEffect() {
-            const img = document.getElementById('congratulationsImage');
-            const imgRect = img.getBoundingClientRect();
-            const pieceSize = 20;
-            const pieces = [];
-
-            for (let y = 0; y < imgRect.height; y += pieceSize) {
-                for (let x = 0; x < imgRect.width; x += pieceSize) {
-                    const piece = document.createElement('div');
-                    piece.classList.add('mosaic-piece');
-                    piece.style.width = pieceSize + 'px';
-                    piece.style.height = pieceSize + 'px';
-                    piece.style.backgroundImage = `url(${img.src})`;
-                    piece.style.backgroundPosition = `-${x}px -${y}px`;
-                    piece.style.top = imgRect.top + y + 'px';
-                    piece.style.left = imgRect.left + x + 'px';
-                    document.body.appendChild(piece);
-                    pieces.push(piece);
-                }
-            }
-
-            img.style.visibility = 'hidden';
-            pieces.forEach((piece, index) => {
-                setTimeout(() => {
-                    piece.style.transition = 'all 0.5s ease';
-                    piece.style.opacity = '0';
-                    piece.style.transform = `translate(${(Math.random() - 0.5) * 100}px, ${(Math.random() - 0.5) * 100}px) rotate(${Math.random() * 360}deg)`;
-                }, index * 10);
-            });
-
-            setTimeout(() => {
-                pieces.forEach(piece => piece.remove());
-            }, 2000);
         }
 
         function handleTimeOut() {
