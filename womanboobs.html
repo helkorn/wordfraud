@@ -53,9 +53,14 @@
         #footer-middle {
             grid-area: footer-middle;
             display: flex;
-            justify-content: flex-start;
+            justify-content: center;
             align-items: flex-start;
             padding-top: 10px;
+            height: 100%;
+        }
+        #footer-middle div {
+            text-align: center;
+            margin-top: -30px;
         }
         #footer-right {
             grid-area: footer-right;
@@ -115,6 +120,14 @@
                 color: gray;
             }
         }
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 <body>
@@ -141,8 +154,8 @@
         const watermarkElement = document.getElementById('watermark');
 
         // Function to generate random letter
-        function getRandomLetter() {
-            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ ';
+        function getRandomLetter(isUpperCase) {
+            const letters = isUpperCase ? 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' : 'abcdefghijklmnopqrstuvwxyz';
             return letters.charAt(Math.floor(Math.random() * letters.length));
         }
 
@@ -162,7 +175,7 @@
             for (let i = 0; i < 5; i++) {
                 grid[i] = [];
                 for (let j = 0; j < 5; j++) {
-                    grid[i][j] = getRandomLetter();
+                    grid[i][j] = getRandomLetter(true);
                 }
             }
 
@@ -213,7 +226,7 @@
                             cell.classList.add('wrong');
                             setTimeout(() => {
                                 cell.classList.remove('wrong');
-                                cell.querySelector('span').textContent = getRandomLetter();
+                                cell.querySelector('span').textContent = getRandomLetter(true);
                             }, 500);
                         }
                     });
@@ -231,8 +244,8 @@
         function showAnswer(word) {
             answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px; color: gray;">Rintojesi nimi on: ${word}</div>`;
             setTimeout(() => {
-                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px; color: gray;">Klikkaa Roosa-nauhaa <span class="blink">:</span></div>`;
-            }, 2000);
+                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px; color: gray;">Klikkaa Roosa-nauhaa jatkaaksesi <span class="blink">:</span></div>`;
+            }, 4000); // Show the correct answer for longer duration before changing the message
             leftElement.innerHTML = `<img src="titpics/${word}.png" width="300">`;
         }
 
@@ -246,12 +259,13 @@
             const text = watermarkElement.textContent;
             const randomIndex = Math.floor(Math.random() * text.length);
             const originalChar = text[randomIndex];
+            const isUpperCase = originalChar === originalChar.toUpperCase();
 
             let interval;
             let frame = 0;
 
             const animateChar = () => {
-                watermarkElement.textContent = text.substring(0, randomIndex) + getRandomLetter() + text.substring(randomIndex + 1);
+                watermarkElement.textContent = text.substring(0, randomIndex) + getRandomLetter(isUpperCase) + text.substring(randomIndex + 1);
                 frame++;
                 if (frame >= 10) {
                     clearInterval(interval);
@@ -262,7 +276,21 @@
             interval = setInterval(animateChar, 50);
         }
 
+        // Function to animate the © symbol
+        function animateCopyright() {
+            const symbol = watermarkElement.querySelector('span');
+            symbol.style.display = 'inline-block';
+            symbol.style.animation = 'spin 2s linear';
+            setTimeout(() => {
+                symbol.style.animation = '';
+            }, 2000);
+        }
+
+        // Wrap © symbol in a span for rotation animation
+        watermarkElement.innerHTML = watermarkElement.innerHTML.replace('©', '<span>©</span>');
+
         setInterval(animateWatermark, 5000);
+        setInterval(animateCopyright, 5000);
 
         // Start the game
         initGame();
