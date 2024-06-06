@@ -12,7 +12,7 @@
             grid-template-areas: 
                 "header header header"
                 "left middle right"
-                "footer-left footer-middle footer-right";
+                "footer footer footer";
             grid-template-rows: 100px 1fr 100px;
             grid-template-columns: 1fr 1fr 1fr;
             height: 100vh;
@@ -25,7 +25,7 @@
             justify-content: center;
             align-items: center;
         }
-        #left {
+        #left, #footer-left {
             grid-area: left;
             display: flex;
             justify-content: center;
@@ -44,30 +44,11 @@
             justify-content: center;
             align-items: flex-start;
         }
-        #footer-left {
-            grid-area: footer-left;
+        #footer {
+            grid-area: footer;
             display: flex;
             justify-content: center;
             align-items: center;
-        }
-        #footer-middle {
-            grid-area: footer-middle;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding-top: 10px;
-            height: 100%;
-        }
-        #footer-middle div {
-            text-align: center;
-            margin-top: -30px;
-        }
-        #footer-right {
-            grid-area: footer-right;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            padding: 10px;
         }
         .grid {
             display: grid;
@@ -88,7 +69,7 @@
             border-radius: 4px; /* Slightly rounded corners */
         }
         .grid-item.clicked {
-            background-color: #006400; /* DarkGreen */
+            background-color: #004d00; /* Darker Green */
         }
         .grid-item.wrong {
             background-color: #8B0000; /* DarkRed */
@@ -132,6 +113,7 @@
         <img src="titpics/spessut/WomanBoobs.png" width="300">
         <div id="watermark" style="font-size: 12px; padding-top: 5px; color: gray;">© Timin Photography GmbH</div>
     </div>
+    <div id="footer"></div>
     <div id="footer-left"></div>
     <div id="footer-middle"></div>
     <div id="footer-right">
@@ -141,7 +123,7 @@
     <script>
         const gridElement = document.getElementById('puzzle');
         const answerElement = document.getElementById('footer-middle');
-        const leftElement = document.getElementById('left');
+        const footerElement = document.getElementById('footer');
         const pinkRibbon = document.getElementById('pink-ribbon');
         const watermarkElement = document.getElementById('watermark');
 
@@ -177,6 +159,7 @@
             let dir = Math.random() < 0.5 ? 0 : 1; // 0 for horizontal, 1 for vertical
 
             for (let i = 0; i < word.length; i++) {
+                if (grid[startY][startX] !== ' ' && grid[startY][startX] !== word.charAt(i)) break;
                 grid[startY][startX] = word.charAt(i);
 
                 if (dir === 0) {
@@ -214,6 +197,7 @@
             // Mark the first letter of the word as found
             const firstLetterElement = [...gridElement.children].find(cell => cell.dataset.letter === word.charAt(0));
             firstLetterElement.classList.add('clicked');
+            firstLetterElement.dataset.found = true;
             foundLetters++;
         }
 
@@ -229,7 +213,26 @@
 
             if (neighbors.some(neighbor => neighbor.classList.contains('clicked'))) {
                 if (word.includes(letter)) {
-                    cell.classList.add('clicked');
+                    const currentIndex = [...gridElement.children].filter(c => c.classList.contains('clicked')).length;
+                    if (letter === word[currentIndex]) {
+                        cell.classList.add('clicked');
+                        cell.dataset.found = true;
+                        if (currentIndex + 1 === word.length) {
+                            showAnswer(word);
+                        }
+                    } else {
+                        cell.classList.add('wrong');
+                        setTimeout(() => {
+                            cell.classList.remove('wrong');
+                            cell.querySelector('span').textContent = getRandomLetter(true);
+                        }, 500);
+                    }
+                } else {
+                    cell.classList.add('wrong');
+                    setTimeout(() => {
+                        cell.classList.remove('wrong');
+                        cell.querySelector('span').textContent = getRandomLetter(true);
+                    }, 500);
                 }
             } else {
                 cell.classList.add('wrong');
@@ -260,7 +263,7 @@
             setTimeout(() => {
                 answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px; color: gray;">Klikkaa Roosa-nauhaa jatkaaksesi <span class="blink">:</span></div>`;
             }, 4000); // Show the correct answer for longer duration before changing the message
-            leftElement.innerHTML = `<img src="titpics/${word}.png" width="300">`;
+            footerElement.innerHTML = `<img src="titpics/${word}.png">`;
         }
 
         // Add event listener to the Pink Ribbon image
