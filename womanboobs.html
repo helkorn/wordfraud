@@ -10,64 +10,70 @@
             color: white;
             display: grid;
             grid-template-areas: 
-                "header header header"
-                "left middle right"
-                "footer-left footer-middle footer-right";
-            grid-template-rows: 100px 1fr 100px;
+                "top-left top-center top-right"
+                "middle-left middle-center middle-right"
+                "bottom-left bottom-center bottom-right";
+            grid-template-rows: 1fr 300px 1fr;
             grid-template-columns: 1fr 1fr 1fr;
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
         }
-        #header {
-            grid-area: header;
+        #top-left { grid-area: top-left; }
+        #top-center {
+            grid-area: top-center;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-bottom: 10px;
+            position: relative;
+        }
+        #top-center .animated-text {
+            font-family: 'Booboo', Arial, sans-serif;
+            color: #32CD32; /* Brightened Dark Green */
+            font-size: 16px;
+        }
+        #top-center #timer {
+            font-family: 'Timer', monospace;
+            color: #32CD32; /* Brightened Dark Green */
+            font-size: 16px;
+            margin-left: 10px;
+        }
+        #top-right { grid-area: top-right; }
+        #middle-left {
+            grid-area: middle-left;
             display: flex;
             justify-content: center;
-            align-items: center;
-        }
-        #left {
-            grid-area: left;
-            display: flex;
-            justify-content: flex-end;
             align-items: center;
             position: relative;
             border: 1px solid silver;
             width: 300px;
             height: 300px;
+            overflow: hidden;
+            margin-left: auto;
+            margin-right: auto;
         }
         #image-box {
             position: absolute;
-            width: 300px;
-            height: 300px;
-            overflow: hidden;
-        }
-        #image-box img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            transition: all 0.5s ease;
         }
         #middle {
-            grid-area: middle;
+            grid-area: middle-center;
             display: flex;
             justify-content: center;
             align-items: center;
         }
         #right {
-            grid-area: right;
+            grid-area: middle-right;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: flex-start;
         }
-        #footer-left {
-            grid-area: footer-left;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+        #footer-left { grid-area: bottom-left; }
         #footer-middle {
-            grid-area: footer-middle;
+            grid-area: bottom-center;
             display: flex;
             justify-content: center;
             align-items: flex-start;
@@ -79,7 +85,7 @@
             margin-top: -30px;
         }
         #footer-right {
-            grid-area: footer-right;
+            grid-area: bottom-right;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -128,16 +134,41 @@
             }
         }
         .animated-text {
-            color: gray;
-            position: relative;
+            color: #32CD32; /* Brightened Dark Green */
+            font-family: 'Booboo', Arial, sans-serif;
         }
-        @keyframes letterChange {
-            0% {
-                color: green;
-            }
-            100% {
-                color: gray;
-            }
+        #hover-icon {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            z-index: 10;
+            animation: hoverMove 3s infinite;
+        }
+        @keyframes hoverMove {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(10px); }
+            50% { transform: translateY(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateY(-10px); }
+        }
+        #hover-icon.faded {
+            opacity: 0.5;
+        }
+        @keyframes zoomIn {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.5); }
+        }
+        @keyframes zoomOut {
+            0% { transform: scale(1.5); }
+            100% { transform: scale(1); }
+        }
+        @keyframes moveUp {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-100%); }
+        }
+        @keyframes moveDown {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100%); }
         }
         @keyframes pinkWave {
             0% { color: #FF69B4; }
@@ -152,11 +183,14 @@
     </style>
 </head>
 <body>
-    <div id="header"></div>
-    <div id="left">
-        <div id="image-box">
-            <img src="titpics/spessut/Niinkövittu.png" style="opacity: 0.5;">
-        </div>
+    <div id="top-left"></div>
+    <div id="top-center">
+        <div id="timer-text" class="animated-text">LÖYDÄ LEMPIRINTASI</div>
+        <div id="timer" class="animated-text">00:00</div>
+    </div>
+    <div id="top-right"></div>
+    <div id="middle-left">
+        <div id="image-box"></div>
     </div>
     <div id="middle">
         <div class="grid" id="puzzle"></div>
@@ -165,9 +199,9 @@
         <img src="titpics/spessut/WomanBoobs.png" width="300">
         <div id="watermark" style="font-size: 12px; padding-top: 5px; color: gray;">© Timin Photography GmbH</div>
     </div>
-    <div id="footer-left"></div>
+    <div id="bottom-left"></div>
     <div id="footer-middle"></div>
-    <div id="footer-right">
+    <div id="bottom-right">
         <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer;" id="pink-ribbon">
         <a href="https://roosanauha.syopasaatio.fi/" target="_blank" class="pink-wave">Roosa nauha Suomessa 2024</a>
     </div>
@@ -188,11 +222,20 @@
             setInterval(() => {
                 const img = document.createElement('img');
                 img.src = images[index % images.length];
-                img.style.opacity = 0;
                 img.onload = () => {
+                    img.style.opacity = 0;
                     imageBox.innerHTML = '';
                     imageBox.appendChild(img);
-                    img.style.transition = 'opacity 1s';
+                    const randomEffect = Math.random();
+                    if (randomEffect < 0.25) {
+                        img.style.animation = 'zoomIn 5s forwards';
+                    } else if (randomEffect < 0.5) {
+                        img.style.animation = 'zoomOut 5s forwards';
+                    } else if (randomEffect < 0.75) {
+                        img.style.animation = 'moveUp 5s forwards';
+                    } else {
+                        img.style.animation = 'moveDown 5s forwards';
+                    }
                     img.style.opacity = 1;
                 };
                 index++;
@@ -362,18 +405,18 @@
         // Function to show help message
         function showHelpMessage(word) {
             helpShown = true;
-            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #006400; font-weight: bold;"><a href="#" style="color: inherit; text-decoration: none;">ÄITI EN KEKSI ANNA <span style="animation: blink 1s infinite alternate;">MAITOA</span></a></div>`;
+            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #32CD32; font-weight: bold;"><a href="#" style="color: inherit; text-decoration: none;">ÄITI EN KEKSI ANNA <span style="animation: blink 1s infinite alternate;">MAITOA</span></a></div>`;
             answerElement.addEventListener('click', (e) => {
                 e.preventDefault();
-                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #006400; font-weight: bold;">VAUVANI, NE ON ISIN ${word.toUpperCase()}</div>`;
+                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #32CD32; font-weight: bold;">VAUVANI, NE ON ISIN ${word.toUpperCase()}</div>`;
             });
         }
 
         // Function to show the answer and the corresponding image
         function showAnswer(word) {
-            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #006400;">LEMPIRINTASI OVAT: ${word}</div>`;
+            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #32CD32;">LEMPIRINTASI OVAT: ${word}</div>`;
             setTimeout(() => {
-                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #006400;">UUSI PELI ROOSA-NAUHASTA <span class="blink">::</span></div>`;
+                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #32CD32;">UUSI PELI ROOSA-NAUHASTA <span class="blink">::</span></div>`;
             }, 4000); // Show the correct answer for longer duration before changing the message
             imageContainer.src = `titpics/${word}.png`;
         }
