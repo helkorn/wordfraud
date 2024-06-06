@@ -17,8 +17,6 @@
         }
         #grid {
             display: grid;
-            grid-template-columns: repeat(10, 30px);
-            grid-template-rows: repeat(10, 30px);
             gap: 1px;
         }
         .cell {
@@ -38,30 +36,28 @@
             margin: 20px;
             font-size: 20px;
         }
-        #image {
-            margin-top: 20px;
-            display: none;
-        }
     </style>
 </head>
 <body>
     <div id="message"></div>
     <div id="grid"></div>
-    <img id="image" src="" alt="Correct Word Image">
     
     <script>
         const words = ['melonit', 'vesi-melonit', 'kulta melonit']; // Sample words from melonit.csv
         let originalWord = words[Math.floor(Math.random() * words.length)];
         let word = originalWord.replace(/[\s\-]/g, '').toLowerCase();
+        let maxWordLength = Math.max(...words.map(w => w.replace(/[\s\-]/g, '').length));
+        let gridSize = Math.max(10, maxWordLength); // At least 10x10 grid
         let grid = document.getElementById('grid');
         let message = document.getElementById('message');
-        let image = document.getElementById('image');
         let correctLetters = [];
 
         function createGrid() {
             grid.innerHTML = '';
             correctLetters = [];
-            for (let i = 0; i < 100; i++) {
+            grid.style.gridTemplateColumns = `repeat(${gridSize}, 30px)`;
+            grid.style.gridTemplateRows = `repeat(${gridSize}, 30px)`;
+            for (let i = 0; i < gridSize * gridSize; i++) {
                 let cell = document.createElement('div');
                 cell.classList.add('cell');
                 cell.textContent = String.fromCharCode(97 + Math.floor(Math.random() * 26));
@@ -72,7 +68,10 @@
         }
 
         function placeWord() {
-            let startPos = Math.floor(Math.random() * (100 - word.length));
+            let startPos = Math.floor(Math.random() * (gridSize * gridSize - word.length));
+            while ((startPos % gridSize) > (gridSize - word.length)) {
+                startPos = Math.floor(Math.random() * (gridSize * gridSize - word.length));
+            }
             for (let i = 0; i < word.length; i++) {
                 let cell = grid.children[startPos + i];
                 cell.textContent = word[i];
@@ -94,13 +93,7 @@
         }
 
         function showImage() {
-            message.textContent = '';
-            image.src = `titpics/${originalWord}.png`;
-            image.style.display = 'block';
-            setTimeout(() => {
-                image.style.display = 'none';
-                createGrid();
-            }, 3000);
+            window.location.href = `showImage.html?image=${encodeURIComponent(originalWord)}.png`;
         }
 
         function gameOver() {
