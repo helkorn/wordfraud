@@ -14,6 +14,7 @@
             background-color: black;
             color: white;
             font-family: Arial, sans-serif;
+            margin: 0;
         }
         #grid {
             display: grid;
@@ -39,12 +40,22 @@
             margin: 20px;
             font-size: 20px;
         }
+        #image {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 100%;
+            max-height: 100%;
+        }
     </style>
 </head>
 <body>
     <div id="message"></div>
     <div id="grid"></div>
-    
+    <img id="image" src="" alt="Correct Word Image">
+
     <script>
         const words = ['Melonit', 'Vesi-Melonit', 'Kulta Melonit']; // Sample words from melonit.csv
         let originalWord = words[Math.floor(Math.random() * words.length)];
@@ -52,6 +63,7 @@
         let gridSize = 6;
         let grid = document.getElementById('grid');
         let message = document.getElementById('message');
+        let image = document.getElementById('image');
         let correctLetters = [];
 
         function createGrid() {
@@ -93,7 +105,12 @@
         }
 
         function showImage() {
-            window.location.href = `showImage.html?image=${encodeURIComponent(originalWord)}.png`;
+            message.textContent = '';
+            image.src = `titpics/${originalWord}.png`;
+            image.style.display = 'block';
+            setTimeout(() => {
+                resetGame();
+            }, 3000);
         }
 
         function gameOver() {
@@ -102,6 +119,11 @@
                 message.textContent = '';
                 createGrid();
             }, 2000);
+        }
+
+        function resetGame() {
+            image.style.display = 'none';
+            createGrid();
         }
 
         createGrid();
