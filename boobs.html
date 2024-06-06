@@ -77,29 +77,47 @@
             }
 
             function placeWord() {
-                let startPos = Math.floor(Math.random() * gridSize) * gridSize;
-                let wordIndex = 0;
+                let placed = false;
                 let directions = ['down', 'right'];
+                
+                while (!placed) {
+                    let startPos = Math.floor(Math.random() * (gridSize * gridSize));
+                    let direction = directions[Math.floor(Math.random() * directions.length)];
+                    let canPlace = true;
 
-                while (wordIndex < word.length) {
-                    if ((startPos % gridSize) + word.length <= gridSize) {
-                        for (let i = 0; i < word.length; i++) {
-                            let cell = grid.children[startPos + i];
-                            cell.textContent = word[wordIndex++].toUpperCase(); // Muutetaan ruudukon kirjaimet isoiksi
-                            cell.dataset.correct = 'true';
-                        }
-                        break;
-                    } else {
-                        for (let i = 0; i < gridSize; i++) {
-                            let direction = directions[Math.floor(Math.random() * directions.length)];
-                            if (direction === 'down' && Math.floor(startPos / gridSize) + 1 < gridSize) {
-                                startPos += gridSize;
-                            } else if (direction === 'right' && (startPos % gridSize) + 1 < gridSize) {
-                                startPos += 1;
+                    if (direction === 'right') {
+                        if ((startPos % gridSize) + word.length <= gridSize) {
+                            for (let i = 0; i < word.length; i++) {
+                                if (grid.children[startPos + i].dataset.correct) {
+                                    canPlace = false;
+                                    break;
+                                }
                             }
-                            let cell = grid.children[startPos];
-                            cell.textContent = word[wordIndex++].toUpperCase(); // Muutetaan ruudukon kirjaimet isoiksi
-                            cell.dataset.correct = 'true';
+                            if (canPlace) {
+                                for (let i = 0; i < word.length; i++) {
+                                    let cell = grid.children[startPos + i];
+                                    cell.textContent = word[i].toUpperCase();
+                                    cell.dataset.correct = 'true';
+                                }
+                                placed = true;
+                            }
+                        }
+                    } else if (direction === 'down') {
+                        if (Math.floor(startPos / gridSize) + word.length <= gridSize) {
+                            for (let i = 0; i < word.length; i++) {
+                                if (grid.children[startPos + i * gridSize].dataset.correct) {
+                                    canPlace = false;
+                                    break;
+                                }
+                            }
+                            if (canPlace) {
+                                for (let i = 0; i < word.length; i++) {
+                                    let cell = grid.children[startPos + i * gridSize];
+                                    cell.textContent = word[i].toUpperCase();
+                                    cell.dataset.correct = 'true';
+                                }
+                                placed = true;
+                            }
                         }
                     }
                 }
@@ -119,7 +137,7 @@
             }
 
             function showImage() {
-                let imageName = originalWord.toLowerCase().replace(/[\s\-]/g, '') + '.png';
+                let imageName = originalWord + '.png';
                 window.location.href = `showImage.html?image=${encodeURIComponent(imageName)}`;
             }
 
@@ -136,4 +154,3 @@
     </script>
 </body>
 </html>
-
