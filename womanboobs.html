@@ -40,8 +40,9 @@
         #right {
             grid-area: right;
             display: flex;
+            flex-direction: column;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
         }
         #footer-left {
             grid-area: footer-left;
@@ -59,7 +60,7 @@
         #footer-right {
             grid-area: footer-right;
             display: flex;
-            justify-content: flex-end;
+            justify-content: flex-start;
             align-items: flex-end;
             padding: 10px;
         }
@@ -100,17 +101,19 @@
     </div>
     <div id="right">
         <img src="titpics/spessut/WomanBoobs.png" width="300">
+        <div style="font-size: 12px; padding-top: 5px;">© Timin Photography GmbH</div>
     </div>
     <div id="footer-left"></div>
     <div id="footer-middle"></div>
     <div id="footer-right">
-        <img src="titpics/spessut/Pink_ribbon.svg" height="70">
+        <img src="titpics/spessut/Pink_ribbon.svg" height="70" style="cursor: pointer;" id="pink-ribbon">
     </div>
 
     <script>
         const gridElement = document.getElementById('puzzle');
         const answerElement = document.getElementById('footer-middle');
         const leftElement = document.getElementById('left');
+        const pinkRibbon = document.getElementById('pink-ribbon');
 
         // Function to generate random letter
         function getRandomLetter() {
@@ -162,6 +165,7 @@
 
         // Function to initialize the game
         async function initGame() {
+            gridElement.innerHTML = ''; // Clear the grid
             const { grid, word } = await createGrid();
             let foundLetters = 0;
 
@@ -202,11 +206,15 @@
         function showAnswer(word) {
             answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px; color: gray;">Rintojesi nimi on: ${word}</div>`;
             setTimeout(() => {
-                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px; color: gray;">Klikkaa peliä jatkaaksesi</div>`;
+                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px; color: gray;">Klikkaa Roosa-nauhaa jatkaaksesi:</div>`;
             }, 2000);
             leftElement.innerHTML = `<img src="titpics/${word}.png" width="300" style="opacity: 0.7;">`;
-            gridElement.addEventListener('click', initGame, { once: true });
         }
+
+        // Add event listener to the Pink Ribbon image
+        pinkRibbon.addEventListener('click', () => {
+            window.location.href = 'https://timosalonen.github.io/wordfraud/womanboobs.html';
+        });
 
         // Start the game
         initGame();
