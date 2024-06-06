@@ -91,6 +91,30 @@
         .grid-item span {
             transition: color 0.5s;
         }
+        .blink {
+            animation: blink 1s infinite;
+            font-weight: bold;
+        }
+        @keyframes blink {
+            0%, 50% {
+                opacity: 1;
+            }
+            51%, 100% {
+                opacity: 0;
+            }
+        }
+        .animated-text {
+            color: gray;
+            position: relative;
+        }
+        @keyframes letterChange {
+            0% {
+                color: green;
+            }
+            100% {
+                color: gray;
+            }
+        }
     </style>
 </head>
 <body>
@@ -101,12 +125,12 @@
     </div>
     <div id="right">
         <img src="titpics/spessut/WomanBoobs.png" width="300">
-        <div style="font-size: 12px; padding-top: 5px;">© Timin Photography GmbH</div>
+        <div id="watermark" style="font-size: 12px; padding-top: 5px;">© Timin Photography GmbH</div>
     </div>
     <div id="footer-left"></div>
     <div id="footer-middle"></div>
     <div id="footer-right">
-        <img src="titpics/spessut/Pink_ribbon.svg" height="70" style="cursor: pointer;" id="pink-ribbon">
+        <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer; align-self: flex-start;" id="pink-ribbon">
     </div>
 
     <script>
@@ -114,6 +138,7 @@
         const answerElement = document.getElementById('footer-middle');
         const leftElement = document.getElementById('left');
         const pinkRibbon = document.getElementById('pink-ribbon');
+        const watermarkElement = document.getElementById('watermark');
 
         // Function to generate random letter
         function getRandomLetter() {
@@ -131,7 +156,7 @@
 
         // Function to create the grid with random letters and one word
         async function createGrid() {
-            const word = await fetchWord();
+            const word = (await fetchWord()).toUpperCase();
 
             let grid = [];
             for (let i = 0; i < 5; i++) {
@@ -206,15 +231,38 @@
         function showAnswer(word) {
             answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px; color: gray;">Rintojesi nimi on: ${word}</div>`;
             setTimeout(() => {
-                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px; color: gray;">Klikkaa Roosa-nauhaa jatkaaksesi:</div>`;
+                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px; color: gray;">Klikkaa Roosa-nauhaa <span class="blink">:</span></div>`;
             }, 2000);
-            leftElement.innerHTML = `<img src="titpics/${word}.png" width="300" style="opacity: 0.7;">`;
+            leftElement.innerHTML = `<img src="titpics/${word}.png" width="300">`;
         }
 
         // Add event listener to the Pink Ribbon image
         pinkRibbon.addEventListener('click', () => {
             window.location.href = 'https://timosalonen.github.io/wordfraud/womanboobs.html';
         });
+
+        // Function to animate the watermark text
+        function animateWatermark() {
+            const text = watermarkElement.textContent;
+            const randomIndex = Math.floor(Math.random() * text.length);
+            const originalChar = text[randomIndex];
+
+            let interval;
+            let frame = 0;
+
+            const animateChar = () => {
+                watermarkElement.textContent = text.substring(0, randomIndex) + getRandomLetter() + text.substring(randomIndex + 1);
+                frame++;
+                if (frame >= 10) {
+                    clearInterval(interval);
+                    watermarkElement.textContent = text;
+                }
+            };
+
+            interval = setInterval(animateChar, 50);
+        }
+
+        setInterval(animateWatermark, 5000);
 
         // Start the game
         initGame();
