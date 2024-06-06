@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sanapeli</title>
+    <title>WomanBoobs</title>
     <style>
         body {
             display: flex;
@@ -28,6 +28,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            text-transform: uppercase; /* Muutetaan kirjaimet isoiksi */
         }
         .cell.correct {
             background-color: red;
@@ -44,7 +45,7 @@
     
     <script>
         // Haetaan tiedostonimet CSV-tiedostosta
-        fetch('wordfraudFI.csv')
+        fetch('melonit.csv')
             .then(response => response.text())
             .then(data => {
                 const imageNames = data.split('\n').map(line => line.trim()).filter(line => line !== '');
@@ -68,7 +69,7 @@
                 for (let i = 0; i < gridSize * gridSize; i++) {
                     let cell = document.createElement('div');
                     cell.classList.add('cell');
-                    cell.textContent = String.fromCharCode(97 + Math.floor(Math.random() * 26));
+                    cell.textContent = String.fromCharCode(65 + Math.floor(Math.random() * 26)); // Käytetään isoja kirjaimia (A-Z)
                     cell.addEventListener('click', onCellClick);
                     grid.appendChild(cell);
                 }
@@ -84,7 +85,7 @@
                     if ((startPos % gridSize) + word.length <= gridSize) {
                         for (let i = 0; i < word.length; i++) {
                             let cell = grid.children[startPos + i];
-                            cell.textContent = word[wordIndex++];
+                            cell.textContent = word[wordIndex++].toUpperCase(); // Muutetaan ruudukon kirjaimet isoiksi
                             cell.dataset.correct = 'true';
                         }
                         break;
@@ -97,7 +98,7 @@
                                 startPos += 1;
                             }
                             let cell = grid.children[startPos];
-                            cell.textContent = word[wordIndex++];
+                            cell.textContent = word[wordIndex++].toUpperCase(); // Muutetaan ruudukon kirjaimet isoiksi
                             cell.dataset.correct = 'true';
                         }
                     }
