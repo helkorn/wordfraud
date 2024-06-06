@@ -88,7 +88,7 @@
             border-radius: 4px; /* Slightly rounded corners */
         }
         .grid-item.clicked {
-            background-color: #003300; /* Darker Green */
+            background-color: #002200; /* Darker Green */
         }
         .grid-item.wrong {
             background-color: #8B0000; /* DarkRed */
@@ -109,7 +109,7 @@
             }
         }
         .animated-text {
-            color: #b0b0b0; /* Slightly lighter gray */
+            color: #808080; /* Slightly darker gray */
             position: relative;
         }
         @keyframes letterChange {
@@ -130,7 +130,7 @@
     </div>
     <div id="right">
         <img src="titpics/spessut/WomanBoobs.png" width="300">
-        <div id="watermark" style="font-size: 12px; padding-top: 5px; color: #b0b0b0;">© Timin Photography GmbH</div>
+        <div id="watermark" style="font-size: 12px; padding-top: 5px; color: #808080;">© Timin Photography GmbH</div>
     </div>
     <div id="footer-left"></div>
     <div id="footer-middle"></div>
@@ -214,6 +214,7 @@
             // Mark the first letter of the word as found
             const firstLetterElement = [...gridElement.children].find(cell => cell.dataset.letter === word.charAt(0));
             firstLetterElement.classList.add('clicked');
+            firstLetterElement.dataset.found = true;
             foundLetters++;
         }
 
@@ -304,3 +305,4 @@
     </script>
 </body>
 </html>
+
