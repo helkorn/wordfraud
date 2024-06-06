@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WomanBoobs</title>
     <style>
+        @font-face {
+            font-family: 'Timer';
+            src: url('fonts/timer.ttf') format('truetype');
+        }
         body {
             background-color: black;
             color: white;
@@ -23,7 +27,16 @@
             grid-area: header;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-end;
+            position: relative;
+        }
+        #timer {
+            font-family: 'Timer', monospace;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            color: #004d00; /* Dark Green */
+            font-size: 18px;
         }
         #left {
             grid-area: left;
@@ -125,10 +138,16 @@
             50% { background-color: #8B0000; }
             100% { background-color: #002200; }
         }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
     </style>
 </head>
 <body>
-    <div id="header"></div>
+    <div id="header">
+        <div id="timer">00:00</div>
+    </div>
     <div id="left"></div>
     <div id="middle">
         <div class="grid" id="puzzle"></div>
@@ -149,6 +168,30 @@
         const leftElement = document.getElementById('left');
         const pinkRibbon = document.getElementById('pink-ribbon');
         const watermarkElement = document.getElementById('watermark');
+        const timerElement = document.getElementById('timer');
+
+        let timerInterval;
+
+        // Function to start the timer
+        function startTimer() {
+            let seconds = 0;
+            timerInterval = setInterval(() => {
+                seconds++;
+                let minutes = Math.floor(seconds / 60);
+                let displaySeconds = seconds % 60;
+                timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(displaySeconds).padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // Function to stop the timer and start the blinking animation
+        function stopTimer() {
+            clearInterval(timerInterval);
+            timerElement.classList.add('blink');
+            setTimeout(() => {
+                timerElement.classList.remove('blink');
+                timerElement.style.animation = 'fadeOut 2s forwards';
+            }, 2000);
+        }
 
         // Letter frequency based on Wordfeud points
         const letterFrequency = {
@@ -194,18 +237,27 @@
             // Place word in the grid starting at random position and in the correct order
             let startX = Math.floor(Math.random() * 5);
             let startY = Math.floor(Math.random() * 5);
-            let dir = Math.random() < 0.5 ? 0 : 1; // 0 for horizontal, 1 for vertical
 
-            for (let i = 0; i < word.length; i++) {
-                grid[startY][startX] = word.charAt(i);
+            let positions = [{ x: startX, y: startY }];
+            grid[startY][startX] = word.charAt(0);
+            let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]]; // Right, Down, Left, Up
 
-                if (dir === 0) {
-                    startX++;
-                    if (startX >= 5) { startX = 0; startY++; }
-                } else {
-                    startY++;
-                    if (startY >= 5) { startY = 0; startX++; }
-                }
+            for (let i = 1; i < word.length; i++) {
+                let lastPos = positions[positions.length - 1];
+                let possibleDirections = directions.filter(dir => {
+                    let newX = lastPos.x + dir[0];
+                    let newY = lastPos.y + dir[1];
+                    return newX >= 0 && newX < 5 && newY >= 0 && newY < 5 && !positions.some(pos => pos.x === newX && pos.y === newY);
+                });
+
+                if (possibleDirections.length === 0) break;
+
+                let dir = possibleDirections[Math.floor(Math.random() * possibleDirections.length)];
+                let newX = lastPos.x + dir[0];
+                let newY = lastPos.y + dir[1];
+
+                grid[newY][newX] = word.charAt(i);
+                positions.push({ x: newX, y: newY });
             }
 
             return { grid, word };
@@ -236,31 +288,26 @@
             firstLetterElement.classList.add('clicked');
             firstLetterElement.dataset.found = true;
             foundLetters++;
+
+            // Start the timer
+            startTimer();
         }
 
         // Function to handle cell click
         function handleCellClick(cell, word) {
             const letter = cell.dataset.letter;
-            const index = [...gridElement.children].indexOf(cell);
-            const neighbors = getNeighbors(index);
 
             if (cell.classList.contains('clicked')) {
                 return;
             }
 
-            if (neighbors.some(neighbor => neighbor.classList.contains('clicked'))) {
-                const currentIndex = [...gridElement.children].filter(c => c.classList.contains('clicked')).length;
-                if (letter === word[currentIndex]) {
-                    cell.classList.add('clicked');
-                    if (currentIndex + 1 === word.length) {
-                        showAnswer(word);
-                        animateCorrectAnswer();
-                    }
-                } else {
-                    cell.classList.add('wrong');
-                    setTimeout(() => {
-                        cell.classList.remove('wrong');
-                    }, 500);
+            const currentIndex = [...gridElement.children].filter(c => c.classList.contains('clicked')).length;
+            if (letter === word[currentIndex]) {
+                cell.classList.add('clicked');
+                if (currentIndex + 1 === word.length) {
+                    showAnswer(word);
+                    animateCorrectAnswer();
+                    stopTimer();
                 }
             } else {
                 cell.classList.add('wrong');
@@ -268,20 +315,6 @@
                     cell.classList.remove('wrong');
                 }, 500);
             }
-        }
-
-        // Function to get neighbors of a cell
-        function getNeighbors(index) {
-            const row = Math.floor(index / 5);
-            const col = index % 5;
-            const neighbors = [];
-
-            if (row > 0) neighbors.push(gridElement.children[(row - 1) * 5 + col]);
-            if (row < 4) neighbors.push(gridElement.children[(row + 1) * 5 + col]);
-            if (col > 0) neighbors.push(gridElement.children[row * 5 + (col - 1)]);
-            if (col < 4) neighbors.push(gridElement.children[row * 5 + (col + 1)]);
-
-            return neighbors;
         }
 
         // Function to show the answer and the corresponding image
