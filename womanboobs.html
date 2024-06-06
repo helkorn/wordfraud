@@ -9,10 +9,6 @@
             font-family: 'Timer';
             src: url('fonts/timer.ttf') format('truetype');
         }
-        @font-face {
-            font-family: 'Booboo';
-            src: url('fonts/booboo.ttf') format('truetype');
-        }
         body {
             background-color: black;
             color: white;
@@ -25,7 +21,7 @@
             grid-template-columns: 1fr 1fr 1fr;
             height: 100vh;
             margin: 0;
-            font-family: 'Booboo', Arial, sans-serif;
+            font-family: Arial, sans-serif;
         }
         #header {
             grid-area: header;
@@ -46,6 +42,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
         }
         #middle {
             grid-area: middle;
@@ -74,7 +71,6 @@
             align-items: flex-start;
             padding-top: 10px;
             height: 100%;
-            font-family: 'Timer', monospace;
         }
         #footer-middle div {
             text-align: center;
@@ -84,7 +80,7 @@
             grid-area: footer-right;
             display: flex;
             justify-content: flex-start;
-            align-items: flex-start; /* Move higher up */
+            align-items: flex-start;
             padding: 10px;
             position: relative;
         }
@@ -150,52 +146,50 @@
             from { opacity: 1; }
             to { opacity: 0; }
         }
-        @keyframes pinkWave {
-            0% { color: #A9A9A9; }
-            50% { color: #FFB6C1; } /* Light Pink */
-            100% { color: #A9A9A9; }
-        }
-        .pink-wave {
-            animation: pinkWave 10s infinite;
-            font-size: 12px;
-            padding: 5px;
-            border: 2px solid #FFB6C1; /* Light Pink */
-            border-radius: 8px;
-        }
         @keyframes pulse {
             0% { color: #006400; }
             100% { color: #00FF00; }
         }
-        @keyframes borderPulse {
-            0% { border-color: #800080; }
-            100% { border-color: #FF69B4; }
+        .roosa-border {
+            border: 2px solid #FF69B4; /* Pink Border */
+            border-radius: 4px;
         }
-        #pink-ribbon-text {
+        #hover-icon {
             position: absolute;
-            bottom: 40px;
-            left: 110px;
-            color: #808080;
-            text-decoration: none;
-            font-size: 12px;
-            animation: pinkWave 10s infinite, borderPulse 1s infinite alternate;
+            width: 50px;
+            height: 50px;
+            z-index: 10;
+            animation: hoverMove 3s infinite;
         }
-        #pink-ribbon-text span {
-            animation: pinkWave 10s infinite;
+        @keyframes hoverMove {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(10px); }
+            50% { transform: translateY(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateY(-10px); }
+        }
+        #hover-icon.faded {
+            opacity: 0.5;
         }
     </style>
 </head>
 <body>
     <div id="header"></div>
-    <div id="left"></div>
+    <div id="left">
+        <div id="hover-container" style="width: 300px; height: 300px; overflow: hidden; position: relative;">
+            <img id="hover-icon" src="titpics/spessut/over-mouse.jpg" alt="Hover icon">
+            <img id="image-container" style="max-width: 300px; cursor: grab; position: absolute; top: 0; left: 0;" alt="Found image">
+        </div>
+    </div>
     <div id="middle">
         <div id="timer-container" style="position: absolute; top: 0; left: 0;">
-            <div id="timer-text" style="font-family: 'Booboo', Arial, sans-serif;">LÖYDÄ RINTASI RUUDUKOSTA</div>
+            <div id="timer-text" style="font-family: Arial, sans-serif;">LÖYDÄ RINTASI RUUDUKOSTA</div>
             <div id="timer">00:00</div>
         </div>
         <div class="grid" id="puzzle"></div>
     </div>
     <div id="right">
-        <img src="titpics/spessut/WomanBoobs.png" width="300">
+        <img src="titpics/spessut/WomanBoobs.png" width="300" class="roosa-border">
         <div id="watermark" style="font-size: 12px; padding-top: 5px; color: #FF6347;">© Timin Photography GmbH</div>
     </div>
     <div id="footer-left"></div>
@@ -216,6 +210,9 @@
         const timerElement = document.getElementById('timer');
         const timerTextElement = document.getElementById('timer-text');
         const pinkRibbonText = document.getElementById('pink-ribbon-text');
+        const hoverContainer = document.getElementById('hover-container');
+        const hoverIcon = document.getElementById('hover-icon');
+        const imageContainer = document.getElementById('image-container');
         let helpShown = false;
         let wrongClicks = 0;
         let timerInterval;
@@ -404,6 +401,7 @@
                 answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 14px; color: #A9A9A9;">UUSI PELI ROOSA-NAUHASTA <span class="blink">::</span></div>`;
             }, 4000); // Show the correct answer for longer duration before changing the message
             leftElement.innerHTML = `<img src="titpics/${word}.png">`;
+            imageContainer.src = `titpics/${word}.png`;
         }
 
         // Function to animate correct answer
@@ -447,6 +445,20 @@
         }
 
         setInterval(animateWatermark, 10000); // Double the interval for animation
+
+        // Mouse move events for imageContainer
+        hoverContainer.addEventListener('mousemove', (e) => {
+            const rect = hoverContainer.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            imageContainer.style.transform = `translate(${-x / 10}px, ${-y / 10}px)`;
+            hoverIcon.style.display = 'none';
+        });
+
+        hoverContainer.addEventListener('mouseleave', () => {
+            hoverIcon.style.display = 'block';
+            hoverIcon.classList.add('faded');
+        });
 
         // Start the game
         initGame();
