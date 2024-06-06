@@ -135,7 +135,7 @@
     <div id="footer-left"></div>
     <div id="footer-middle"></div>
     <div id="footer-right">
-        <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer; align-self: flex-start;" id="pink-ribbon">
+        <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer; align-self: center; margin-top: 0;" id="pink-ribbon">
     </div>
 
     <script>
@@ -145,9 +145,9 @@
         const pinkRibbon = document.getElementById('pink-ribbon');
         const watermarkElement = document.getElementById('watermark');
 
-        // Function to generate random letter
+        // Function to generate random letter, including Å, Ä, and Ö
         function getRandomLetter(isUpperCase) {
-            const letters = isUpperCase ? 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' : 'abcdefghijklmnopqrstuvwxyz';
+            const letters = isUpperCase ? 'ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ' : 'abcdefghijklmnopqrstuvwxyzåäö';
             return letters.charAt(Math.floor(Math.random() * letters.length));
         }
 
@@ -236,14 +236,12 @@
                     cell.classList.add('wrong');
                     setTimeout(() => {
                         cell.classList.remove('wrong');
-                        cell.querySelector('span').textContent = getRandomLetter(true);
                     }, 500);
                 }
             } else {
                 cell.classList.add('wrong');
                 setTimeout(() => {
                     cell.classList.remove('wrong');
-                    cell.querySelector('span').textContent = getRandomLetter(true);
                 }, 500);
             }
         }
