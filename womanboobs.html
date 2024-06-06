@@ -28,12 +28,11 @@
             display: flex;
             justify-content: flex-start;
             align-items: center;
-            position: relative;
-            padding-left: 20px;
+            padding-left: 10px;
         }
         #timer {
             font-family: 'Timer', monospace;
-            color: #00cc00; /* Brighter Green */
+            color: #00FF00; /* Bright Green */
             font-size: 16px;
             font-weight: bold;
         }
@@ -101,7 +100,7 @@
             border-radius: 4px; /* Slightly rounded corners */
         }
         .grid-item.clicked {
-            background-color: #004d00; /* Darker Green */
+            background-color: #00FF00; /* Bright Green */
         }
         .grid-item.wrong {
             background-color: #8B0000; /* DarkRed */
@@ -122,7 +121,8 @@
             }
         }
         .animated-text {
-            color: #b0b0b0; /* Slightly lighter gray */
+            color: #A9A9A9; /* Slightly lighter gray */
+            font-size: 14px;
             position: relative;
         }
         @keyframes letterChange {
@@ -134,21 +134,22 @@
             }
         }
         @keyframes flash {
-            0% { background-color: #004d00; }
+            0% { background-color: #00FF00; }
             50% { background-color: #8B0000; }
-            100% { background-color: #004d00; }
+            100% { background-color: #00FF00; }
         }
         @keyframes fadeOut {
             from { opacity: 1; }
             to { opacity: 0; }
         }
         @keyframes pinkWave {
-            0% { color: #808080; }
-            50% { color: #FFB6C1; } /* Lighter Pink */
-            100% { color: #808080; }
+            0% { color: #A9A9A9; }
+            50% { color: #FFB6C1; } /* Light Pink */
+            100% { color: #A9A9A9; }
         }
         .pink-wave {
             animation: pinkWave 10s infinite;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -197,8 +198,8 @@
         // Function to stop the timer and start the blinking animation
         function stopTimer() {
             clearInterval(timerInterval);
-            timerElement.textContent = timerElement.textContent.replace("LÖYDÄ RINTASI RUUDUKOSTA", "HIENOA. OLISIN ODOTTANUT ENÄÄ HETKEN.");
             timerElement.classList.add('blink');
+            timerElement.textContent = timerElement.textContent.replace("LÖYDÄ RINTASI RUUDUKOSTA", "HIENOA. OLISIN ODOTTANUT ENÄÄ HETKEN.");
             setTimeout(() => {
                 timerElement.classList.remove('blink');
                 timerElement.style.animation = 'fadeOut 3s forwards';
@@ -236,7 +237,7 @@
 
         // Function to create the grid with random letters and one word
         async function createGrid() {
-            const word = (await fetchWord());
+            const word = (await fetchWord()).toUpperCase();
 
             let grid = [];
             for (let i = 0; i < 5; i++) {
@@ -271,6 +272,17 @@
                 grid[newY][newX] = word.charAt(i);
                 positions.push({ x: newX, y: newY });
             }
+
+            // Ensure no more than one empty cell
+            let emptyCount = 0;
+            grid.forEach(row => row.forEach(cell => {
+                if (!cell) {
+                    emptyCount++;
+                    if (emptyCount > 1) {
+                        cell = getRandomLetter();
+                    }
+                }
+            }));
 
             return { grid, word };
         }
@@ -314,7 +326,7 @@
             }
 
             const currentIndex = [...gridElement.children].filter(c => c.classList.contains('clicked')).length;
-            if (letter === word.charAt(currentIndex)) {
+            if (letter === word[currentIndex]) {
                 cell.classList.add('clicked');
                 if (currentIndex + 1 === word.length) {
                     showAnswer(word);
@@ -331,25 +343,11 @@
 
         // Function to show the answer and the corresponding image
         function showAnswer(word) {
-            const capitalizedWord = word.charAt(0).toUpperCase() + word.slice(1);
-            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px; color: gray;">Lempirintasi ovat: ${capitalizedWord}</div>`;
+            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 14px; color: #A9A9A9;">Lempirintasi ovat: ${word}</div>`;
             setTimeout(() => {
-                alternateMessages(capitalizedWord);
+                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 14px; color: #A9A9A9;">Uusi peli Roosa-nauhasta <span class="blink">:</span></div>`;
             }, 4000); // Show the correct answer for longer duration before changing the message
             leftElement.innerHTML = `<img src="titpics/${word}.png">`;
-        }
-
-        // Function to alternate messages
-        function alternateMessages(word) {
-            let showingMessage = true;
-            setInterval(() => {
-                if (showingMessage) {
-                    answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px; color: #b0b0b0;">Uusi peli Roosa-nauhasta <span class="blink">:</span></div>`;
-                } else {
-                    answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px; color: #b0b0b0;">Lempirintasi ovat: ${word}</div>`;
-                }
-                showingMessage = !showingMessage;
-            }, 2000);
         }
 
         // Function to animate correct answer
@@ -383,16 +381,16 @@
             const animateChar = () => {
                 watermarkElement.textContent = text.substring(0, randomIndex) + originalChar + text.substring(randomIndex + 1);
                 frame++;
-                if (frame >= 50) { // Slower animation
+                if (frame >= 10) {
                     clearInterval(interval);
                     watermarkElement.textContent = text;
                 }
             };
 
-            interval = setInterval(animateChar, 100); // Slow down animation speed
+            interval = setInterval(animateChar, 100);
         }
 
-        setInterval(animateWatermark, 10000); // Interval for animation
+        setInterval(animateWatermark, 10000); // Double the interval for animation
 
         // Start the game
         initGame();
