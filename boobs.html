@@ -93,7 +93,8 @@
         }
 
         function showImage() {
-            window.location.href = `showImage.html?image=${encodeURIComponent(originalWord)}.png`;
+            let imageName = originalWord.toLowerCase().replace(/[\s\-]/g, '') + '.png';
+            window.location.href = `showImage.html?image=${encodeURIComponent(imageName)}`;
         }
 
         function gameOver() {
