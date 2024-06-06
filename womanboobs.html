@@ -34,7 +34,6 @@
             overflow: hidden;
             margin-left: auto;
             margin-right: auto;
-            margin-left: 20px; /* Move the box 20px to the right */
         }
         #image-box {
             position: absolute;
@@ -125,16 +124,8 @@
         }
         @keyframes pinkWave {
             0% { color: #FF69B4; }
-            50% { color: gray; }
+            30% { color: gray; }
             100% { color: #FF69B4; }
-        }
-        @keyframes zoomIn {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.5); }
-        }
-        @keyframes zoomOut {
-            0% { transform: scale(1.5); }
-            100% { transform: scale(1); }
         }
         @keyframes moveUp {
             0% { transform: translateY(0); }
@@ -143,6 +134,11 @@
         @keyframes moveDown {
             0% { transform: translateY(0); }
             100% { transform: translateY(100%); }
+        }
+        @keyframes textChange {
+            0% { color: gray; }
+            50% { color: white; }
+            100% { color: gray; }
         }
     </style>
 </head>
@@ -179,7 +175,6 @@
         const images = ["titpics/Ajovalot.png", "titpics/image2.png", "titpics/image3.png"]; // Placeholder images
         let helpShown = false;
         let wrongClicks = 0;
-        let timerInterval;
 
         function startImageRotation() {
             let index = 0;
@@ -191,11 +186,7 @@
                     imageBox.innerHTML = '';
                     imageBox.appendChild(img);
                     const randomEffect = Math.random();
-                    if (randomEffect < 0.25) {
-                        img.style.animation = 'zoomIn 5s forwards';
-                    } else if (randomEffect < 0.5) {
-                        img.style.animation = 'zoomOut 5s forwards';
-                    } else if (randomEffect < 0.75) {
+                    if (randomEffect < 0.5) {
                         img.style.animation = 'moveUp 5s forwards';
                     } else {
                         img.style.animation = 'moveDown 5s forwards';
@@ -346,12 +337,12 @@
         function showHelpMessage(word) {
             helpShown = true;
             const helpText = document.createElement('div');
-            helpText.style = "animation: fadein 1s; font-size: 14px; color: #808080; font-family: 'booboo', Arial, sans-serif;";
-            helpText.innerHTML = `ÄITI EN KEKSI, ANNA <span style="animation: blink 1s infinite alternate; color: #A9A9A9;">MAITOA</span>`;
+            helpText.style = "animation: fadein 1s; font-size: 14px; color: #808080; font-family: 'booboo', Arial, sans-serif; margin-top: 10px;";
+            helpText.innerHTML = `<b>ÄITI EN KEKSI, ANNA <span style="animation: blink 1s infinite alternate; color: #A9A9A9;">MAITOA</span></b>`;
             answerElement.appendChild(helpText);
 
             helpText.addEventListener('click', () => {
-                helpText.innerHTML = `VAUVANI, NE OVAT ISIN <span style="color: #A9A9A9;">${word.toUpperCase()}</span>`;
+                helpText.innerHTML = `<b>VAUVANI, NE OVAT ISIN <span style="color: #A9A9A9;">${word.toUpperCase()}</span></b>`;
                 setTimeout(initGame, 3000);
             });
         }
@@ -361,12 +352,12 @@
             const endMessage = document.getElementById('end-message');
             const restartMessage = document.getElementById('restart-message');
 
-            endMessage.innerHTML = `LEMPIRINTASI OVAT: <span style="color: #A9A9A9;">${word}</span>`;
+            endMessage.innerHTML = `<b>LEMPIRINTASI OVAT: <span style="color: #A9A9A9;">${word}</span></b>`;
             endMessage.style.opacity = 1;
 
             setTimeout(() => {
                 endMessage.style.opacity = 0;
-                restartMessage.innerHTML = "PELAA UUDELLEEN KLIKKAAMALLA ROOSA-NAUHAA";
+                restartMessage.innerHTML = "<b>PELAA UUDELLEEN KLIKKAAMALLA ROOSA-NAUHAA</b>";
                 restartMessage.style.opacity = 1;
             }, 3500);
 
@@ -438,3 +429,4 @@
     </script>
 </body>
 </html>
+
