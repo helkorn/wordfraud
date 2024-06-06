@@ -150,7 +150,7 @@
             }
 
             function gameOver() {
-                message.textContent = `Oikea sana oli: ${originalWord}`;
+                message.textContent = `OIKEA SANA OLI: ${originalWord.toUpperCase()}`;
                 setTimeout(() => {
                     message.textContent = '';
                     createGrid();
