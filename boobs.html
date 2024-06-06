@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanapeli</title>
+    <style>
+        body {
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        canvas {
+            border: 1px solid white;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="750" height="750"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const GRID_SIZE = 50;
+        const CELL_SIZE = 15;
+        const MARGIN = 2;
+        const wordsList = ["esimerkki", "testisana", "python", "javascript", "ohjelmointi", "projekti", "kehitys", "tietokone", "verkkosivu", "sovellus"];
+        let grid = [];
+        let foundWords = [];
+        
+        function createGrid() {
+            grid = [];
+            for (let row = 0; row < GRID_SIZE; row++) {
+                let gridRow = [];
+                for (let col = 0; col < GRID_SIZE; col++) {
+                    let rand = Math.random();
+                    if (rand < 0.05) {
+                        gridRow.push('-');
+                    } else if (rand < 0.25) {
+                        gridRow.push(' ');
+                    } else {
+                        gridRow.push(String.fromCharCode(Math.floor(Math.random() * 26) + (Math.random() > 0.5 ? 65 : 97)));
+                    }
+                }
+                grid.push(gridRow);
+            }
+        }
+
+        function placeWords(words) {
+            words.forEach(word => {
+                let placed = false;
+                while (!placed) {
+                    const direction = Math.random() > 0.5 ? 'H' : 'V';
+                    if (direction === 'H') {
+                        const startRow = Math.floor(Math.random() * GRID_SIZE);
+                        const startCol = Math.floor(Math.random() * (GRID_SIZE - word.length));
+                        if (grid[startRow].slice(startCol, startCol + word.length).every(cell => cell === ' ')) {
+                            for (let i = 0; i < word.length; i++) {
+                                grid[startRow][startCol + i] = word[i];
+                            }
+                            placed = true;
+                        }
+                    } else {
+                        const startRow = Math.floor(Math.random() * (GRID_SIZE - word.length));
+                        const startCol = Math.floor(Math.random() * GRID_SIZE);
+                        if (grid.slice(startRow, startRow + word.length).every(row => row[startCol] === ' ')) {
+                            for (let i = 0; i < word.length; i++) {
+                                grid[startRow + i][startCol] = word[i];
+                            }
+                            placed = true;
+                        }
+                    }
+                }
+            });
+        }
+
+        function drawGrid() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let row = 0; row < GRID_SIZE; row++) {
+                for (let col = 0; col < GRID_SIZE; col++) {
+                    const cell = grid[row][col];
+                    ctx.fillStyle = cell === ' ' ? 'black' : 'white';
+                    ctx.fillRect(col * (CELL_SIZE + MARGIN), row * (CELL_SIZE + MARGIN), CELL_SIZE, CELL_SIZE);
+                    if (cell !== ' ' && cell !== '-') {
+                        ctx.fillStyle = 'white';
+                        ctx.fillText(cell, col * (CELL_SIZE + MARGIN) + 3, row * (CELL_SIZE + MARGIN) + 12);
+                    }
+                }
+            }
+        }
+
+        function checkWordCompletion(word) {
+            for (let letter of word) {
+                if (letter !== ' ' && letter !== '-') {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function showImage(word) {
+            const img = new Image();
+            img.src = `titpics/${word}.png`;
+            img.onload = () => {
+                ctx.drawImage(img, canvas.width / 2 - img.width / 2, canvas.height / 2 - img.height / 2);
+                setTimeout(() => {
+                    drawGrid();
+                }, 3000);
+            };
+        }
+
+        function handleMouseClick(event) {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            const col = Math.floor(x / (CELL_SIZE + MARGIN));
+            const row = Math.floor(y / (CELL_SIZE + MARGIN));
+
+            if (grid[row][col] !== ' ') {
+                grid[row][col] = ' ';
+                drawGrid();
+
+                for (let word of wordsList) {
+                    if (grid.flat().join('').includes(word)) {
+                        if (checkWordCompletion(word)) {
+                            foundWords.push(word);
+                            showImage(word);
+                            wordsList.splice(wordsList.indexOf(word), 1);
+                            if (foundWords.length === 10) {
+                                setTimeout(() => {
+                                    ctx.fillStyle = 'white';
+                                    ctx.font = '36px Arial';
+                                    ctx.fillText("ONNEA!", canvas.width / 2 - 50, canvas.height / 2);
+                                    setTimeout(() => {
+                                        mainGame();
+                                    }, 3000);
+                                }, 0);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        function mainGame() {
+            createGrid();
+            placeWords(wordsList.slice(0, 10));
+            foundWords = [];
+            drawGrid();
+        }
+
+        canvas.addEventListener('click', handleMouseClick);
+        mainGame();
+    </script>
+</body>
+</html>
