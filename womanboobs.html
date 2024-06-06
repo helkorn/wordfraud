@@ -26,17 +26,16 @@
         #header {
             grid-area: header;
             display: flex;
-            justify-content: center;
-            align-items: flex-end;
+            justify-content: flex-start;
+            align-items: center;
             position: relative;
+            padding-left: 20px;
         }
         #timer {
             font-family: 'Timer', monospace;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            color: #004d00; /* Dark Green */
-            font-size: 18px;
+            color: #00cc00; /* Brighter Green */
+            font-size: 16px;
+            font-weight: bold;
         }
         #left {
             grid-area: left;
@@ -102,7 +101,7 @@
             border-radius: 4px; /* Slightly rounded corners */
         }
         .grid-item.clicked {
-            background-color: #002200; /* Darker Green */
+            background-color: #004d00; /* Darker Green */
         }
         .grid-item.wrong {
             background-color: #8B0000; /* DarkRed */
@@ -123,7 +122,7 @@
             }
         }
         .animated-text {
-            color: #808080; /* Slightly darker gray */
+            color: #b0b0b0; /* Slightly lighter gray */
             position: relative;
         }
         @keyframes letterChange {
@@ -135,9 +134,9 @@
             }
         }
         @keyframes flash {
-            0% { background-color: #002200; }
+            0% { background-color: #004d00; }
             50% { background-color: #8B0000; }
-            100% { background-color: #002200; }
+            100% { background-color: #004d00; }
         }
         @keyframes fadeOut {
             from { opacity: 1; }
@@ -145,7 +144,7 @@
         }
         @keyframes pinkWave {
             0% { color: #808080; }
-            50% { color: #FF69B4; }
+            50% { color: #FFB6C1; } /* Lighter Pink */
             100% { color: #808080; }
         }
         .pink-wave {
@@ -155,7 +154,7 @@
 </head>
 <body>
     <div id="header">
-        <div id="timer">00:00</div>
+        <div id="timer">00:00 - LÖYDÄ RINTASI RUUDUKOSTA</div>
     </div>
     <div id="left"></div>
     <div id="middle">
@@ -169,7 +168,7 @@
     <div id="footer-middle"></div>
     <div id="footer-right">
         <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer; align-self: center; margin-top: 0;" id="pink-ribbon">
-        <a href="https://roosanauha.syopasaatio.fi/" target="_blank" style="position: absolute; bottom: 0; left: 110px; color: #808080; text-decoration: none;">
+        <a href="https://roosanauha.syopasaatio.fi/" target="_blank" style="position: absolute; bottom: 20px; left: 110px; color: #808080; text-decoration: none;">
             <span class="pink-wave">Roosa nauha Suomessa 2024</span>
         </a>
     </div>
@@ -191,13 +190,14 @@
                 seconds++;
                 let minutes = Math.floor(seconds / 60);
                 let displaySeconds = seconds % 60;
-                timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(displaySeconds).padStart(2, '0')}`;
+                timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(displaySeconds).padStart(2, '0')} - LÖYDÄ RINTASI RUUDUKOSTA`;
             }, 1000);
         }
 
         // Function to stop the timer and start the blinking animation
         function stopTimer() {
             clearInterval(timerInterval);
+            timerElement.textContent = timerElement.textContent.replace("LÖYDÄ RINTASI RUUDUKOSTA", "HIENOA. OLISIN ODOTTANUT ENÄÄ HETKEN.");
             timerElement.classList.add('blink');
             setTimeout(() => {
                 timerElement.classList.remove('blink');
@@ -236,7 +236,7 @@
 
         // Function to create the grid with random letters and one word
         async function createGrid() {
-            const word = (await fetchWord()).toUpperCase();
+            const word = (await fetchWord());
 
             let grid = [];
             for (let i = 0; i < 5; i++) {
@@ -314,7 +314,7 @@
             }
 
             const currentIndex = [...gridElement.children].filter(c => c.classList.contains('clicked')).length;
-            if (letter === word[currentIndex]) {
+            if (letter === word.charAt(currentIndex)) {
                 cell.classList.add('clicked');
                 if (currentIndex + 1 === word.length) {
                     showAnswer(word);
@@ -331,11 +331,25 @@
 
         // Function to show the answer and the corresponding image
         function showAnswer(word) {
-            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px; color: gray;">Rintojesi nimi on: ${word}</div>`;
+            const capitalizedWord = word.charAt(0).toUpperCase() + word.slice(1);
+            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px; color: gray;">Lempirintasi ovat: ${capitalizedWord}</div>`;
             setTimeout(() => {
-                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px; color: gray;">Klikkaa Roosa-nauhaa jatkaaksesi <span class="blink">:</span></div>`;
+                alternateMessages(capitalizedWord);
             }, 4000); // Show the correct answer for longer duration before changing the message
             leftElement.innerHTML = `<img src="titpics/${word}.png">`;
+        }
+
+        // Function to alternate messages
+        function alternateMessages(word) {
+            let showingMessage = true;
+            setInterval(() => {
+                if (showingMessage) {
+                    answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px; color: #b0b0b0;">Uusi peli Roosa-nauhasta <span class="blink">:</span></div>`;
+                } else {
+                    answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px; color: #b0b0b0;">Lempirintasi ovat: ${word}</div>`;
+                }
+                showingMessage = !showingMessage;
+            }, 2000);
         }
 
         // Function to animate correct answer
@@ -367,22 +381,21 @@
             let frame = 0;
 
             const animateChar = () => {
-                watermarkElement.textContent = text.substring(0, randomIndex) + getRandomLetter() + text.substring(randomIndex + 1);
+                watermarkElement.textContent = text.substring(0, randomIndex) + originalChar + text.substring(randomIndex + 1);
                 frame++;
-                if (frame >= 10) {
+                if (frame >= 50) { // Slower animation
                     clearInterval(interval);
                     watermarkElement.textContent = text;
                 }
             };
 
-            interval = setInterval(animateChar, 50);
+            interval = setInterval(animateChar, 100); // Slow down animation speed
         }
 
-        setInterval(animateWatermark, 10000); // Double the interval for animation
+        setInterval(animateWatermark, 10000); // Interval for animation
 
         // Start the game
         initGame();
     </script>
 </body>
 </html>
-
