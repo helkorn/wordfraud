@@ -19,7 +19,6 @@
         #grid {
             display: grid;
             gap: 1px;
-            margin-bottom: 20px; /* Add margin to separate grid and message */
         }
         .cell {
             width: 30px;
@@ -30,23 +29,23 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            text-transform: uppercase; /* Keep text uppercase */
-            font-size: 12px;
+            text-transform: uppercase; /* Muutetaan kirjaimet isoiksi */
+            font-size: 12px; /* Pienennetään fonttikoko */
         }
         .cell.correct {
             background-color: red;
         }
         #message {
             margin: 20px;
-            font-size: 16px; /* Increase font size */
-            text-transform: none; /* Remove text-transform to use standard capitalization */
+            font-size: 16px; /* Kasvatetaan fonttikoko */
+            text-transform: none; /* Käytetään kieliopin mukaisia isoja ja pieniä kirjaimia */
         }
         #image-container {
-            margin-bottom: 20px; /* Margin to separate image from grid */
+            margin-bottom: 20px;
         }
         #image-container img {
             height: 100px;
-            opacity: 0.5; /* Set transparency to 50% */
+            opacity: 0.5; /* Läpinäkyvyys 50 % */
         }
     </style>
 </head>
@@ -58,26 +57,14 @@
     <div id="message"></div>
     
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            console.log("Document loaded");
-
-            fetch('melonit.csv')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.text();
-                })
-                .then(data => {
-                    const imageNames = data.split('\n').map(line => line.trim()).filter(line => line !== '');
-                    const words = imageNames.map(name => name.replace('.png', ''));
-                    console.log("Words loaded:", words);
-                    startGame(words);
-                })
-                .catch(error => {
-                    console.error('Error fetching CSV file:', error);
-                });
-        });
+        // Haetaan tiedostonimet CSV-tiedostosta
+        fetch('melonit.csv')
+            .then(response => response.text())
+            .then(data => {
+                const imageNames = data.split('\n').map(line => line.trim()).filter(line => line !== '');
+                const words = imageNames.map(name => name.replace('.png', ''));
+                startGame(words);
+            });
 
         function startGame(words) {
             let originalWord = words[Math.floor(Math.random() * words.length)];
