@@ -5,94 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WomanBoobs</title>
     <style>
-        @font-face {
-            font-family: 'Timer';
-            src: url('fonts/timer.ttf') format('truetype');
-        }
-        @font-face {
-            font-family: 'Booboo';
-            src: url('fonts/booboo.ttf') format('truetype');
-        }
         body {
             background-color: black;
             color: white;
             display: grid;
             grid-template-areas: 
-                "top-left top-center top-right"
-                "middle-left middle-center middle-right"
-                "bottom-left bottom-center bottom-right";
-            grid-template-rows: 1fr 300px 1fr;
+                "header header header"
+                "left middle right"
+                "footer-left footer-middle footer-right";
+            grid-template-rows: 100px 1fr 100px;
             grid-template-columns: 1fr 1fr 1fr;
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
         }
-        #top-left { grid-area: top-left; }
-        #top-center {
-            grid-area: top-center;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            padding-bottom: 10px;
-            position: relative;
-        }
-        #top-center .animated-text {
-            font-family: 'Booboo', Arial, sans-serif;
-            color: #32CD32; /* Brightened Dark Green */
-            font-size: 16px;
-        }
-        #top-center #timer {
-            font-family: 'Timer', monospace;
-            color: #32CD32; /* Brightened Dark Green */
-            font-size: 16px;
-            margin-left: 10px;
-        }
-        #top-right { grid-area: top-right; }
-        #middle-left {
-            grid-area: middle-left;
-            border: 1px solid silver;
-            width: 300px;
-            height: 300px;
-            overflow: hidden;
-            position: relative;
-            background: url('titpics/spessut/Niinkövittu.png') center center / cover no-repeat;
-            opacity: 0.5;
-        }
-        #middle-center {
-            grid-area: middle-center;
+        #header {
+            grid-area: header;
             display: flex;
             justify-content: center;
             align-items: center;
         }
-        #middle-right {
-            grid-area: middle-right;
+        #left {
+            grid-area: left;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
         }
-        #bottom-left { grid-area: bottom-left; }
-        #bottom-center {
-            grid-area: bottom-center;
+        #middle {
+            grid-area: middle;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #right {
+            grid-area: right;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: center;
-            position: relative;
-            font-family: 'Booboo', Arial, sans-serif;
-            color: #32CD32; /* Brightened Dark Green */
-            font-size: 18px;
+            align-items: flex-start;
         }
-        #bottom-right {
-            grid-area: bottom-right;
+        #footer-left {
+            grid-area: footer-left;
             display: flex;
+            justify-content: center;
             align-items: center;
-            padding-left: 10px;
-            font-family: Arial, sans-serif;
-            color: #FFB6C1; /* Light Pink */
-            animation: pinkWave 10s infinite;
         }
-        #bottom-right .pink-wave {
-            font-size: 12px;
+        #footer-middle {
+            grid-area: footer-middle;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 10px;
+            height: 100%;
+        }
+        #footer-middle div {
+            text-align: center;
+            margin-top: -30px;
+        }
+        #footer-right {
+            grid-area: footer-right;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 10px;
         }
         .grid {
             display: grid;
@@ -113,14 +88,13 @@
             border-radius: 4px; /* Slightly rounded corners */
         }
         .grid-item.clicked {
-            background-color: #32CD32; /* Brightened Dark Green */
+            background-color: #006400; /* DarkGreen */
         }
         .grid-item.wrong {
             background-color: #8B0000; /* DarkRed */
         }
         .grid-item span {
             transition: color 0.5s;
-            text-transform: uppercase;
         }
         .blink {
             animation: blink 1s infinite;
@@ -135,112 +109,46 @@
             }
         }
         .animated-text {
-            color: #32CD32; /* Brightened Dark Green */
-            font-family: 'Booboo', Arial, sans-serif;
+            color: gray;
+            position: relative;
         }
-        #hover-icon {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            z-index: 10;
-            animation: hoverMove 3s infinite;
-        }
-        @keyframes hoverMove {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(10px); }
-            50% { transform: translateY(10px); }
-            75% { transform: translateX(-10px); }
-            100% { transform: translateY(-10px); }
-        }
-        #hover-icon.faded {
-            opacity: 0.5;
-        }
-        @keyframes pulse {
-            0% { color: #32CD32; }
-            100% { color: #00FF00; }
-        }
-        @keyframes pinkWave {
-            0% { color: #FF69B4; }
-            50% { color: #FFB6C1; }
-            100% { color: #FF69B4; }
+        @keyframes letterChange {
+            0% {
+                color: green;
+            }
+            100% {
+                color: gray;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="top-left"></div>
-    <div id="top-center">
-        <div id="timer-text" class="animated-text">LÖYDÄ LEMPIRINTASI</div>
-        <div id="timer" class="animated-text">00:00</div>
-    </div>
-    <div id="top-right"></div>
-    <div id="middle-left">
-        <img id="image-container" style="max-width: 300px; cursor: grab; position: absolute; top: 0; left: 0;" alt="Found image">
-    </div>
-    <div id="middle-center">
+    <div id="header"></div>
+    <div id="left"></div>
+    <div id="middle">
         <div class="grid" id="puzzle"></div>
     </div>
-    <div id="middle-right">
+    <div id="right">
         <img src="titpics/spessut/WomanBoobs.png" width="300">
-        <div id="watermark" style="font-size: 12px; padding-top: 5px; color: #D3A4A4;">© Timin Photography GmbH</div>
+        <div id="watermark" style="font-size: 12px; padding-top: 5px; color: gray;">© Timin Photography GmbH</div>
     </div>
-    <div id="bottom-left"></div>
-    <div id="bottom-center"></div>
-    <div id="bottom-right">
-        <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer;" id="pink-ribbon">
-        <div class="pink-wave">Roosa nauha Suomessa 2024</div>
+    <div id="footer-left"></div>
+    <div id="footer-middle"></div>
+    <div id="footer-right">
+        <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer; align-self: flex-start;" id="pink-ribbon">
     </div>
 
     <script>
         const gridElement = document.getElementById('puzzle');
-        const answerElement = document.getElementById('bottom-center');
-        const imageContainer = document.getElementById('image-container');
+        const answerElement = document.getElementById('footer-middle');
+        const leftElement = document.getElementById('left');
         const pinkRibbon = document.getElementById('pink-ribbon');
         const watermarkElement = document.getElementById('watermark');
-        const timerElement = document.getElementById('timer');
-        const timerTextElement = document.getElementById('timer-text');
-        let helpShown = false;
-        let wrongClicks = 0;
-        let timerInterval;
 
-        // Function to start the timer
-        function startTimer() {
-            let seconds = 0;
-            timerInterval = setInterval(() => {
-                seconds++;
-                let minutes = Math.floor(seconds / 60);
-                let displaySeconds = seconds % 60;
-                timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(displaySeconds).padStart(2, '0')}`;
-            }, 1000);
-        }
-
-        // Function to stop the timer and start the blinking animation
-        function stopTimer() {
-            clearInterval(timerInterval);
-            timerElement.classList.add('blink');
-            setTimeout(() => {
-                timerElement.classList.remove('blink');
-            }, 5000);
-        }
-
-        // Letter frequency based on Wordfeud points
-        const letterFrequency = {
-            'A': 1, 'B': 4, 'C': 8, 'D': 2, 'E': 1,
-            'F': 8, 'G': 4, 'H': 4, 'I': 1, 'J': 4,
-            'K': 2, 'L': 2, 'M': 2, 'N': 1, 'O': 2,
-            'P': 4, 'Q': 10, 'R': 1, 'S': 1, 'T': 1,
-            'U': 3, 'V': 4, 'W': 10, 'X': 10, 'Y': 4,
-            'Z': 10, 'Å': 4, 'Ä': 2, 'Ö': 7
-        };
-
-        // Function to generate random letter, including Å, Ä, and Ö
-        function getRandomLetter() {
-            const letters = Object.keys(letterFrequency);
-            const totalWeight = letters.reduce((sum, letter) => sum + (11 - letterFrequency[letter]), 0);
-            let rand = Math.random() * totalWeight;
-            for (const letter of letters) {
-                rand -= (11 - letterFrequency[letter]);
-                if (rand <= 0) return letter;
-            }
+        // Function to generate random letter
+        function getRandomLetter(isUpperCase) {
+            const letters = isUpperCase ? 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' : 'abcdefghijklmnopqrstuvwxyz';
+            return letters.charAt(Math.floor(Math.random() * letters.length));
         }
 
         // Function to fetch a word from melonit.csv
@@ -253,52 +161,32 @@
 
         // Function to create the grid with random letters and one word
         async function createGrid() {
-            const word = (await fetchWord());
+            const word = (await fetchWord()).toUpperCase();
 
             let grid = [];
             for (let i = 0; i < 5; i++) {
                 grid[i] = [];
                 for (let j = 0; j < 5; j++) {
-                    grid[i][j] = getRandomLetter();
+                    grid[i][j] = getRandomLetter(true);
                 }
             }
 
-            // Place word in the grid starting at random position
+            // Place word in the grid starting at random position and in the correct order
             let startX = Math.floor(Math.random() * 5);
             let startY = Math.floor(Math.random() * 5);
+            let dir = Math.random() < 0.5 ? 0 : 1; // 0 for horizontal, 1 for vertical
 
-            let positions = [{ x: startX, y: startY }];
-            grid[startY][startX] = word.charAt(0);
-            let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]]; // Right, Down, Left, Up
+            for (let i = 0; i < word.length; i++) {
+                grid[startY][startX] = word.charAt(i);
 
-            for (let i = 1; i < word.length; i++) {
-                let lastPos = positions[positions.length - 1];
-                let possibleDirections = directions.filter(dir => {
-                    let newX = lastPos.x + dir[0];
-                    let newY = lastPos.y + dir[1];
-                    return newX >= 0 && newX < 5 && newY >= 0 && newY < 5 && !positions.some(pos => pos.x === newX && pos.y === newY);
-                });
-
-                if (possibleDirections.length === 0) break;
-
-                let dir = possibleDirections[Math.floor(Math.random() * possibleDirections.length)];
-                let newX = lastPos.x + dir[0];
-                let newY = lastPos.y + dir[1];
-
-                grid[newY][newX] = word.charAt(i);
-                positions.push({ x: newX, y: newY });
-            }
-
-            // Ensure no more than one empty cell
-            let emptyCount = 0;
-            grid.forEach(row => row.forEach(cell => {
-                if (!cell) {
-                    emptyCount++;
-                    if (emptyCount > 1) {
-                        cell = getRandomLetter();
-                    }
+                if (dir === 0) {
+                    startX++;
+                    if (startX >= 5) { startX = 0; startY++; }
+                } else {
+                    startY++;
+                    if (startY >= 5) { startY = 0; startX++; }
                 }
-            }));
+            }
 
             return { grid, word };
         }
@@ -306,7 +194,6 @@
         // Function to initialize the game
         async function initGame() {
             gridElement.innerHTML = ''; // Clear the grid
-            answerElement.innerHTML = ''; // Clear any previous help text
             const { grid, word } = await createGrid();
             let foundLetters = 0;
 
@@ -325,13 +212,9 @@
             });
 
             // Mark the first letter of the word as found
-            const firstLetterElement = [...gridElement.children].find(cell => cell.dataset.letter === word.charAt(0).toUpperCase());
+            const firstLetterElement = [...gridElement.children].find(cell => cell.dataset.letter === word.charAt(0));
             firstLetterElement.classList.add('clicked');
-            firstLetterElement.dataset.found = true;
             foundLetters++;
-
-            // Start the timer
-            startTimer();
         }
 
         // Function to handle cell click
@@ -342,56 +225,24 @@
                 return;
             }
 
-            const currentIndex = [...gridElement.children].filter(c => c.classList.contains('clicked')).length;
-            if (letter === word[currentIndex].toUpperCase()) {
+            if (word.includes(letter)) {
                 cell.classList.add('clicked');
-                if (currentIndex + 1 === word.length) {
-                    showAnswer(word);
-                    animateCorrectAnswer();
-                    stopTimer();
-                }
             } else {
                 cell.classList.add('wrong');
-                wrongClicks++;
-                if (wrongClicks > 3 && !helpShown) {
-                    showHelpMessage(word);
-                }
                 setTimeout(() => {
                     cell.classList.remove('wrong');
+                    cell.querySelector('span').textContent = getRandomLetter(true);
                 }, 500);
             }
         }
 
-        // Function to show help message
-        function showHelpMessage(word) {
-            helpShown = true;
-            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #32CD32; font-weight: bold;"><a href="#" style="color: inherit; text-decoration: none;">ÄITI EN KEKSI ANNA <span style="animation: blink 1s infinite alternate;">MAITOA</span></a></div>`;
-            answerElement.addEventListener('click', (e) => {
-                e.preventDefault();
-                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #32CD32; font-weight: bold;">VAUVANI, NE ON ISIN ${word.toUpperCase()}</div>`;
-            });
-        }
-
         // Function to show the answer and the corresponding image
         function showAnswer(word) {
-            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #32CD32;">LEMPIRINTASI OVAT: ${word}</div>`;
+            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px; color: gray;">Rintojesi nimi on: ${word}</div>`;
             setTimeout(() => {
-                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #32CD32;">UUSI PELI ROOSA-NAUHASTA <span class="blink">::</span></div>`;
+                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px; color: gray;">Klikkaa Roosa-nauhaa jatkaaksesi <span class="blink">:</span></div>`;
             }, 4000); // Show the correct answer for longer duration before changing the message
-            imageContainer.src = `titpics/${word}.png`;
-        }
-
-        // Function to animate correct answer
-        function animateCorrectAnswer() {
-            const clickedCells = [...gridElement.children].filter(cell => cell.classList.contains('clicked'));
-            clickedCells.forEach(cell => {
-                cell.style.animation = 'flash 0.5s alternate 3';
-            });
-            setTimeout(() => {
-                clickedCells.forEach(cell => {
-                    cell.style.animation = '';
-                });
-            }, 1500);
+            leftElement.innerHTML = `<img src="titpics/${word}.png" width="300">`;
         }
 
         // Add event listener to the Pink Ribbon image
@@ -410,7 +261,7 @@
             let frame = 0;
 
             const animateChar = () => {
-                watermarkElement.textContent = text.substring(0, randomIndex) + originalChar + text.substring(randomIndex + 1);
+                watermarkElement.textContent = text.substring(0, randomIndex) + getRandomLetter(isUpperCase) + text.substring(randomIndex + 1);
                 frame++;
                 if (frame >= 10) {
                     clearInterval(interval);
@@ -418,25 +269,14 @@
                 }
             };
 
-            interval = setInterval(animateChar, 200);
+            interval = setInterval(animateChar, 50);
         }
 
-        setInterval(animateWatermark, 10000); // Double the interval for animation
-
-        // Mouse move events for imageContainer
-        document.getElementById('middle-left').addEventListener('mousemove', (e) => {
-            const rect = imageContainer.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            imageContainer.style.transform = `translate(${-x / 10}px, ${-y / 10}px)`;
-        });
-
-        document.getElementById('middle-left').addEventListener('mouseleave', () => {
-            imageContainer.style.transform = 'translate(0, 0)';
-        });
+        setInterval(animateWatermark, 5000);
 
         // Start the game
         initGame();
     </script>
 </body>
 </html>
+
