@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -43,11 +43,13 @@
     <div id="grid"></div>
     
     <script>
-        const words = ['melonit', 'vesi-melonit', 'kulta melonit']; // Sample words from melonit.csv
+        // Haetaan tiedostonimet titpics-kansiosta
+        const imageNames = ['melonit.png', 'vesi-melonit.png', 'kulta melonit.png']; // Korvaa tämä dynaamisella hakemisella tarvittaessa
+        const words = imageNames.map(name => name.replace('.png', ''));
+        
         let originalWord = words[Math.floor(Math.random() * words.length)];
         let word = originalWord.replace(/[\s\-]/g, '').toLowerCase();
-        let maxWordLength = Math.max(...words.map(w => w.replace(/[\s\-]/g, '').length));
-        let gridSize = Math.max(10, maxWordLength); // At least 10x10 grid
+        let gridSize = 6; // Asetetaan ruudukon koko 6x6
         let grid = document.getElementById('grid');
         let message = document.getElementById('message');
         let correctLetters = [];
@@ -68,14 +70,31 @@
         }
 
         function placeWord() {
-            let startPos = Math.floor(Math.random() * (gridSize * gridSize - word.length));
-            while ((startPos % gridSize) > (gridSize - word.length)) {
-                startPos = Math.floor(Math.random() * (gridSize * gridSize - word.length));
-            }
-            for (let i = 0; i < word.length; i++) {
-                let cell = grid.children[startPos + i];
-                cell.textContent = word[i];
-                cell.dataset.correct = 'true';
+            let startPos = Math.floor(Math.random() * gridSize) * gridSize;
+            let wordIndex = 0;
+            let directions = ['down', 'right'];
+
+            while (wordIndex < word.length) {
+                if ((startPos % gridSize) + word.length <= gridSize) {
+                    for (let i = 0; i < word.length; i++) {
+                        let cell = grid.children[startPos + i];
+                        cell.textContent = word[wordIndex++];
+                        cell.dataset.correct = 'true';
+                    }
+                    break;
+                } else {
+                    for (let i = 0; i < gridSize; i++) {
+                        let direction = directions[Math.floor(Math.random() * directions.length)];
+                        if (direction === 'down' && Math.floor(startPos / gridSize) + 1 < gridSize) {
+                            startPos += gridSize;
+                        } else if (direction === 'right' && (startPos % gridSize) + 1 < gridSize) {
+                            startPos += 1;
+                        }
+                        let cell = grid.children[startPos];
+                        cell.textContent = word[wordIndex++];
+                        cell.dataset.correct = 'true';
+                    }
+                }
             }
         }
 
