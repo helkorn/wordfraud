@@ -3,332 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WomanBoobs24</title>
+    <title>WomanBoobs</title>
     <style>
-        @font-face {
-            font-family: 'C64';
-            src: url('fontC64.ttf') format('truetype');
-        }
-        @font-face {
-            font-family: 'Typewriter';
-            src: url('fontTW.ttf') format('truetype');
-        }
         body {
-            font-family: Arial, sans-serif;
-            background-color: #000;
-            color: #fff;
+            background-color: black;
+            color: white;
+            display: grid;
+            grid-template-areas: 
+                "header header header"
+                "left middle right"
+                "footer-left footer-middle footer-right";
+            grid-template-rows: 100px 1fr 100px;
+            grid-template-columns: 1fr 1fr 1fr;
+            height: 100vh;
             margin: 0;
-            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        #header {
+            grid-area: header;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
         }
-        .container {
-            max-width: 800px;
-            text-align: center;
-            padding: 20px;
-            border: 1px solid #333;
-            border-radius: 10px;
-            background-color: #111;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        #left {
+            grid-area: left;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        h1 {
-            color: #fff;
-            font-size: 2em;
-            margin-bottom: 20px;
+        #middle {
+            grid-area: middle;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        .timer {
-            font-size: 1.5em;
-            margin-bottom: 20px;
+        #right {
+            grid-area: right;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        .shuffled-word {
-            font-size: 1.5em;
-            margin-bottom: 20px;
-            color: #fff;
+        #footer-left {
+            grid-area: footer-left;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        input[type="text"] {
-            width: 80%;
-            padding: 10px;
-            font-size: 16px;
-            margin-bottom: 10px;
-            border: 1px solid #333;
-            border-radius: 5px;
-            background-color: #222;
-            color: #fff;
-            text-align: center;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            autocomplete: off;
-            spellcheck: false;
+        #footer-middle {
+            grid-area: footer-middle;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        button {
-            padding: 5px 10px;
-            font-size: 14px;
+        #footer-right {
+            grid-area: footer-right;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 40px);
+            grid-template-rows: repeat(5, 40px);
+            gap: 5px;
+        }
+        .grid-item {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: black;
+            font-size: 24px;
             cursor: pointer;
-            border: 1px solid #333;
-            border-radius: 50px;
-            background-color: #333;
-            color: #fff;
-            transition: background-color 0.3s;
-            margin-top: 10px;
+            transition: background-color 0.5s;
         }
-        button:hover {
-            background-color: #555;
+        .grid-item.clicked {
+            background-color: #006400; /* DarkGreen */
         }
-        .result {
-            margin-top: 20px;
-            font-size: 1em;
-            color: #f00;
+        .grid-item.wrong {
+            background-color: #8B0000; /* DarkRed */
         }
-        .link-box {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            font-size: 14px;
-            color: #fff;
-            white-space: nowrap;
-            text-align: right;
-        }
-        .link-box a {
-            color: #888;
-            text-decoration: none;
-            font-weight: bold;
-            padding-right: 20px;
-        }
-        .link-box a:hover {
-            text-decoration: underline;
-        }
-        .hidden {
-            display: none;
-        }
-        .typewriter-box {
-            position: absolute;
-            top: 40px;
-            right: 20px;
-            background-color: #f5f5f5;
-            color: #000;
-            padding: 10px;
-            border: 1px solid #333;
-            border-radius: 5px;
-            font-family: 'Typewriter', monospace;
-            font-size: 13px;
-            white-space: pre-wrap;
-            width: 200px;
-        }
-        .waiting {
-            font-size: 0.8em;
-            color: #fff;
-            animation: waitingAnimation 1.5s infinite;
-        }
-        @keyframes waitingAnimation {
-            0%, 100% {
-                color: #888;
-            }
-            35% {
-                color: #444;
-            }
-        }
-        .corner-image {
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            height: 50px;
-            width: auto;
+        .grid-item span {
+            transition: color 0.5s;
         }
     </style>
 </head>
 <body>
-    <div class="link-box" id="whatIsThisLink">
-        <a href="javascript:void(0)" onclick="showAnalgrammi()">Mikä tämä on?  </a>
+    <div id="header">
+        <img src="titpics/spessut/WomanBoobs.png" height="100" style="opacity: 0.5;">
     </div>
-    <div class="container">
-        <h1>WomanBoobs24</h1>
-        <p>Mammografianagrammi. Ratkaise!</p>
-        <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
-        <div class="timer" id="timer">20</div>
-        <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
-        <div>
-            <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
-        </div>
-        <div class="result" id="result"></div>
+    <div id="left"></div>
+    <div id="middle">
+        <div class="grid" id="puzzle"></div>
     </div>
-    <img src="titpics/Pink_ribbon.svg" alt="Pink Ribbon" class="corner-image">
+    <div id="right"></div>
+    <div id="footer-left">
+        <img src="titpics/spessut/Pink_ribbon.svg" height="200">
+    </div>
+    <div id="footer-middle"></div>
+    <div id="footer-right"></div>
 
     <script>
-        let words = [];
-        let currentWord = '';
-        let timer;
-        let timeLeft = 20;
-        let paused = false;
-        let randomCounter = 0;
+        const gridElement = document.getElementById('puzzle');
+        const answerElement = document.getElementById('footer-middle');
+        const leftElement = document.getElementById('left');
 
-        function startTimer() {
-            clearInterval(timer);
-            timer = setInterval(() => {
-                if (!paused) {
-                    timeLeft--;
-                    document.getElementById('timer').textContent = timeLeft;
-                    if (timeLeft <= 0) {
-                        clearInterval(timer);
-                        handleTimeOut();
-                    }
+        // Function to generate random letter
+        function getRandomLetter() {
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ ';
+            return letters.charAt(Math.floor(Math.random() * letters.length));
+        }
+
+        // Function to create the grid with random letters and one word
+        function createGrid() {
+            // Fetch word from melonit.csv (simulated here as a JavaScript array)
+            const words = ["TISSIT", "MELONIT", "PÖLLÖT"];
+            const word = words[Math.floor(Math.random() * words.length)];
+
+            let grid = [];
+            for (let i = 0; i < 5; i++) {
+                grid[i] = [];
+                for (let j = 0; j < 5; j++) {
+                    grid[i][j] = getRandomLetter();
                 }
-            }, 1000);
-        }
-
-        function shuffleWord(word) {
-            let shuffledWord = word.split('').sort(() => Math.random() - 0.5).join('');
-            while (shuffledWord === word) {
-                shuffledWord = word.split('').sort(() => Math.random() - 0.5).join('');
             }
-            return shuffledWord;
-        }
 
-        function loadNewWord() {
-            if (words.length > 0) {
-                currentWord = words[Math.floor(Math.random() * words.length)];
-                const shuffledWord = shuffleWord(currentWord);
-                document.getElementById('shuffledWord').textContent = shuffledWord;
-                document.getElementById('answer').value = '';
-                timeLeft = 20;
-                document.getElementById('timer').textContent = timeLeft;
-                startTimer();
-            } else {
-                document.getElementById('shuffledWord').textContent = 'Ei sanoja ladattu.';
-            }
-        }
+            // Place word in the grid starting at random position
+            let startX = Math.floor(Math.random() * 5);
+            let startY = Math.floor(Math.random() * 5);
+            let dir = Math.random() < 0.5 ? 0 : 1; // 0 for horizontal, 1 for vertical
 
-        function checkAnswer() {
-            const answer = document.getElementById('answer').value.trim().toLowerCase();
-            if (answer === '') {
-                let randomIndex = Math.floor(Math.random() * words.length);
-                if (++randomCounter % 5 === 0) {
-                    randomIndex = words.indexOf(currentWord);
-                }
-                document.getElementById('result').textContent = `Voisiko se olla ${words[randomIndex]}?`;
-                return;
-            }
-            paused = true;
-            if (answer === currentWord.toLowerCase()) {
-                revealCorrectAnswer(() => {
-                    showCongratulationsPage();
-                });
-            } else {
-                revealCorrectAnswer();
-            }
-        }
+            for (let i = 0; i < word.length; i++) {
+                if (startX >= 5 || startY >= 5) break;
 
-        function revealCorrectAnswer(callback) {
-            const shuffledWordElement = document.getElementById('shuffledWord');
-            shuffledWordElement.style.color = '#FFFF00';
-            let currentIndex = 0;
+                grid[startY][startX] = word.charAt(i);
 
-            const interval = setInterval(() => {
-                if (currentIndex < currentWord.length) {
-                    shuffledWordElement.textContent =
-                        currentWord.slice(0, currentIndex + 1) +
-                        shuffledWordElement.textContent.slice(currentIndex + 1);
-                    currentIndex++;
+                if (dir === 0) {
+                    startX++;
+                    if (startX >= 5) { startX = 0; startY++; }
                 } else {
-                    clearInterval(interval);
-                    if (callback) {
-                        setTimeout(callback, 1500);
-                    } else {
-                        setTimeout(() => {
-                            window.location.href = 'https://timosalonen.github.io/wordfraud/womanboobs.html';
-                        }, 5000);
-                    }
-                }
-            }, 200);
-        }
-
-        function showCongratulationsPage() {
-            const imagePath = `titpics/${currentWord}.png`;
-            document.body.innerHTML = `
-                <div style="color: #fff; text-align: center; font-size: 1.5em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                    <img src="${imagePath}" alt="${currentWord}" style="max-height: 600px; height: 100%; margin-top: 20px;"><br>
-                    <div style="font-size: 0.32em; color: #888; text-align: left; margin-top: 10px;">© 2024 Timin Photography Ltd</div>
-                </div>`;
-        }
-
-        function handleTimeOut() {
-            revealCorrectAnswer();
-        }
-
-        function showAnalgrammi() {
-            paused = true;
-            document.getElementById('timer').innerHTML = '<span class="waiting">-sinulle on postia-</span>';
-            const linkBox = document.getElementById('whatIsThisLink');
-            linkBox.innerHTML = '';
-            const box = document.createElement('div');
-            box.id = 'typewriterBox';
-            box.className = 'typewriter-box';
-            document.body.appendChild(box);
-            const text = "Pohjoisen korpimetsän radiokanavalta kuului tissikuvaajan kutsu.\n\nAmmattikuvaaja ikuistaa radioasemalla naisia työn äärellä.\n\nTissit korostettuna.\n\nPelaa oikea rintojen lempinimi, ja saat kuvan näkyviin!\n\nSamalla tuet Roosa nauha-kampanjaa joka jalkautuu katukuvaan jälleen lokakuussa.\n\nSe on osa maailmanlaajuista liikettä kampanjoiden rintasyöpätietoisuuden puolesta.\n\nOnnea peliin. Tissit mainittu!";
-            let index = 0;
-
-            function typeNext() {
-                if (index < text.length) {
-                    box.textContent += text[index];
-                    index++;
-                    let delay = 40;
-                    if (text[index - 1] === ' ' || text[index - 1] === '\n') {
-                        delay = 100;
-                    }
-                    setTimeout(typeNext, delay);
-                } else {
-                    setTimeout(removeText, 3000);
+                    startY++;
+                    if (startY >= 5) { startY = 0; startX++; }
                 }
             }
 
-            function removeText() {
-                document.getElementById('timer').innerHTML = timeLeft;
-                let grayValue = 245;
-                let upperIndex = 0;
-                const lines = box.textContent.split('\n');
-                const interval = setInterval(() => {
-                    if (box.textContent.length > 0) {
-                        if (upperIndex < lines.length) {
-                            lines[upperIndex] = '';
-                            upperIndex++;
-                            box.textContent = lines.join('\n');
-                        } else {
-                            const randomIndex = Math.floor(Math.random() * box.textContent.length);
-                            box.textContent = box.textContent.slice(0, randomIndex) + box.textContent.slice(randomIndex + 1);
+            return { grid, word };
+        }
+
+        // Initial setup
+        const { grid, word } = createGrid();
+        let foundLetters = 0;
+
+        // Render grid
+        grid.forEach((row, rowIndex) => {
+            row.forEach((letter, colIndex) => {
+                const cell = document.createElement('div');
+                cell.classList.add('grid-item');
+                cell.innerHTML = `<span>${letter}</span>`;
+                cell.addEventListener('click', () => {
+                    if (word.includes(letter)) {
+                        if (!cell.classList.contains('clicked')) {
+                            cell.classList.add('clicked');
+                            foundLetters++;
+                            if (foundLetters === word.length) {
+                                showAnswer(word);
+                            }
                         }
-                        grayValue -= 5;
-                        box.style.backgroundColor = `rgb(${grayValue}, ${grayValue}, ${grayValue})`;
                     } else {
-                        clearInterval(interval);
-                        box.remove();
-                        paused = false;
-                        startTimer();
+                        cell.classList.add('wrong');
+                        setTimeout(() => {
+                            cell.classList.remove('wrong');
+                            cell.querySelector('span').textContent = getRandomLetter();
+                        }, 500);
                     }
-                }, 30);
-            }
-
-            typeNext();
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            fetch('melonit.csv')
-                .then(response => response.text())
-                .then(text => {
-                    words = text.split('\n').map(word => word.trim()).filter(Boolean);
-                    loadNewWord();
                 });
+                gridElement.appendChild(cell);
+            });
         });
 
-        document.getElementById('answer').addEventListener('keydown', function (e) {
-            if (e.key === 'Enter') {
-                checkAnswer();
-            }
-        });
+        // Mark the first letter of the word as found
+        const firstLetterElement = [...gridElement.children].find(cell => cell.textContent === word.charAt(0));
+        firstLetterElement.classList.add('clicked');
+        foundLetters++;
+
+        // Function to show the answer and the corresponding image
+        function showAnswer(word) {
+            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 20px;">Rintojesi nimi on: ${word}</div>`;
+            setTimeout(() => {
+                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 20px;">Klikkaa peliä jatkaaksesi</div>`;
+            }, 2000);
+            leftElement.innerHTML = `<img src="titpics/${word}.png" style="opacity: 0.7;">`;
+        }
     </script>
 </body>
 </html>
