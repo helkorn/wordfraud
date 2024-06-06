@@ -9,6 +9,10 @@
             font-family: 'Timer';
             src: url('fonts/timer.ttf') format('truetype');
         }
+        @font-face {
+            font-family: 'Booboo';
+            src: url('fonts/booboo.ttf') format('truetype');
+        }
         body {
             background-color: black;
             color: white;
@@ -21,7 +25,7 @@
             grid-template-columns: 1fr 1fr 1fr;
             height: 100vh;
             margin: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Booboo', Arial, sans-serif;
         }
         #header {
             grid-area: header;
@@ -32,9 +36,10 @@
         }
         #timer {
             font-family: 'Timer', monospace;
-            color: #00FF00; /* Bright Green */
-            font-size: 16px;
+            color: #006400; /* Dark Green */
+            font-size: 14px;
             font-weight: bold;
+            animation: pulse 1s infinite alternate;
         }
         #left {
             grid-area: left;
@@ -68,6 +73,7 @@
             align-items: flex-start;
             padding-top: 10px;
             height: 100%;
+            font-family: 'Timer', monospace;
         }
         #footer-middle div {
             text-align: center;
@@ -100,13 +106,14 @@
             border-radius: 4px; /* Slightly rounded corners */
         }
         .grid-item.clicked {
-            background-color: #00FF00; /* Bright Green */
+            background-color: #006400; /* Dark Green */
         }
         .grid-item.wrong {
             background-color: #8B0000; /* DarkRed */
         }
         .grid-item span {
             transition: color 0.5s;
+            text-transform: uppercase;
         }
         .blink {
             animation: blink 1s infinite;
@@ -134,9 +141,9 @@
             }
         }
         @keyframes flash {
-            0% { background-color: #00FF00; }
+            0% { background-color: #006400; }
             50% { background-color: #8B0000; }
-            100% { background-color: #00FF00; }
+            100% { background-color: #006400; }
         }
         @keyframes fadeOut {
             from { opacity: 1; }
@@ -150,27 +157,50 @@
         .pink-wave {
             animation: pinkWave 10s infinite;
             font-size: 12px;
+            padding: 5px;
+            border: 2px solid #FFB6C1; /* Light Pink */
+            border-radius: 8px;
+        }
+        @keyframes pulse {
+            0% { color: #006400; }
+            100% { color: #00FF00; }
+        }
+        @keyframes borderPulse {
+            0% { border-color: #800080; }
+            100% { border-color: #FF69B4; }
+        }
+        #pink-ribbon-text {
+            position: absolute;
+            bottom: 40px;
+            left: 110px;
+            color: #808080;
+            text-decoration: none;
+            font-size: 12px;
+            animation: pinkWave 10s infinite, borderPulse 1s infinite alternate;
+        }
+        #pink-ribbon-text span {
+            animation: pinkWave 10s infinite;
         }
     </style>
 </head>
 <body>
     <div id="header">
-        <div id="timer">00:00 - LÖYDÄ RINTASI RUUDUKOSTA</div>
+        <div id="timer">00:00 - RINNAT RUUDUKOSSA:</div>
     </div>
     <div id="left"></div>
     <div id="middle">
         <div class="grid" id="puzzle"></div>
     </div>
     <div id="right">
-        <img src="titpics/spessut/WomanBoobs.png" width="300">
-        <div id="watermark" style="font-size: 12px; padding-top: 5px; color: #808080;">© Timin Photography GmbH</div>
+        <img src="titpics/spessut/WomanBoobs.png" width="300" style="border: 4px solid #FF69B4; animation: borderPulse 1s infinite alternate;">
+        <div id="watermark" style="font-size: 12px; padding-top: 5px; color: #FF6347;">© Timin Photography GmbH</div>
     </div>
     <div id="footer-left"></div>
     <div id="footer-middle"></div>
     <div id="footer-right">
         <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer; align-self: center; margin-top: 0;" id="pink-ribbon">
-        <a href="https://roosanauha.syopasaatio.fi/" target="_blank" style="position: absolute; bottom: 20px; left: 110px; color: #808080; text-decoration: none;">
-            <span class="pink-wave">Roosa nauha Suomessa 2024</span>
+        <a id="pink-ribbon-text" href="https://roosanauha.syopasaatio.fi/" target="_blank">
+            <span>Roosa nauha Suomessa 2024</span>
         </a>
     </div>
 
@@ -181,7 +211,9 @@
         const pinkRibbon = document.getElementById('pink-ribbon');
         const watermarkElement = document.getElementById('watermark');
         const timerElement = document.getElementById('timer');
-
+        const pinkRibbonText = document.getElementById('pink-ribbon-text');
+        let helpShown = false;
+        let wrongClicks = 0;
         let timerInterval;
 
         // Function to start the timer
@@ -191,7 +223,7 @@
                 seconds++;
                 let minutes = Math.floor(seconds / 60);
                 let displaySeconds = seconds % 60;
-                timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(displaySeconds).padStart(2, '0')} - LÖYDÄ RINTASI RUUDUKOSTA`;
+                timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(displaySeconds).padStart(2, '0')} - RINNAT RUUDUKOSSA:`;
             }, 1000);
         }
 
@@ -199,7 +231,7 @@
         function stopTimer() {
             clearInterval(timerInterval);
             timerElement.classList.add('blink');
-            timerElement.textContent = timerElement.textContent.replace("LÖYDÄ RINTASI RUUDUKOSTA", "HIENOA. OLISIN ODOTTANUT ENÄÄ HETKEN.");
+            timerElement.textContent = timerElement.textContent.replace("RINNAT RUUDUKOSSA:", "HIENOA. OLISIN ODOTTANUT ENÄÄ HETKEN.");
             setTimeout(() => {
                 timerElement.classList.remove('blink');
                 timerElement.style.animation = 'fadeOut 3s forwards';
@@ -290,6 +322,7 @@
         // Function to initialize the game
         async function initGame() {
             gridElement.innerHTML = ''; // Clear the grid
+            answerElement.innerHTML = ''; // Clear any previous help text
             const { grid, word } = await createGrid();
             let foundLetters = 0;
 
@@ -308,7 +341,7 @@
             });
 
             // Mark the first letter of the word as found
-            const firstLetterElement = [...gridElement.children].find(cell => cell.dataset.letter === word.charAt(0));
+            const firstLetterElement = [...gridElement.children].find(cell => cell.dataset.letter === word.charAt(0).toUpperCase());
             firstLetterElement.classList.add('clicked');
             firstLetterElement.dataset.found = true;
             foundLetters++;
@@ -326,7 +359,7 @@
             }
 
             const currentIndex = [...gridElement.children].filter(c => c.classList.contains('clicked')).length;
-            if (letter === word[currentIndex]) {
+            if (letter === word[currentIndex].toUpperCase()) {
                 cell.classList.add('clicked');
                 if (currentIndex + 1 === word.length) {
                     showAnswer(word);
@@ -335,10 +368,24 @@
                 }
             } else {
                 cell.classList.add('wrong');
+                wrongClicks++;
+                if (wrongClicks > 3 && !helpShown) {
+                    showHelpMessage(word);
+                }
                 setTimeout(() => {
                     cell.classList.remove('wrong');
                 }, 500);
             }
+        }
+
+        // Function to show help message
+        function showHelpMessage(word) {
+            helpShown = true;
+            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 14px; color: #006400; font-weight: bold;">ÄITI EN KEKSI, ANNA MAITOA.</div>`;
+            answerElement.addEventListener('click', () => {
+                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 14px; color: #006400; font-weight: bold;">VAUVA PIENI, NE OVAT ${word.toUpperCase()}</div>`;
+                stopTimer();
+            });
         }
 
         // Function to show the answer and the corresponding image
@@ -387,7 +434,7 @@
                 }
             };
 
-            interval = setInterval(animateChar, 100);
+            interval = setInterval(animateChar, 200);
         }
 
         setInterval(animateWatermark, 10000); // Double the interval for animation
@@ -397,3 +444,4 @@
     </script>
 </body>
 </html>
+
