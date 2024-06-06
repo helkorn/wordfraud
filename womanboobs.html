@@ -9,80 +9,68 @@
             font-family: 'Timer';
             src: url('fonts/timer.ttf') format('truetype');
         }
+        @font-face {
+            font-family: 'Booboo';
+            src: url('fonts/booboo.ttf') format('truetype');
+        }
         body {
             background-color: black;
             color: white;
             display: grid;
             grid-template-areas: 
-                "header header header"
-                "left middle right"
-                "footer-left footer-middle footer-right";
-            grid-template-rows: 100px 1fr 100px;
+                "top-left top-center top-right"
+                "middle-left middle-center middle-right"
+                "bottom-left bottom-center bottom-right";
+            grid-template-rows: 1fr 300px 1fr;
             grid-template-columns: 1fr 1fr 1fr;
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
         }
-        #header {
-            grid-area: header;
+        #top-left { grid-area: top-left; }
+        #top-center {
+            grid-area: top-center;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            padding-bottom: 10px;
+            position: relative;
+        }
+        #top-right { grid-area: top-right; }
+        #middle-left {
+            grid-area: middle-left;
+            border: 1px solid silver;
+            width: 300px;
+            height: 300px;
+            overflow: hidden;
+            position: relative;
+        }
+        #middle-center {
+            grid-area: middle-center;
             display: flex;
             justify-content: center;
             align-items: center;
-            position: relative;
         }
-        #timer {
-            font-family: 'Timer', monospace;
-            color: #006400; /* Dark Green */
-            font-size: 14px;
-            font-weight: bold;
-            animation: pulse 1s infinite alternate;
-        }
-        #left {
-            grid-area: left;
+        #middle-right {
+            grid-area: middle-right;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            position: relative;
         }
-        #middle {
-            grid-area: middle;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-        #right {
-            grid-area: right;
+        #bottom-left { grid-area: bottom-left; }
+        #bottom-center {
+            grid-area: bottom-center;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: flex-start;
-        }
-        #footer-left {
-            grid-area: footer-left;
-            display: flex;
-            justify-content: center;
             align-items: center;
-        }
-        #footer-middle {
-            grid-area: footer-middle;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding-top: 10px;
-            height: 100%;
-        }
-        #footer-middle div {
-            text-align: center;
-            margin-top: -30px;
-        }
-        #footer-right {
-            grid-area: footer-right;
-            display: flex;
-            justify-content: flex-start;
-            align-items: flex-start;
-            padding: 10px;
             position: relative;
+        }
+        #bottom-right {
+            grid-area: bottom-right;
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
         }
         .grid {
             display: grid;
@@ -125,34 +113,8 @@
             }
         }
         .animated-text {
-            color: #A9A9A9; /* Slightly lighter gray */
-            font-size: 14px;
-            position: relative;
-        }
-        @keyframes letterChange {
-            0% {
-                color: green;
-            }
-            100% {
-                color: gray;
-            }
-        }
-        @keyframes flash {
-            0% { background-color: #006400; }
-            50% { background-color: white; }
-            100% { background-color: #006400; }
-        }
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-        @keyframes pulse {
-            0% { color: #006400; }
-            100% { color: #00FF00; }
-        }
-        .roosa-border {
-            border: 2px solid #FF69B4; /* Pink Border */
-            border-radius: 4px;
+            color: #006400; /* Dark Green */
+            font-family: 'Booboo', Arial, sans-serif;
         }
         #hover-icon {
             position: absolute;
@@ -171,48 +133,60 @@
         #hover-icon.faded {
             opacity: 0.5;
         }
+        @keyframes pulse {
+            0% { color: #006400; }
+            100% { color: #00FF00; }
+        }
+        .roosa-border {
+            border: 2px solid #FF69B4; /* Pink Border */
+            border-radius: 4px;
+        }
+        @keyframes pinkWave {
+            0% { color: #FF69B4; }
+            50% { color: #FFB6C1; }
+            100% { color: #FF69B4; }
+        }
+        .pink-wave {
+            animation: pinkWave 10s infinite;
+            font-family: 'Booboo', Arial, sans-serif;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
-    <div id="header"></div>
-    <div id="left">
-        <div id="hover-container" style="width: 300px; height: 300px; overflow: hidden; position: relative;">
-            <img id="hover-icon" src="titpics/spessut/over-mouse.jpg" alt="Hover icon">
-            <img id="image-container" style="max-width: 300px; cursor: grab; position: absolute; top: 0; left: 0;" alt="Found image">
+    <div id="top-left"></div>
+    <div id="top-center">
+        <div id="timer-container">
+            <div id="timer-text" class="animated-text">LÖYDÄ LEMPIRINTASI</div>
+            <div id="timer" class="animated-text" style="font-family: 'Timer'; font-size: 14px;">00:00</div>
         </div>
     </div>
-    <div id="middle">
-        <div id="timer-container" style="position: absolute; top: 0; left: 0;">
-            <div id="timer-text" style="font-family: Arial, sans-serif;">LÖYDÄ RINTASI RUUDUKOSTA</div>
-            <div id="timer">00:00</div>
-        </div>
+    <div id="top-right"></div>
+    <div id="middle-left">
+        <img id="image-container" style="max-width: 300px; cursor: grab; position: absolute; top: 0; left: 0;" alt="Found image">
+    </div>
+    <div id="middle-center">
         <div class="grid" id="puzzle"></div>
     </div>
-    <div id="right">
+    <div id="middle-right">
         <img src="titpics/spessut/WomanBoobs.png" width="300" class="roosa-border">
-        <div id="watermark" style="font-size: 12px; padding-top: 5px; color: #FF6347;">© Timin Photography GmbH</div>
+        <div id="watermark" style="font-size: 12px; padding-top: 5px; color: #FF69B4;">© Timin Photography GmbH</div>
     </div>
-    <div id="footer-left"></div>
-    <div id="footer-middle"></div>
-    <div id="footer-right">
-        <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer; align-self: center; margin-top: 0;" id="pink-ribbon">
-        <a id="pink-ribbon-text" href="https://roosanauha.syopasaatio.fi/" target="_blank">
-            <span>Roosa nauha Suomessa 2024</span>
-        </a>
+    <div id="bottom-left"></div>
+    <div id="bottom-center"></div>
+    <div id="bottom-right">
+        <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer;" id="pink-ribbon">
+        <div class="pink-wave">Roosa nauha Suomessa 2024</div>
     </div>
 
     <script>
         const gridElement = document.getElementById('puzzle');
-        const answerElement = document.getElementById('footer-middle');
-        const leftElement = document.getElementById('left');
+        const answerElement = document.getElementById('bottom-center');
+        const imageContainer = document.getElementById('image-container');
         const pinkRibbon = document.getElementById('pink-ribbon');
         const watermarkElement = document.getElementById('watermark');
         const timerElement = document.getElementById('timer');
         const timerTextElement = document.getElementById('timer-text');
-        const pinkRibbonText = document.getElementById('pink-ribbon-text');
-        const hoverContainer = document.getElementById('hover-container');
-        const hoverIcon = document.getElementById('hover-icon');
-        const imageContainer = document.getElementById('image-container');
         let helpShown = false;
         let wrongClicks = 0;
         let timerInterval;
@@ -400,7 +374,6 @@
             setTimeout(() => {
                 answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 14px; color: #A9A9A9;">UUSI PELI ROOSA-NAUHASTA <span class="blink">::</span></div>`;
             }, 4000); // Show the correct answer for longer duration before changing the message
-            leftElement.innerHTML = `<img src="titpics/${word}.png">`;
             imageContainer.src = `titpics/${word}.png`;
         }
 
@@ -447,17 +420,15 @@
         setInterval(animateWatermark, 10000); // Double the interval for animation
 
         // Mouse move events for imageContainer
-        hoverContainer.addEventListener('mousemove', (e) => {
-            const rect = hoverContainer.getBoundingClientRect();
+        document.getElementById('middle-left').addEventListener('mousemove', (e) => {
+            const rect = imageContainer.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
             imageContainer.style.transform = `translate(${-x / 10}px, ${-y / 10}px)`;
-            hoverIcon.style.display = 'none';
         });
 
-        hoverContainer.addEventListener('mouseleave', () => {
-            hoverIcon.style.display = 'block';
-            hoverIcon.classList.add('faded');
+        document.getElementById('middle-left').addEventListener('mouseleave', () => {
+            imageContainer.style.transform = 'translate(0, 0)';
         });
 
         // Start the game
@@ -465,3 +436,4 @@
     </script>
 </body>
 </html>
+
