@@ -21,6 +21,7 @@
             font-family: 'C64';
             color: #696969;
             white-space: pre-wrap;
+            margin-top: -40px; /* Siirretään tekstiä ylöspäin */
         }
         .button-container {
             text-align: center;
@@ -63,18 +64,18 @@
                 '60 END',
                 '',
                 '3000 PRINT "Loading WordFraud 1.0..."',
-                '3010 OPEN "WORDFRAUD" FOR INPUT AS FILE',
+                '3010 OPEN "WordFraud 1.0" FOR INPUT AS FILE',
                 '3020 RUN',
                 '',
                 '3500 PRINT "Invalid choice. Please choose 1, 2 or 3."',
                 '3510 RETURN',
                 '',
                 '4000 PRINT "Loading WordPorn..."',
-                '4010 OPEN "WORDPORN" FOR INPUT AS FILE',
+                '4010 OPEN "WordPorn" FOR INPUT AS FILE',
                 '4020 RUN',
                 '',
-                '5000 PRINT "Loading WomanBoobs..."',
-                '5010 OPEN "WOMANBOOBS" FOR INPUT AS FILE',
+                '5000 PRINT "Loading WomanBoobs'24..."',
+                '5010 OPEN "WomanBoobs'24" FOR INPUT AS FILE',
                 '5020 RUN'
             ];
 
