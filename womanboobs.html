@@ -13,7 +13,7 @@
                 "header header header"
                 "left middle right"
                 "footer-left footer-middle footer-right";
-            grid-template-rows: 100px 1fr 100px;
+            grid-template-rows: 60% 1fr 100px;
             grid-template-columns: 1fr 1fr 1fr;
             height: 100vh;
             margin: 0;
@@ -77,6 +77,7 @@
             font-size: 24px;
             cursor: pointer;
             transition: background-color 0.5s;
+            border-radius: 8px;
         }
         .grid-item.clicked {
             background-color: #006400; /* DarkGreen */
@@ -90,19 +91,19 @@
     </style>
 </head>
 <body>
-    <div id="header">
-        <img src="titpics/spessut/WomanBoobs.png" height="100" style="opacity: 0.5;">
-    </div>
+    <div id="header"></div>
     <div id="left"></div>
     <div id="middle">
         <div class="grid" id="puzzle"></div>
     </div>
-    <div id="right"></div>
-    <div id="footer-left">
-        <img src="titpics/spessut/Pink_ribbon.svg" height="200">
+    <div id="right">
+        <img src="titpics/spessut/WomanBoobs.png" width="300">
     </div>
+    <div id="footer-left"></div>
     <div id="footer-middle"></div>
-    <div id="footer-right"></div>
+    <div id="footer-right">
+        <img src="titpics/spessut/Pink_ribbon.svg" height="100">
+    </div>
 
     <script>
         const gridElement = document.getElementById('puzzle');
@@ -189,11 +190,11 @@
 
         // Function to show the answer and the corresponding image
         function showAnswer(word) {
-            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 20px;">Rintojesi nimi on: ${word}</div>`;
+            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px;">Rintojesi nimi on: ${word}</div>`;
             setTimeout(() => {
-                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 20px;">Klikkaa peliä jatkaaksesi</div>`;
+                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px;">Klikkaa peliä jatkaaksesi</div>`;
             }, 2000);
-            leftElement.innerHTML = `<img src="titpics/${word}.png" style="opacity: 0.7;">`;
+            leftElement.innerHTML = `<img src="titpics/${word}.png" width="300" style="opacity: 0.7;">`;
         }
     </script>
 </body>
