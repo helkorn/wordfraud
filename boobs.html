@@ -43,88 +43,96 @@
     <div id="grid"></div>
     
     <script>
-        // Haetaan tiedostonimet titpics-kansiosta
-        const imageNames = ['melonit.png', 'vesi-melonit.png', 'kulta melonit.png']; // Korvaa tämä dynaamisella hakemisella tarvittaessa
-        const words = imageNames.map(name => name.replace('.png', ''));
-        
-        let originalWord = words[Math.floor(Math.random() * words.length)];
-        let word = originalWord.replace(/[\s\-]/g, '').toLowerCase();
-        let gridSize = 6; // Asetetaan ruudukon koko 6x6
-        let grid = document.getElementById('grid');
-        let message = document.getElementById('message');
-        let correctLetters = [];
+        // Haetaan tiedostonimet CSV-tiedostosta
+        fetch('wordfraudFI.csv')
+            .then(response => response.text())
+            .then(data => {
+                const imageNames = data.split('\n').map(line => line.trim()).filter(line => line !== '');
+                const words = imageNames.map(name => name.replace('.png', ''));
+                startGame(words);
+            });
 
-        function createGrid() {
-            grid.innerHTML = '';
-            correctLetters = [];
-            grid.style.gridTemplateColumns = `repeat(${gridSize}, 30px)`;
-            grid.style.gridTemplateRows = `repeat(${gridSize}, 30px)`;
-            for (let i = 0; i < gridSize * gridSize; i++) {
-                let cell = document.createElement('div');
-                cell.classList.add('cell');
-                cell.textContent = String.fromCharCode(97 + Math.floor(Math.random() * 26));
-                cell.addEventListener('click', onCellClick);
-                grid.appendChild(cell);
+        function startGame(words) {
+            let originalWord = words[Math.floor(Math.random() * words.length)];
+            let word = originalWord.replace(/[\s\-]/g, '').toLowerCase();
+            let gridSize = 6; // Asetetaan ruudukon koko 6x6
+            let grid = document.getElementById('grid');
+            let message = document.getElementById('message');
+            let correctLetters = [];
+
+            function createGrid() {
+                grid.innerHTML = '';
+                correctLetters = [];
+                grid.style.gridTemplateColumns = `repeat(${gridSize}, 30px)`;
+                grid.style.gridTemplateRows = `repeat(${gridSize}, 30px)`;
+                for (let i = 0; i < gridSize * gridSize; i++) {
+                    let cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.textContent = String.fromCharCode(97 + Math.floor(Math.random() * 26));
+                    cell.addEventListener('click', onCellClick);
+                    grid.appendChild(cell);
+                }
+                placeWord();
             }
-            placeWord();
-        }
 
-        function placeWord() {
-            let startPos = Math.floor(Math.random() * gridSize) * gridSize;
-            let wordIndex = 0;
-            let directions = ['down', 'right'];
+            function placeWord() {
+                let startPos = Math.floor(Math.random() * gridSize) * gridSize;
+                let wordIndex = 0;
+                let directions = ['down', 'right'];
 
-            while (wordIndex < word.length) {
-                if ((startPos % gridSize) + word.length <= gridSize) {
-                    for (let i = 0; i < word.length; i++) {
-                        let cell = grid.children[startPos + i];
-                        cell.textContent = word[wordIndex++];
-                        cell.dataset.correct = 'true';
-                    }
-                    break;
-                } else {
-                    for (let i = 0; i < gridSize; i++) {
-                        let direction = directions[Math.floor(Math.random() * directions.length)];
-                        if (direction === 'down' && Math.floor(startPos / gridSize) + 1 < gridSize) {
-                            startPos += gridSize;
-                        } else if (direction === 'right' && (startPos % gridSize) + 1 < gridSize) {
-                            startPos += 1;
+                while (wordIndex < word.length) {
+                    if ((startPos % gridSize) + word.length <= gridSize) {
+                        for (let i = 0; i < word.length; i++) {
+                            let cell = grid.children[startPos + i];
+                            cell.textContent = word[wordIndex++];
+                            cell.dataset.correct = 'true';
                         }
-                        let cell = grid.children[startPos];
-                        cell.textContent = word[wordIndex++];
-                        cell.dataset.correct = 'true';
+                        break;
+                    } else {
+                        for (let i = 0; i < gridSize; i++) {
+                            let direction = directions[Math.floor(Math.random() * directions.length)];
+                            if (direction === 'down' && Math.floor(startPos / gridSize) + 1 < gridSize) {
+                                startPos += gridSize;
+                            } else if (direction === 'right' && (startPos % gridSize) + 1 < gridSize) {
+                                startPos += 1;
+                            }
+                            let cell = grid.children[startPos];
+                            cell.textContent = word[wordIndex++];
+                            cell.dataset.correct = 'true';
+                        }
                     }
                 }
             }
-        }
 
-        function onCellClick(event) {
-            let cell = event.target;
-            if (cell.dataset.correct) {
-                cell.classList.add('correct');
-                correctLetters.push(cell);
-                if (correctLetters.length === word.length) {
-                    showImage();
+            function onCellClick(event) {
+                let cell = event.target;
+                if (cell.dataset.correct) {
+                    cell.classList.add('correct');
+                    correctLetters.push(cell);
+                    if (correctLetters.length === word.length) {
+                        showImage();
+                    }
+                } else {
+                    gameOver();
                 }
-            } else {
-                gameOver();
             }
-        }
 
-        function showImage() {
-            let imageName = originalWord.toLowerCase().replace(/[\s\-]/g, '') + '.png';
-            window.location.href = `showImage.html?image=${encodeURIComponent(imageName)}`;
-        }
+            function showImage() {
+                let imageName = originalWord.toLowerCase().replace(/[\s\-]/g, '') + '.png';
+                window.location.href = `showImage.html?image=${encodeURIComponent(imageName)}`;
+            }
 
-        function gameOver() {
-            message.textContent = `Oikea sana oli: ${originalWord}`;
-            setTimeout(() => {
-                message.textContent = '';
-                createGrid();
-            }, 2000);
-        }
+            function gameOver() {
+                message.textContent = `Oikea sana oli: ${originalWord}`;
+                setTimeout(() => {
+                    message.textContent = '';
+                    createGrid();
+                }, 2000);
+            }
 
-        createGrid();
+            createGrid();
+        }
     </script>
 </body>
 </html>
+
