@@ -66,7 +66,7 @@
             grid-area: footer-right;
             display: flex;
             justify-content: flex-start;
-            align-items: flex-end;
+            align-items: center;
             padding: 10px;
         }
         .grid {
@@ -120,14 +120,6 @@
                 color: gray;
             }
         }
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
     </style>
 </head>
 <body>
@@ -138,7 +130,7 @@
     </div>
     <div id="right">
         <img src="titpics/spessut/WomanBoobs.png" width="300">
-        <div id="watermark" style="font-size: 12px; padding-top: 5px;">© Timin Photography GmbH</div>
+        <div id="watermark" style="font-size: 12px; padding-top: 5px; color: gray;">© Timin Photography GmbH</div>
     </div>
     <div id="footer-left"></div>
     <div id="footer-middle"></div>
@@ -179,14 +171,12 @@
                 }
             }
 
-            // Place word in the grid starting at random position
+            // Place word in the grid starting at random position and in the correct order
             let startX = Math.floor(Math.random() * 5);
             let startY = Math.floor(Math.random() * 5);
             let dir = Math.random() < 0.5 ? 0 : 1; // 0 for horizontal, 1 for vertical
 
             for (let i = 0; i < word.length; i++) {
-                if (startX >= 5 || startY >= 5) break;
-
                 grid[startY][startX] = word.charAt(i);
 
                 if (dir === 0) {
@@ -213,31 +203,55 @@
                     const cell = document.createElement('div');
                     cell.classList.add('grid-item');
                     cell.innerHTML = `<span>${letter}</span>`;
-                    cell.addEventListener('click', () => {
-                        if (word.includes(letter)) {
-                            if (!cell.classList.contains('clicked')) {
-                                cell.classList.add('clicked');
-                                foundLetters++;
-                                if (foundLetters === word.length) {
-                                    showAnswer(word);
-                                }
-                            }
-                        } else {
-                            cell.classList.add('wrong');
-                            setTimeout(() => {
-                                cell.classList.remove('wrong');
-                                cell.querySelector('span').textContent = getRandomLetter(true);
-                            }, 500);
-                        }
-                    });
+                    cell.dataset.letter = letter; // Store letter in data attribute for later use
+                    cell.dataset.row = rowIndex;
+                    cell.dataset.col = colIndex;
+                    cell.addEventListener('click', () => handleCellClick(cell, word));
                     gridElement.appendChild(cell);
                 });
             });
 
             // Mark the first letter of the word as found
-            const firstLetterElement = [...gridElement.children].find(cell => cell.textContent === word.charAt(0));
+            const firstLetterElement = [...gridElement.children].find(cell => cell.dataset.letter === word.charAt(0));
             firstLetterElement.classList.add('clicked');
             foundLetters++;
+        }
+
+        // Function to handle cell click
+        function handleCellClick(cell, word) {
+            const letter = cell.dataset.letter;
+            const index = [...gridElement.children].indexOf(cell);
+            const neighbors = getNeighbors(index);
+
+            if (cell.classList.contains('clicked')) {
+                return;
+            }
+
+            if (neighbors.some(neighbor => neighbor.classList.contains('clicked'))) {
+                if (word.includes(letter)) {
+                    cell.classList.add('clicked');
+                }
+            } else {
+                cell.classList.add('wrong');
+                setTimeout(() => {
+                    cell.classList.remove('wrong');
+                    cell.querySelector('span').textContent = getRandomLetter(true);
+                }, 500);
+            }
+        }
+
+        // Function to get neighbors of a cell
+        function getNeighbors(index) {
+            const row = Math.floor(index / 5);
+            const col = index % 5;
+            const neighbors = [];
+
+            if (row > 0) neighbors.push(gridElement.children[(row - 1) * 5 + col]);
+            if (row < 4) neighbors.push(gridElement.children[(row + 1) * 5 + col]);
+            if (col > 0) neighbors.push(gridElement.children[row * 5 + (col - 1)]);
+            if (col < 4) neighbors.push(gridElement.children[row * 5 + (col + 1)]);
+
+            return neighbors;
         }
 
         // Function to show the answer and the corresponding image
@@ -276,21 +290,7 @@
             interval = setInterval(animateChar, 50);
         }
 
-        // Function to animate the © symbol
-        function animateCopyright() {
-            const symbol = watermarkElement.querySelector('span');
-            symbol.style.display = 'inline-block';
-            symbol.style.animation = 'spin 2s linear';
-            setTimeout(() => {
-                symbol.style.animation = '';
-            }, 2000);
-        }
-
-        // Wrap © symbol in a span for rotation animation
-        watermarkElement.innerHTML = watermarkElement.innerHTML.replace('©', '<span>©</span>');
-
         setInterval(animateWatermark, 5000);
-        setInterval(animateCopyright, 5000);
 
         // Start the game
         initGame();
