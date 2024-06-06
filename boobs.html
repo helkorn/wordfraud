@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sanapeli ja Kuvanäyttö</title>
+    <title>WomanBoobs</title>
     <style>
         body {
             display: flex;
@@ -14,7 +14,6 @@
             background-color: black;
             color: white;
             font-family: Arial, sans-serif;
-            margin: 0;
         }
         #grid {
             display: grid;
@@ -29,62 +28,37 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            text-transform: uppercase;
-            font-size: 12px;
+            text-transform: uppercase; /* Muutetaan kirjaimet isoiksi */
+            font-size: 12px; /* Pienennetään fonttikoko */
         }
         .cell.correct {
             background-color: red;
         }
         #message {
             margin: 20px;
-            font-size: 12px;
-            text-transform: uppercase;
-        }
-        img {
-            max-width: 100%;
-            max-height: 100%;
+            font-size: 12px; /* Pienennetään fonttikoko */
+            text-transform: uppercase; /* Muutetaan teksti isoiksi kirjaimiksi */
         }
     </style>
 </head>
 <body>
     <div id="message"></div>
     <div id="grid"></div>
-    <div id="imageContainer" style="display: none;"></div>
     
     <script>
-        function getQueryParameter(name) {
-            let urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(name);
-        }
+        // Haetaan tiedostonimet CSV-tiedostosta
+        fetch('melonit.csv')
+            .then(response => response.text())
+            .then(data => {
+                const imageNames = data.split('\n').map(line => line.trim()).filter(line => line !== '');
+                const words = imageNames.map(name => name.replace('.png', ''));
+                startGame(words);
+            });
 
-        let imageName = getQueryParameter('image');
-        if (imageName) {
-            let img = document.createElement('img');
-            img.src = `titpics/${imageName}`;
-            document.getElementById('imageContainer').appendChild(img);
-            document.getElementById('imageContainer').style.display = 'flex';
-            setTimeout(() => {
-                window.location.href = 'sanapeli.html';
-            }, 3000);
-        } else {
-            startGame();
-        }
-
-        function startGame() {
-            // Haetaan tiedostonimet CSV-tiedostosta
-            fetch('melonit.csv')
-                .then(response => response.text())
-                .then(data => {
-                    const imageNames = data.split('\n').map(line => line.trim()).filter(line => line !== '');
-                    const words = imageNames.map(name => name.replace('.png', ''));
-                    initGame(words);
-                });
-        }
-
-        function initGame(words) {
+        function startGame(words) {
             let originalWord = words[Math.floor(Math.random() * words.length)];
             let word = originalWord.replace(/[\s\-]/g, '').toLowerCase();
-            let gridSize = 6;
+            let gridSize = 6; // Asetetaan ruudukon koko 6x6
             let grid = document.getElementById('grid');
             let message = document.getElementById('message');
             let correctLetters = [];
@@ -97,7 +71,7 @@
                 for (let i = 0; i < gridSize * gridSize; i++) {
                     let cell = document.createElement('div');
                     cell.classList.add('cell');
-                    cell.textContent = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+                    cell.textContent = String.fromCharCode(65 + Math.floor(Math.random() * 26)); // Käytetään isoja kirjaimia (A-Z)
                     cell.addEventListener('click', onCellClick);
                     grid.appendChild(cell);
                 }
@@ -127,7 +101,7 @@
                                     cell.textContent = word[i].toUpperCase();
                                     cell.dataset.correct = 'true';
                                     if (i === 0) {
-                                        cell.classList.add('correct');
+                                        cell.classList.add('correct'); // Värjätään ensimmäinen ruutu punaiseksi
                                     }
                                 }
                                 placed = true;
@@ -147,7 +121,7 @@
                                     cell.textContent = word[i].toUpperCase();
                                     cell.dataset.correct = 'true';
                                     if (i === 0) {
-                                        cell.classList.add('correct');
+                                        cell.classList.add('correct'); // Värjätään ensimmäinen ruutu punaiseksi
                                     }
                                 }
                                 placed = true;
@@ -172,7 +146,7 @@
 
             function showImage() {
                 let imageName = originalWord + '.png';
-                window.location.href = `sanapeli.html?image=${encodeURIComponent(imageName)}`;
+                window.location.href = `showImage.html?image=${encodeURIComponent(imageName)}`;
             }
 
             function gameOver() {
@@ -188,3 +162,4 @@
     </script>
 </body>
 </html>
+
