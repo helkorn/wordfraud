@@ -52,8 +52,9 @@
         #footer-middle {
             grid-area: footer-middle;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            justify-content: flex-start;
+            align-items: flex-start;
+            padding-top: 10px;
         }
         #footer-right {
             grid-area: footer-right;
@@ -103,7 +104,7 @@
     <div id="footer-left"></div>
     <div id="footer-middle"></div>
     <div id="footer-right">
-        <img src="titpics/spessut/Pink_ribbon.svg" height="100">
+        <img src="titpics/spessut/Pink_ribbon.svg" height="70">
     </div>
 
     <script>
@@ -117,11 +118,17 @@
             return letters.charAt(Math.floor(Math.random() * letters.length));
         }
 
+        // Function to fetch a word from melonit.csv
+        async function fetchWord() {
+            const response = await fetch('melonit.csv');
+            const text = await response.text();
+            const words = text.split('\n').map(word => word.trim()).filter(word => word.length > 0);
+            return words[Math.floor(Math.random() * words.length)];
+        }
+
         // Function to create the grid with random letters and one word
-        function createGrid() {
-            // Fetch word from melonit.csv (simulated here as a JavaScript array)
-            const words = ["TISSIT", "MELONIT", "PÖLLÖT"];
-            const word = words[Math.floor(Math.random() * words.length)];
+        async function createGrid() {
+            const word = await fetchWord();
 
             let grid = [];
             for (let i = 0; i < 5; i++) {
@@ -153,41 +160,43 @@
             return { grid, word };
         }
 
-        // Initial setup
-        const { grid, word } = createGrid();
-        let foundLetters = 0;
+        // Function to initialize the game
+        async function initGame() {
+            const { grid, word } = await createGrid();
+            let foundLetters = 0;
 
-        // Render grid
-        grid.forEach((row, rowIndex) => {
-            row.forEach((letter, colIndex) => {
-                const cell = document.createElement('div');
-                cell.classList.add('grid-item');
-                cell.innerHTML = `<span>${letter}</span>`;
-                cell.addEventListener('click', () => {
-                    if (word.includes(letter)) {
-                        if (!cell.classList.contains('clicked')) {
-                            cell.classList.add('clicked');
-                            foundLetters++;
-                            if (foundLetters === word.length) {
-                                showAnswer(word);
+            // Render grid
+            grid.forEach((row, rowIndex) => {
+                row.forEach((letter, colIndex) => {
+                    const cell = document.createElement('div');
+                    cell.classList.add('grid-item');
+                    cell.innerHTML = `<span>${letter}</span>`;
+                    cell.addEventListener('click', () => {
+                        if (word.includes(letter)) {
+                            if (!cell.classList.contains('clicked')) {
+                                cell.classList.add('clicked');
+                                foundLetters++;
+                                if (foundLetters === word.length) {
+                                    showAnswer(word);
+                                }
                             }
+                        } else {
+                            cell.classList.add('wrong');
+                            setTimeout(() => {
+                                cell.classList.remove('wrong');
+                                cell.querySelector('span').textContent = getRandomLetter();
+                            }, 500);
                         }
-                    } else {
-                        cell.classList.add('wrong');
-                        setTimeout(() => {
-                            cell.classList.remove('wrong');
-                            cell.querySelector('span').textContent = getRandomLetter();
-                        }, 500);
-                    }
+                    });
+                    gridElement.appendChild(cell);
                 });
-                gridElement.appendChild(cell);
             });
-        });
 
-        // Mark the first letter of the word as found
-        const firstLetterElement = [...gridElement.children].find(cell => cell.textContent === word.charAt(0));
-        firstLetterElement.classList.add('clicked');
-        foundLetters++;
+            // Mark the first letter of the word as found
+            const firstLetterElement = [...gridElement.children].find(cell => cell.textContent === word.charAt(0));
+            firstLetterElement.classList.add('clicked');
+            foundLetters++;
+        }
 
         // Function to show the answer and the corresponding image
         function showAnswer(word) {
@@ -196,7 +205,11 @@
                 answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px; color: gray;">Klikkaa peliä jatkaaksesi</div>`;
             }, 2000);
             leftElement.innerHTML = `<img src="titpics/${word}.png" width="300" style="opacity: 0.7;">`;
+            gridElement.addEventListener('click', initGame, { once: true });
         }
+
+        // Start the game
+        initGame();
     </script>
 </body>
 </html>
