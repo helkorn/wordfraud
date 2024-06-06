@@ -172,11 +172,18 @@
         const imageBox = document.getElementById('image-box');
         const pinkRibbon = document.getElementById('pink-ribbon');
         const watermarkElement = document.getElementById('watermark');
-        const images = ["titpics/Ajovalot.png", "titpics/image2.png", "titpics/image3.png"]; // Placeholder images
         let helpShown = false;
         let wrongClicks = 0;
 
-        function startImageRotation() {
+        async function fetchImages() {
+            const response = await fetch('melonit.csv');
+            const text = await response.text();
+            const words = text.split('\n').map(word => word.trim()).filter(word => word.length > 0);
+            return words.map(word => `titpics/${word}.png`);
+        }
+
+        async function startImageRotation() {
+            const images = await fetchImages();
             let index = 0;
             setInterval(() => {
                 const img = document.createElement('img');
@@ -429,4 +436,3 @@
     </script>
 </body>
 </html>
-
