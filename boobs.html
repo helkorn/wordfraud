@@ -18,6 +18,7 @@
         #grid {
             display: grid;
             gap: 1px;
+            margin-bottom: 20px; /* Add margin to separate grid and message */
         }
         .cell {
             width: 30px;
@@ -28,22 +29,32 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            text-transform: uppercase; /* Muutetaan kirjaimet isoiksi */
-            font-size: 12px; /* Pienennetään fonttikoko */
+            text-transform: uppercase; /* Keep text uppercase */
+            font-size: 12px;
         }
         .cell.correct {
             background-color: red;
         }
         #message {
             margin: 20px;
-            font-size: 12px; /* Pienennetään fonttikoko */
-            text-transform: uppercase; /* Muutetaan teksti isoiksi kirjaimiksi */
+            font-size: 16px; /* Increase font size */
+            text-transform: none; /* Remove text-transform to use standard capitalization */
+        }
+        #image-container {
+            margin-bottom: 20px; /* Margin to separate image from grid */
+        }
+        #image-container img {
+            height: 100px;
+            opacity: 0.5; /* Set transparency to 50% */
         }
     </style>
 </head>
 <body>
-    <div id="message"></div>
+    <div id="image-container">
+        <img src="titpics/spessut/WomanBoobs.png" alt="Woman Boobs">
+    </div>
     <div id="grid"></div>
+    <div id="message"></div>
     
     <script>
         // Haetaan tiedostonimet CSV-tiedostosta
@@ -162,4 +173,5 @@
     </script>
 </body>
 </html>
+
 
