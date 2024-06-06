@@ -25,6 +25,7 @@
             width: 30px;
             height: 30px;
             background-color: black;
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -64,6 +65,7 @@
                 let cell = document.createElement('div');
                 cell.classList.add('cell');
                 cell.textContent = String.fromCharCode(97 + Math.floor(Math.random() * 26));
+                cell.addEventListener('click', onCellClick);
                 grid.appendChild(cell);
             }
             placeWord();
@@ -78,19 +80,18 @@
             }
         }
 
-        grid.addEventListener('click', function(event) {
-            if (event.target.classList.contains('cell')) {
-                if (event.target.dataset.correct) {
-                    event.target.classList.add('correct');
-                    correctLetters.push(event.target);
-                    if (correctLetters.length === word.length) {
-                        showImage();
-                    }
-                } else {
-                    gameOver();
+        function onCellClick(event) {
+            let cell = event.target;
+            if (cell.dataset.correct) {
+                cell.classList.add('correct');
+                correctLetters.push(cell);
+                if (correctLetters.length === word.length) {
+                    showImage();
                 }
+            } else {
+                gameOver();
             }
-        });
+        }
 
         function showImage() {
             message.textContent = '';
