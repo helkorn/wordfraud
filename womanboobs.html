@@ -31,10 +31,21 @@
         #top-center {
             grid-area: top-center;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: flex-end;
             padding-bottom: 10px;
             position: relative;
+        }
+        #top-center .animated-text {
+            font-family: 'Booboo', Arial, sans-serif;
+            color: #32CD32; /* Brightened Dark Green */
+            font-size: 16px;
+        }
+        #top-center #timer {
+            font-family: 'Timer', monospace;
+            color: #32CD32; /* Brightened Dark Green */
+            font-size: 16px;
+            margin-left: 10px;
         }
         #top-right { grid-area: top-right; }
         #middle-left {
@@ -44,6 +55,8 @@
             height: 300px;
             overflow: hidden;
             position: relative;
+            background: url('titpics/spessut/Niinkövittu.png') center center / cover no-repeat;
+            opacity: 0.5;
         }
         #middle-center {
             grid-area: middle-center;
@@ -65,12 +78,21 @@
             justify-content: center;
             align-items: center;
             position: relative;
+            font-family: 'Booboo', Arial, sans-serif;
+            color: #32CD32; /* Brightened Dark Green */
+            font-size: 18px;
         }
         #bottom-right {
             grid-area: bottom-right;
             display: flex;
             align-items: center;
             padding-left: 10px;
+            font-family: Arial, sans-serif;
+            color: #FFB6C1; /* Light Pink */
+            animation: pinkWave 10s infinite;
+        }
+        #bottom-right .pink-wave {
+            font-size: 12px;
         }
         .grid {
             display: grid;
@@ -91,7 +113,7 @@
             border-radius: 4px; /* Slightly rounded corners */
         }
         .grid-item.clicked {
-            background-color: #006400; /* Dark Green */
+            background-color: #32CD32; /* Brightened Dark Green */
         }
         .grid-item.wrong {
             background-color: #8B0000; /* DarkRed */
@@ -113,7 +135,7 @@
             }
         }
         .animated-text {
-            color: #006400; /* Dark Green */
+            color: #32CD32; /* Brightened Dark Green */
             font-family: 'Booboo', Arial, sans-serif;
         }
         #hover-icon {
@@ -134,32 +156,21 @@
             opacity: 0.5;
         }
         @keyframes pulse {
-            0% { color: #006400; }
+            0% { color: #32CD32; }
             100% { color: #00FF00; }
-        }
-        .roosa-border {
-            border: 2px solid #FF69B4; /* Pink Border */
-            border-radius: 4px;
         }
         @keyframes pinkWave {
             0% { color: #FF69B4; }
             50% { color: #FFB6C1; }
             100% { color: #FF69B4; }
         }
-        .pink-wave {
-            animation: pinkWave 10s infinite;
-            font-family: 'Booboo', Arial, sans-serif;
-            font-size: 12px;
-        }
     </style>
 </head>
 <body>
     <div id="top-left"></div>
     <div id="top-center">
-        <div id="timer-container">
-            <div id="timer-text" class="animated-text">LÖYDÄ LEMPIRINTASI</div>
-            <div id="timer" class="animated-text" style="font-family: 'Timer'; font-size: 14px;">00:00</div>
-        </div>
+        <div id="timer-text" class="animated-text">LÖYDÄ LEMPIRINTASI</div>
+        <div id="timer" class="animated-text">00:00</div>
     </div>
     <div id="top-right"></div>
     <div id="middle-left">
@@ -169,8 +180,8 @@
         <div class="grid" id="puzzle"></div>
     </div>
     <div id="middle-right">
-        <img src="titpics/spessut/WomanBoobs.png" width="300" class="roosa-border">
-        <div id="watermark" style="font-size: 12px; padding-top: 5px; color: #FF69B4;">© Timin Photography GmbH</div>
+        <img src="titpics/spessut/WomanBoobs.png" width="300">
+        <div id="watermark" style="font-size: 12px; padding-top: 5px; color: #D3A4A4;">© Timin Photography GmbH</div>
     </div>
     <div id="bottom-left"></div>
     <div id="bottom-center"></div>
@@ -206,12 +217,8 @@
         function stopTimer() {
             clearInterval(timerInterval);
             timerElement.classList.add('blink');
-            timerTextElement.textContent = "HIENOA. OLISIN ODOTTANUT ENÄÄ HETKEN";
-            timerElement.textContent += " " + timerElement.textContent;
             setTimeout(() => {
                 timerElement.classList.remove('blink');
-                timerElement.style.animation = 'fadeOut 5s forwards';
-                timerTextElement.style.animation = 'fadeOut 5s forwards';
             }, 5000);
         }
 
@@ -358,21 +365,18 @@
         // Function to show help message
         function showHelpMessage(word) {
             helpShown = true;
-            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 14px; color: #006400; font-weight: bold;">ÄITI EN KEKSI, ANNA MAITOA</div>`;
-            answerElement.addEventListener('click', () => {
-                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 14px; color: #006400; font-weight: bold;">VAUVA PIENI NE OVAT ${word.toUpperCase()}</div>`;
-                setTimeout(() => {
-                    answerElement.innerHTML += `<div style="animation: fadein 1s; font-size: 14px; color: #006400; font-weight: bold;">UUSI PELI ROOSA-NAUHASTA<span class="blink">::</span></div>`;
-                }, 4000);
-                stopTimer();
+            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #32CD32; font-weight: bold;"><a href="#" style="color: inherit; text-decoration: none;">ÄITI EN KEKSI ANNA <span style="animation: blink 1s infinite alternate;">MAITOA</span></a></div>`;
+            answerElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #32CD32; font-weight: bold;">VAUVANI, NE ON ISIN ${word.toUpperCase()}</div>`;
             });
         }
 
         // Function to show the answer and the corresponding image
         function showAnswer(word) {
-            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 14px; color: #A9A9A9;">LEMPIRINTASI OVAT: ${word}</div>`;
+            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #32CD32;">LEMPIRINTASI OVAT: ${word}</div>`;
             setTimeout(() => {
-                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 14px; color: #A9A9A9;">UUSI PELI ROOSA-NAUHASTA <span class="blink">::</span></div>`;
+                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #32CD32;">UUSI PELI ROOSA-NAUHASTA <span class="blink">::</span></div>`;
             }, 4000); // Show the correct answer for longer duration before changing the message
             imageContainer.src = `titpics/${word}.png`;
         }
@@ -436,4 +440,3 @@
     </script>
 </body>
 </html>
-
