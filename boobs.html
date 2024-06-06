@@ -29,13 +29,23 @@
             justify-content: center;
             cursor: pointer;
             text-transform: uppercase; /* Muutetaan kirjaimet isoiksi */
+            font-size: 12px; /* Pienempi fonttikoko */
         }
         .cell.correct {
             background-color: red;
         }
         #message {
             margin: 20px;
-            font-size: 20px;
+            font-size: 12px; /* Pienempi fonttikoko */
+            text-transform: uppercase; /* Muutetaan teksti isoiksi kirjaimiksi */
+        }
+        @keyframes fade {
+            from {
+                color: white;
+            }
+            to {
+                color: black;
+            }
         }
     </style>
 </head>
@@ -56,7 +66,7 @@
         function startGame(words) {
             let originalWord = words[Math.floor(Math.random() * words.length)];
             let word = originalWord.replace(/[\s\-]/g, '').toLowerCase();
-            let gridSize = 6; // Asetetaan ruudukon koko 6x6
+            let gridSize = 8; // Asetetaan ruudukon koko 8x8
             let grid = document.getElementById('grid');
             let message = document.getElementById('message');
             let correctLetters = [];
@@ -79,7 +89,7 @@
             function placeWord() {
                 let placed = false;
                 let directions = ['down', 'right'];
-                
+
                 while (!placed) {
                     let startPos = Math.floor(Math.random() * (gridSize * gridSize));
                     let direction = directions[Math.floor(Math.random() * directions.length)];
@@ -98,6 +108,9 @@
                                     let cell = grid.children[startPos + i];
                                     cell.textContent = word[i].toUpperCase();
                                     cell.dataset.correct = 'true';
+                                    if (i === 0) {
+                                        cell.classList.add('correct'); // Ensimmäinen ruutu punaiseksi
+                                    }
                                 }
                                 placed = true;
                             }
@@ -115,6 +128,9 @@
                                     let cell = grid.children[startPos + i * gridSize];
                                     cell.textContent = word[i].toUpperCase();
                                     cell.dataset.correct = 'true';
+                                    if (i === 0) {
+                                        cell.classList.add('correct'); // Ensimmäinen ruutu punaiseksi
+                                    }
                                 }
                                 placed = true;
                             }
@@ -142,7 +158,8 @@
             }
 
             function gameOver() {
-                message.textContent = `Oikea sana oli: ${originalWord}`;
+                message.textContent = `Oikea sana oli: ${originalWord}`.toUpperCase();
+                message.style.animation = 'fade 2s forwards';
                 setTimeout(() => {
                     message.textContent = '';
                     createGrid();
