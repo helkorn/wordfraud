@@ -13,7 +13,7 @@
                 "header header header"
                 "left middle right"
                 "footer-left footer-middle footer-right";
-            grid-template-rows: 60% 1fr 100px;
+            grid-template-rows: 100px 1fr 100px;
             grid-template-columns: 1fr 1fr 1fr;
             height: 100vh;
             margin: 0;
@@ -58,8 +58,9 @@
         #footer-right {
             grid-area: footer-right;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            justify-content: flex-end;
+            align-items: flex-end;
+            padding: 10px;
         }
         .grid {
             display: grid;
@@ -77,7 +78,7 @@
             font-size: 24px;
             cursor: pointer;
             transition: background-color 0.5s;
-            border-radius: 8px;
+            border-radius: 4px;
         }
         .grid-item.clicked {
             background-color: #006400; /* DarkGreen */
@@ -97,7 +98,7 @@
         <div class="grid" id="puzzle"></div>
     </div>
     <div id="right">
-        <img src="titpics/spessut/WomanBoobs.png" width="300">
+        <img src="titpics/spessut/WomanBoobs.png">
     </div>
     <div id="footer-left"></div>
     <div id="footer-middle"></div>
@@ -190,9 +191,9 @@
 
         // Function to show the answer and the corresponding image
         function showAnswer(word) {
-            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px;">Rintojesi nimi on: ${word}</div>`;
+            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px; color: gray;">Rintojesi nimi on: ${word}</div>`;
             setTimeout(() => {
-                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px;">Klikkaa peliä jatkaaksesi</div>`;
+                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 16px; color: gray;">Klikkaa peliä jatkaaksesi</div>`;
             }, 2000);
             leftElement.innerHTML = `<img src="titpics/${word}.png" width="300" style="opacity: 0.7;">`;
         }
