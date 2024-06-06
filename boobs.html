@@ -14,7 +14,6 @@
             background-color: black;
             color: white;
             font-family: Arial, sans-serif;
-            margin: 0;
         }
         #grid {
             display: grid;
@@ -37,24 +36,14 @@
         }
         #message {
             margin: 20px;
-            font-size: 16px; /* Kasvatetaan fonttikoko */
-            text-transform: none; /* Käytetään kieliopin mukaisia isoja ja pieniä kirjaimia */
-        }
-        #image-container {
-            margin-bottom: 20px;
-        }
-        #image-container img {
-            height: 100px;
-            opacity: 0.5; /* Läpinäkyvyys 50 % */
+            font-size: 12px; /* Pienennetään fonttikoko */
+            text-transform: uppercase; /* Muutetaan teksti isoiksi kirjaimiksi */
         }
     </style>
 </head>
 <body>
-    <div id="image-container">
-        <img src="titpics/spessut/WomanBoobs.png" alt="Woman Boobs">
-    </div>
-    <div id="grid"></div>
     <div id="message"></div>
+    <div id="grid"></div>
     
     <script>
         // Haetaan tiedostonimet CSV-tiedostosta
