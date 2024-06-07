@@ -3,325 +3,561 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WordPorn</title>
+    <title>WomanBoobs</title>
     <style>
-        @font-face {
-            font-family: 'C64';
-            src: url('fonts/fontC64.ttf') format('truetype');
-        }
-        @font-face {
-            font-family: 'Typewriter';
-            src: url('fonts/fontTW.ttf') format('truetype');
-        }
         body {
-            font-family: Arial, sans-serif;
-            background-color: #000;
-            color: #fff;
+            background-color: black;
+            color: white;
+            display: grid;
+            grid-template-areas: 
+                "top-left top-center top-right"
+                "middle-left middle-center middle-right"
+                "bottom-left bottom-center bottom-right";
+            grid-template-rows: 1fr 300px 1fr;
+            grid-template-columns: 1fr 1fr 1fr;
+            height: 100vh;
             margin: 0;
-            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        #top-left { grid-area: top-left; }
+        #top-center { grid-area: top-center; }
+        #top-right { grid-area: top-right; }
+        #middle-left {
+            grid-area: middle-left;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            flex-direction: column;
-            overflow: hidden;
             position: relative;
-        }
-        .container {
-            max-width: 800px;
-            text-align: center;
-            padding: 20px;
-            border: 1px solid #333;
-            border-radius: 10px;
-            background-color: #111;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-        }
-        h1 {
-            color: #fff;
-            font-size: 2em;
-            margin-bottom: 20px;
-        }
-        .timer {
-            font-size: 1.5em;
-            margin-bottom: 20px;
-        }
-        .shuffled-word {
-            font-size: 1.5em;
-            margin-bottom: 20px;
-            color: #fff;
-        }
-        input[type="text"] {
-            width: 80%;
-            padding: 10px;
-            font-size: 16px;
-            margin-bottom: 10px;
-            border: 1px solid #333;
-            border-radius: 5px;
-            background-color: #222;
-            color: #fff;
-            text-align: center;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            autocomplete: off;
-            spellcheck: false;
-        }
-        button {
-            padding: 5px 10px;
-            font-size: 14px;
-            cursor: pointer;
-            border: 1px solid #333;
-            border-radius: 50px;
-            background-color: #333;
-            color: #fff;
-            transition: background-color 0.3s;
+            border: 1px solid silver;
+            width: 300px;
+            height: 300px;
+            overflow: hidden;
+            margin-left: auto;
+            margin-right: auto;
             margin-top: 10px;
         }
-        button:hover {
-            background-color: #555;
-        }
-        .result {
-            margin-top: 20px;
-            font-size: 1em;
-            color: #f00;
-        }
-        .link-box {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            font-size: 14px;
-            color: #fff;
-            white-space: nowrap;
-            text-align: right;
-        }
-        .link-box a {
-            color: #888;
-            text-decoration: none;
-            font-weight: bold;
-            padding-right: 20px;
-        }
-        .link-box a:hover {
-            text-decoration: underline;
-        }
-        .hidden {
-            display: none;
-        }
-        .typewriter-box {
+        #image-box {
             position: absolute;
-            top: 40px;
-            right: 20px;
-            background-color: #f5f5f5;
-            color: #000;
+            width: 100%;
+            height: 100%;
+        }
+        #middle {
+            grid-area: middle-center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        #right {
+            grid-area: middle-right;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            position: relative;
+        }
+        #right img {
+            border: 1px solid silver;
+        }
+        #footer-left { grid-area: bottom-left; }
+        #footer-middle {
+            grid-area: bottom-center;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding-top: 10px;
+            height: 100%;
+            position: relative;
+        }
+        #footer-middle-text {
+            position: absolute;
+            top: 10px;
+        }
+        #footer-right {
+            grid-area: bottom-right;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
             padding: 10px;
-            border: 1px solid #333;
-            border-radius: 5px;
-            font-family: 'Typewriter', monospace;
-            font-size: 13px;
+            position: relative;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 40px);
+            grid-template-rows: repeat(5, 40px);
+            gap: 5px;
+        }
+        .grid-item {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: black;
+            font-size: 20px;
+            cursor: pointer;
+            transition: background-color 0.5s, transform 0.1s;
+            border-radius: 4px; /* Slightly rounded corners */
+        }
+        .grid-item.clicked {
+            background-color: rgba(255, 182, 193, 0.7); /* LightPink with some transparency */
+        }
+        .grid-item.wrong {
+            background-color: rgba(255, 255, 255, 0.5); /* White with some transparency */
+            animation: shake 0.1s;
+        }
+        .grid-item span {
+            transition: color 0.5s;
+            text-transform: uppercase;
+        }
+        .blink {
+            animation: blink 2s infinite;
+            font-weight: bold;
+        }
+        @keyframes blink {
+            0%, 50% {
+                opacity: 1;
+            }
+            51%, 100% {
+                opacity: 0;
+            }
+        }
+        .animated-text {
+            color: gray;
+            font-family: 'booboo', Arial, sans-serif;
+        }
+        .purple-wave {
+            animation: purpleWave 10s infinite alternate;
+            font-size: 14px;
+            color: gray;
+            text-decoration: none;
+        }
+        @keyframes purpleWave {
+            0% { color: #808080; }
+            20% { color: #800080; }
+            40% { color: #808080; }
+            60% { color: #FF69B4; }
+            80% { color: #808080; }
+            100% { color: #800080; }
+        }
+        @keyframes moveUp {
+            0% { transform: translateY(50%); }
+            25% { transform: translateY(0); }
+            75% { transform: translateY(0); }
+            100% { transform: translateY(50%); }
+        }
+        @keyframes moveDown {
+            0% { transform: translateY(-50%); }
+            25% { transform: translateY(0); }
+            75% { transform: translateY(0); }
+            100% { transform: translateY(-50%); }
+        }
+        @keyframes moveLeft {
+            0% { transform: translateX(50%); }
+            25% { transform: translateX(0); }
+            75% { transform: translateX(0); }
+            100% { transform: translateX(50%); }
+        }
+        @keyframes moveRight {
+            0% { transform: translateX(-50%); }
+            25% { transform: translateX(0); }
+            75% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        @keyframes zoomIn {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.2); }
+        }
+        @keyframes zoomOut {
+            0% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        @keyframes textChange {
+            0% { color: gray; }
+            50% { color: white; }
+            100% { color: gray; }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-2px); }
+            50% { transform: translateX(2px); }
+            75% { transform: translateX(-2px); }
+        }
+        @keyframes flip {
+            0%, 100% { transform: rotateX(0); }
+            50% { transform: rotateX(180deg); }
+        }
+        .help-text {
+            cursor: pointer;
+            animation: blink 1s infinite alternate;
+        }
+        #help-text {
+            color: #808080;
+            font-family: 'booboo', Arial, sans-serif;
+        }
+        #typed-text {
+            font-family: 'fontTW', Arial, sans-serif;
+            font-size: 14px;
             white-space: pre-wrap;
-            width: 200px;
-        }
-        .waiting {
-            font-size: 0.8em;
-            color: #fff;
-            animation: waitingAnimation 1.5s infinite;
-        }
-        @keyframes waitingAnimation {
-            0%, 100% {
-                color: #888;
-            }
-            35% {
-                color: #444;
-            }
+            color: white;
         }
     </style>
 </head>
 <body>
-    <div class="link-box" id="whatIsThisLink">
-        <a href="javascript:void(0)" onclick="showAnalgrammi()">Mikä tämä on?  </a>
+    <div id="top-left"></div>
+    <div id="top-center"></div>
+    <div id="top-right"></div>
+    <div id="middle-left">
+        <div id="image-box"></div>
     </div>
-    <div class="container">
-        <h1>Word<span style="color: red;">P</span>orn</h1>
-        <p>Analgrammit. Mitä nyt vittua taas.</p>
-        <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
-        <div class="timer" id="timer">20</div>
-        <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
-        <div>
-            <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
+    <div id="middle">
+        <div class="grid" id="puzzle"></div>
+    </div>
+    <div id="right">
+        <img src="titpics/spessut/WomanBoobs.png" width="300">
+        <div id="watermark" style="font-size: 12px; padding-top: 5px; color: #808080;">© Timin Photography GmbH</div>
+    </div>
+    <div id="footer-left"></div>
+    <div id="footer-middle">
+        <div id="footer-middle-text">
+            <div id="help-text">LEMPINIMI RINNOILLE. <span class="help-text">APUA?</span></div>
+            <div id="typed-text"></div>
+            <div id="end-message" class="animated-text"></div>
+            <div id="restart-message" class="animated-text"></div>
         </div>
-        <div class="result" id="result"></div>
+    </div>
+    <div id="bottom-right">
+        <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer;" id="pink-ribbon">
+        <a href="https://roosanauha.syopasaatio.fi/" target="_blank" class="purple-wave">Roosa nauha Suomessa 2024</a>
     </div>
 
     <script>
-        let words = [];
-        let currentWord = '';
-        let timer;
-        let timeLeft = 20;
-        let paused = false;
+        const gridElement = document.getElementById('puzzle');
+        const answerElement = document.getElementById('footer-middle');
+        const imageBox = document.getElementById('image-box');
+        const pinkRibbon = document.getElementById('pink-ribbon');
+        const watermarkElement = document.getElementById('watermark');
+        const helpText = document.querySelector('.help-text');
+        const typedText = document.getElementById('typed-text');
+        const endMessage = document.getElementById('end-message');
+        const restartMessage = document.getElementById('restart-message');
+        let helpShown = false;
+        let wrongClicks = 0;
 
-        function startTimer() {
-            clearInterval(timer);
-            timer = setInterval(() => {
-                if (!paused) {
-                    timeLeft--;
-                    document.getElementById('timer').textContent = timeLeft;
-                    if (timeLeft <= 0) {
-                        clearInterval(timer);
-                        handleTimeOut();
+        async function fetchImages() {
+            const response = await fetch('image_map_data.csv');
+            const text = await response.text();
+            const rows = text.split('\n').slice(1); // Skip the header row
+            const images = rows.map(row => {
+                const [name, coords, shape] = row.split(',');
+                return { name: name.trim(), coords: coords.trim(), shape: shape.trim() };
+            });
+            return images.filter(image => image.name); // Remove any empty rows
+        }
+
+        function getRandomElement(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function applyImageEffect(img, effect) {
+            img.style.transition = 'transform 5s ease-in-out, opacity 5s ease-in-out';
+            if (effect === 'zoomIn') {
+                img.style.animation = 'zoomIn 5s alternate infinite';
+            } else if (effect === 'zoomOut') {
+                img.style.animation = 'zoomOut 5s alternate infinite';
+            } else if (effect === 'moveUp') {
+                img.style.animation = 'moveUp 5s infinite';
+            } else if (effect === 'moveDown') {
+                img.style.animation = 'moveDown 5s infinite';
+            } else if (effect === 'moveLeft') {
+                img.style.animation = 'moveLeft 5s infinite';
+            } else if (effect === 'moveRight') {
+                img.style.animation = 'moveRight 5s infinite';
+            }
+        }
+
+        async function startImageRotation() {
+            const images = await fetchImages();
+            setInterval(() => {
+                const { name, coords, shape } = getRandomElement(images);
+                const img = new Image();
+                img.src = `titpics/${name}`;
+                img.onload = () => {
+                    const isPortrait = img.naturalWidth < img.naturalHeight;
+                    const isSquare = img.naturalWidth === img.naturalHeight;
+
+                    if (isSquare) {
+                        img.style.width = '300px';
+                        img.style.height = '300px';
+                        applyImageEffect(img, Math.random() > 0.5 ? 'zoomIn' : 'zoomOut');
+                    } else if (isPortrait) {
+                        img.style.width = '300px';
+                        img.style.height = 'auto';
+                        applyImageEffect(img, Math.random() > 0.7 ? 'moveUp' : 'zoomIn');
+                    } else {
+                        img.style.width = 'auto';
+                        img.style.height = '300px';
+                        applyImageEffect(img, Math.random() > 0.7 ? 'moveLeft' : 'zoomIn');
+                    }
+                    img.style.opacity = 0;
+                    imageBox.innerHTML = '';
+                    imageBox.appendChild(img);
+                    setTimeout(() => {
+                        img.style.opacity = 1;
+                    }, 100); // Allow some time for the image to be added to the DOM
+                };
+                img.onerror = () => {
+                    console.error(`Failed to load image: titpics/${name}`);
+                };
+            }, 5000);
+        }
+
+        // Letter frequency based on Wordfeud points
+        const letterFrequency = {
+            'A': 1, 'B': 4, 'C': 8, 'D': 2, 'E': 1,
+            'F': 8, 'G': 4, 'H': 4, 'I': 1, 'J': 4,
+            'K': 2, 'L': 2, 'M': 2, 'N': 1, 'O': 2,
+            'P': 4, 'Q': 10, 'R': 1, 'S': 1, 'T': 1,
+            'U': 3, 'V': 4, 'W': 10, 'X': 10, 'Y': 4,
+            'Z': 10, 'Å': 4, 'Ä': 2, 'Ö': 7
+        };
+
+        // Function to generate random letter, including Å, Ä, and Ö
+        function getRandomLetter() {
+            const letters = Object.keys(letterFrequency);
+            const totalWeight = letters.reduce((sum, letter) => sum + (11 - letterFrequency[letter]), 0);
+            let rand = Math.random() * totalWeight;
+            for (const letter of letters) {
+                rand -= (11 - letterFrequency[letter]);
+                if (rand <= 0) return letter;
+            }
+        }
+
+        // Function to fetch a word from melonit.csv
+        async function fetchWord() {
+            const response = await fetch('melonit.csv');
+            const text = await response.text();
+            const words = text.split('\n').map(word => word.trim()).filter(word => word.length > 0);
+            return words[Math.floor(Math.random() * words.length)];
+        }
+
+        // Function to create the grid with random letters and one word
+        async function createGrid() {
+            const word = (await fetchWord()).toUpperCase();
+
+            let grid = [];
+            for (let i = 0; i < 5; i++) {
+                grid[i] = [];
+                for (let j = 0; j < 5; j++) {
+                    grid[i][j] = getRandomLetter();
+                }
+            }
+
+            // Place word in the grid starting at random position
+            let startX = Math.floor(Math.random() * 5);
+            let startY = Math.floor(Math.random() * 5);
+
+            let positions = [{ x: startX, y: startY }];
+            grid[startY][startX] = word.charAt(0);
+            let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]]; // Right, Down, Left, Up
+
+            for (let i = 1; i < word.length; i++) {
+                let lastPos = positions[positions.length - 1];
+                let possibleDirections = directions.filter(dir => {
+                    let newX = lastPos.x + dir[0];
+                    let newY = lastPos.y + dir[1];
+                    return newX >= 0 && newX < 5 && newY >= 0 && newY < 5 && !positions.some(pos => pos.x === newX && pos.y === newY);
+                });
+
+                if (possibleDirections.length === 0) break;
+
+                let dir = possibleDirections[Math.floor(Math.random() * possibleDirections.length)];
+                let newX = lastPos.x + dir[0];
+                let newY = lastPos.y + dir[1];
+
+                grid[newY][newX] = word.charAt(i);
+                positions.push({ x: newX, y: newY });
+            }
+
+            // Ensure no more than one empty cell
+            let emptyCount = 0;
+            grid.forEach(row => row.forEach((cell, index) => {
+                if (!cell) {
+                    emptyCount++;
+                    if (emptyCount > 1) {
+                        grid[row][index] = getRandomLetter();
                     }
                 }
-            }, 1000);
+            }));
+
+            return { grid, word };
         }
 
-        function shuffleWord(word) {
-            let shuffledWord = word.split('').sort(() => Math.random() - 0.5).join('');
-            while (shuffledWord === word) {
-                shuffledWord = word.split('').sort(() => Math.random() - 0.5).join('');
-            }
-            return shuffledWord;
+        // Function to initialize the game
+        async function initGame() {
+            gridElement.innerHTML = ''; // Clear the grid
+            answerElement.innerHTML = ''; // Clear any previous help text
+            const { grid, word } = await createGrid();
+            let foundLetters = 0;
+
+            // Render grid
+            grid.forEach((row, rowIndex) => {
+                row.forEach((letter, colIndex) => {
+                    const cell = document.createElement('div');
+                    cell.classList.add('grid-item');
+                    cell.innerHTML = `<span>${letter}</span>`;
+                    cell.dataset.letter = letter; // Store letter in data attribute for later use
+                    cell.dataset.row = rowIndex;
+                    cell.dataset.col = colIndex;
+                    cell.addEventListener('click', () => handleCellClick(cell, word));
+                    gridElement.appendChild(cell);
+                });
+            });
+
+            // Mark the first letter of the word as found
+            const firstLetterElement = [...gridElement.children].find(cell => cell.dataset.letter === word.charAt(0).toUpperCase());
+            firstLetterElement.classList.add('clicked');
+            firstLetterElement.dataset.found = true;
+            foundLetters++;
         }
 
-        function loadNewWord() {
-            if (words.length > 0) {
-                currentWord = words[Math.floor(Math.random() * words.length)];
-                const shuffledWord = shuffleWord(currentWord);
-                document.getElementById('shuffledWord').textContent = shuffledWord;
-                document.getElementById('answer').value = '';
-                timeLeft = 20;
-                document.getElementById('timer').textContent = timeLeft;
-                startTimer();
-            } else {
-                document.getElementById('shuffledWord').textContent = 'Ei sanoja ladattu.';
-            }
-        }
+        // Function to handle cell click
+        function handleCellClick(cell, word) {
+            const letter = cell.dataset.letter;
 
-        function checkAnswer() {
-            const answer = document.getElementById('answer').value.trim().toLowerCase();
-            if (answer === '') {
-                document.getElementById('result').textContent = 'Vastaa nyt jotain menee hermo.';
+            if (cell.classList.contains('clicked')) {
                 return;
             }
-            paused = true;
-            if (answer === currentWord.toLowerCase()) {
-                revealCorrectAnswer(() => {
-                    document.body.innerHTML = `
-                        <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                            Ihan oikein, hienoa!<br>Äidin pikku vittunaama.<br>Ladataan uudestaan..
-                        </div>`;
-                    let countdown = 5;
-                    const interval = setInterval(() => {
-                        countdown--;
-                        document.body.innerHTML = `
-                            <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                                Ihan oikein, hienoa!<br>Äidin pikku vittunaama.<br>Ladataan uudestaan..<br>${countdown}
-                            </div>`;
-                        if (countdown <= 0) {
-                            clearInterval(interval);
-                            location.reload();
-                        }
-                    }, 1000);
-                });
+
+            const currentIndex = [...gridElement.children].filter(c => c.classList.contains('clicked')).length;
+            if (letter === word[currentIndex].toUpperCase()) {
+                cell.classList.add('clicked');
+                if (currentIndex + 1 === word.length) {
+                    showAnswer(word);
+                    animateCorrectAnswer();
+                }
             } else {
-                revealCorrectAnswer();
+                cell.classList.add('wrong');
+                wrongClicks++;
+                if (wrongClicks > 3 && !helpShown) {
+                    showHelpMessage();
+                }
+                setTimeout(() => {
+                    cell.classList.remove('wrong');
+                }, 500);
             }
         }
 
-        function revealCorrectAnswer(callback) {
-            const shuffledWordElement = document.getElementById('shuffledWord');
-            shuffledWordElement.style.color = '#FFFF00';
-            let currentIndex = 0;
-
+        // Function to show help message
+        function showHelpMessage() {
+            helpShown = true;
+            const helpTextElement = document.getElementById('help-text');
+            helpTextElement.innerHTML = 'ETSI SEURAAVA KIRJAIN<span class="blink">..</span>';
+            const blinkDots = helpTextElement.querySelector('.blink');
             const interval = setInterval(() => {
-                if (currentIndex < currentWord.length) {
-                    shuffledWordElement.textContent =
-                        currentWord.slice(0, currentIndex + 1) +
-                        shuffledWordElement.textContent.slice(currentIndex + 1);
-                    currentIndex++;
-                } else {
+                blinkDots.style.opacity = blinkDots.style.opacity == 1 ? 0 : 1;
+            }, 500);
+
+            const onGreenClick = (event) => {
+                if (event.target.classList.contains('clicked')) {
+                    helpTextElement.innerHTML = 'LEMPINIMI RINNOILLE. <span class="help-text" style="animation: blink 1s infinite alternate; color: #808080;">APUA?</span>';
                     clearInterval(interval);
-                    if (callback) {
-                        setTimeout(callback, 1500);
-                    } else {
-                        setTimeout(() => {
-                            window.location.href = 'https://timosalonen.github.io/wordfraud/wordporn.html';
-                        }, 2000);
-                    }
+                    document.removeEventListener('click', onGreenClick);
                 }
-            }, 200);
+            };
+
+            document.addEventListener('click', onGreenClick);
         }
 
-        function handleTimeOut() {
-            revealCorrectAnswer();
+        // Function to show the answer and the corresponding image
+        function showAnswer(word) {
+            endMessage.innerHTML = `<b>LEMPIRINTASI OVAT: <span style="color: #A9A9A9;">${word}</span></b>`;
+            endMessage.style.opacity = 1;
+
+            setTimeout(() => {
+                endMessage.style.opacity = 0;
+                restartMessage.innerHTML = "<b>PELAA UUDELLEEN KLIKKAAMALLA ROOSA-NAUHAA</b>";
+                restartMessage.style.opacity = 1;
+            }, 3500);
+
+            setTimeout(() => {
+                initGame();
+                startImageRotation();
+            }, 6500);
         }
 
-        function showAnalgrammi() {
-            paused = true;
-            document.getElementById('timer').innerHTML = '<span class="waiting">-sinulle on postia-</span>';
-            const linkBox = document.getElementById('whatIsThisLink');
-            linkBox.innerHTML = '';
-            const box = document.createElement('div');
-            box.id = 'typewriterBox';
-            box.className = 'typewriter-box';
-            document.body.appendChild(box);
-            const text = 'Rakas persehaju,\n\nTämä on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä, kuin sinäkin.\n\nMuodosta kirjaimista sana. Ole yllättävä kuin äitisi raskaus.\n\nOnnea peliin. Se olkoon helppo, kuin jokainen kumppanisi.\n\nT. Koiranoksennus johon nussit';
-            let index = 0;
-
-            function typeNext() {
-                if (index < text.length) {
-                    box.textContent += text[index];
-                    index++;
-                    let delay = 40;
-                    if (text[index - 1] === ' ' || text[index - 1] === '\n') {
-                        delay = 100;
-                    }
-                    setTimeout(typeNext, delay);
-                } else {
-                    setTimeout(removeText, 3000); // Lisätty ylimääräinen sekunti
-                }
-            }
-
-            function removeText() {
-                document.getElementById('timer').innerHTML = timeLeft; // Nopeutettu muutos kelloksi
-                let grayValue = 245;
-                let upperIndex = 0;
-                const lines = box.textContent.split('\n');
-                const interval = setInterval(() => {
-                    if (box.textContent.length > 0) {
-                        if (upperIndex < lines.length) {
-                            lines[upperIndex] = '';
-                            upperIndex++;
-                            box.textContent = lines.join('\n');
-                        } else {
-                            const randomIndex = Math.floor(Math.random() * box.textContent.length);
-                            box.textContent = box.textContent.slice(0, randomIndex) + box.textContent.slice(randomIndex + 1);
-                        }
-                        grayValue -= 5;
-                        box.style.backgroundColor = `rgb(${grayValue}, ${grayValue}, ${grayValue})`;
-                    } else {
-                        clearInterval(interval);
-                        box.remove();
-                        paused = false;
-                        startTimer();
-                    }
-                }, 30);
-            }
-
-            typeNext();
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            fetch('wordpornFI.csv')
-                .then(response => response.text())
-                .then(text => {
-                    words = text.split('\n').map(word => word.trim()).filter(Boolean);
-                    loadNewWord();
+        // Function to animate correct answer
+        function animateCorrectAnswer() {
+            const clickedCells = [...gridElement.children].filter(cell => cell.classList.contains('clicked'));
+            clickedCells.forEach(cell => {
+                cell.style.animation = 'flash 0.5s alternate 3';
+            });
+            setTimeout(() => {
+                clickedCells.forEach(cell => {
+                    cell.style.animation = '';
                 });
+            }, 1500);
+        }
+
+        // Add event listener to the Pink Ribbon image
+        pinkRibbon.addEventListener('click', () => {
+            window.location.href = 'https://timosalonen.github.io/wordfraud/womanboobs.html';
         });
 
-        document.getElementById('answer').addEventListener('keydown', function (e) {
-            if (e.key === 'Enter') {
-                checkAnswer();
-            }
+        // Function to animate the watermark text
+        function animateWatermark() {
+            const text = watermarkElement.textContent;
+            const randomIndex = Math.floor(Math.random() * text.length);
+            const originalChar = text[randomIndex];
+            const isUpperCase = originalChar === originalChar.toUpperCase();
+
+            let interval;
+            let frame = 0;
+
+            const animateChar = () => {
+                watermarkElement.textContent = text.substring(0, randomIndex) + originalChar + text.substring(randomIndex + 1);
+                frame++;
+                if (frame >= 10) {
+                    clearInterval(interval);
+                    watermarkElement.textContent = text;
+                }
+            };
+
+            interval = setInterval(animateChar, 200);
+        }
+
+        setInterval(animateWatermark, 10000); // Double the interval for animation
+
+        // Flip the G character in the watermark
+        function flipG() {
+            const watermarkText = watermarkElement.textContent;
+            const newText = watermarkText.split('').map((char, index) => {
+                if (char === 'G') {
+                    return `<span class="flip">${char}</span>`;
+                }
+                return char;
+            }).join('');
+            watermarkElement.innerHTML = newText;
+        }
+
+        setInterval(flipG, 20000); // Flip the G character every 20 seconds
+
+        // Handle help text click
+        helpText.addEventListener('click', () => {
+            typedText.innerHTML = '';
+            const helpMessage = "NE VOIVAT SUUNNATA YLOS TAI ALAS,\nJOSKUS PIILOON KOKONAAN. ETSI, JA\nSAAT OMAN LEMPINIMESI RINNOILLE.";
+            typedText.textContent = helpMessage;
+            setTimeout(() => {
+                typedText.innerHTML = '';
+                helpText.innerHTML = 'LEMPINIMI RINNOILLE. <span class="help-text" style="animation: blink 1s infinite alternate; color: #808080;">APUA?</span>';
+            }, 5000);
         });
+
+        // Start the game
+        initGame();
+        startImageRotation();
     </script>
 </body>
 </html>
