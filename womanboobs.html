@@ -68,20 +68,20 @@
             transition: color 0.5s;
         }
         .grid-item.clicked {
-            background-color: #FF1493; /* Pink without transparency */
+            background-color: #FF69B4; /* Lightened pink */
         }
         .grid-item.wrong {
-            background-color: #FF1493; /* Pink without transparency */
+            background-color: rgba(255, 255, 255, 0.1); /* White with 10% transparency */
         }
         .animated-text {
-            color: #FF69B4; /* Brightened pink color */
+            color: #FF69B4; /* Lightened pink */
             font-family: 'booboo', Arial, sans-serif;
             margin-bottom: 20px;
             text-align: center;
         }
         .pink-wave {
             font-size: 14px;
-            color: #FF69B4; /* Brightened pink color */
+            color: #FF82B2; /* Slightly brighter pink */
             text-decoration: none;
             transition: color 2s;
             opacity: 0.8;
@@ -93,7 +93,7 @@
         }
         @keyframes colorChange {
             0% { color: gray; }
-            100% { color: #FF69B4; } /* Harmaan ja pinkin väli */
+            100% { color: #FF82B2; } /* Brighter pink */
         }
         #footer-middle-text {
             text-align: center;
@@ -115,6 +115,7 @@
             display: flex;
             flex-direction: row;
             align-items: center;
+            margin-top: 20px;
         }
         #roosa-nauha-section img {
             margin-right: 10px;
@@ -153,7 +154,7 @@
 
     <script>
         // Roosa nauha osio
-        const roosaNauhaText = document.getElementById('roosa-nauha');
+        const roosaNauhaText = document.querySelector('.pink-wave');
         roosaNauhaText.classList.add('animate');
 
         // Sanapeli osio
