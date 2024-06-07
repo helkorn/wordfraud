@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kuvien Zoomaus</title>
+    <title>WomanBoops</title>
     <style>
         body {
             background-color: black;
@@ -97,10 +97,10 @@
             border-radius: 4px; /* Slightly rounded corners */
         }
         .grid-item.clicked {
-            background-color: rgba(255, 20, 147, 0.1); /* Pink */
+            background-color: #FF1493; /* Pink without transparency */
         }
         .grid-item.wrong {
-            background-color: rgba(255, 20, 147, 0.1); /* Pink */
+            background-color: #FF1493; /* Pink without transparency */
         }
         .grid-item span {
             transition: color 0.5s;
@@ -119,12 +119,12 @@
             }
         }
         .animated-text {
-            color: gray;
+            color: #FF69B4; /* Brightened pink color */
             font-family: 'booboo', Arial, sans-serif;
         }
         .pink-wave {
             font-size: 14px;
-            color: gray;
+            color: #FF69B4; /* Brightened pink color */
             text-decoration: none;
             transition: color 2s;
             opacity: 0.2;
@@ -217,7 +217,7 @@
         </div>
     </div>
     <div id="bottom-right">
-        <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer;" id="pink-ribbon">
+        <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer; opacity: 0.05;" id="pink-ribbon">
         <a href="https://roosanauha.syopasaatio.fi/" target="_blank" class="pink-wave" id="roosa-nauha">Roosa nauha Suomessa 2024</a>
     </div>
 
@@ -424,7 +424,7 @@
             helpShown = true;
             const helpText = document.createElement('div');
             helpText.style = "animation: fadein 1s; font-size: 14px; color: #808080; font-family: 'booboo', Arial, sans-serif; margin-top: 10px;";
-            helpText.innerHTML = `<b>HELP TEXT PLACEHOLDER</b>`;
+            // helpText.innerHTML = `<b>HELP TEXT PLACEHOLDER</b>`;
             answerElement.appendChild(helpText);
         }
 
