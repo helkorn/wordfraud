@@ -285,7 +285,9 @@
                     img.style.opacity = 0;
                     imageBox.innerHTML = '';
                     imageBox.appendChild(img);
-                    img.style.opacity = 1;
+                    setTimeout(() => {
+                        img.style.opacity = 1;
+                    }, 100); // Allow some time for the image to be added to the DOM
                 };
             }, 5000);
         }
