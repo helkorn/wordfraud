@@ -10,20 +10,20 @@
             color: white;
             display: grid;
             grid-template-areas: 
-                "Lohko1 Lohko2 Lohko3"
-                "Lohko4 Lohko5 Lohko6"
-                "Lohko7 Lohko8 Lohko9";
+                "Block1 Block2 Block3"
+                "Block4 Block5 Block6"
+                "Block7 Block8 Block9";
             grid-template-rows: 1fr 1fr 1fr;
             grid-template-columns: 1fr 1fr 1fr;
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
         }
-        #Lohko1 { grid-area: Lohko1; }
-        #Lohko2 { grid-area: Lohko2; }
-        #Lohko3 { grid-area: Lohko3; }
-        #Lohko4 {
-            grid-area: Lohko4;
+        #Block1 { grid-area: Block1; }
+        #Block2 { grid-area: Block2; }
+        #Block3 { grid-area: Block3; }
+        #Block4 {
+            grid-area: Block4;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -39,22 +39,22 @@
             width: 100%;
             height: 100%;
         }
-        #Lohko5 {
-            grid-area: Lohko5;
+        #Block5 {
+            grid-area: Block5;
             display: flex;
             justify-content: center;
             align-items: center;
         }
-        #Lohko6 {
-            grid-area: Lohko6;
+        #Block6 {
+            grid-area: Block6;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: flex-start;
         }
-        #Lohko7 { grid-area: Lohko7; }
-        #Lohko8 {
-            grid-area: Lohko8;
+        #Block7 { grid-area: Block7; }
+        #Block8 {
+            grid-area: Block8;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -62,8 +62,8 @@
             padding-top: 10px;
             height: 100%;
         }
-        #Lohko9 {
-            grid-area: Lohko9;
+        #Block9 {
+            grid-area: Block9;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -115,16 +115,12 @@
             color: gray;
             font-family: 'booboo', Arial, sans-serif;
         }
-        .pink-wave {
-            animation: pinkWave 5s infinite alternate;
+        .roosa-text {
             font-size: 14px;
-            color: gray;
+            color: #d08090; /* Midway between gray and pink */
             text-decoration: none;
-        }
-        @keyframes pinkWave {
-            0% { color: #FF69B4; }
-            50% { color: gray; }
-            100% { color: #FF69B4; }
+            margin-top: 10px;
+            margin-left: 10px;
         }
         @keyframes zoomIn {
             0% { transform: scale(1); }
@@ -145,61 +141,71 @@
     </style>
 </head>
 <body>
-    <div id="Lohko1"></div>
-    <div id="Lohko2"></div>
-    <div id="Lohko3"></div>
-    <div id="Lohko4">
+    <div id="Block1"></div>
+    <div id="Block2"></div>
+    <div id="Block3"></div>
+    <div id="Block4">
         <div id="image-box"></div>
     </div>
-    <div id="Lohko5">
+    <div id="Block5">
         <div class="grid" id="puzzle"></div>
     </div>
-    <div id="Lohko6">
+    <div id="Block6">
         <img src="titpics/spessut/WomanBoobs.png" width="300">
         <div id="watermark" style="font-size: 12px; padding-top: 5px; color: #808080;">© Timin Photography GmbH</div>
     </div>
-    <div id="Lohko7"></div>
-    <div id="Lohko8">
+    <div id="Block7"></div>
+    <div id="Block8">
         <div id="end-message" class="animated-text"></div>
         <div id="restart-message" class="animated-text"></div>
     </div>
-    <div id="Lohko9">
-        <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer;" id="pink-ribbon">
-        <a href="https://roosanauha.syopasaatio.fi/" target="_blank" class="pink-wave">Roosa nauha Suomessa 2024</a>
+    <div id="Block9">
+        <div style="display: flex; align-items: flex-start;">
+            <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer;" id="pink-ribbon">
+            <a href="https://roosanauha.syopasaatio.fi/" target="_blank" class="roosa-text">Roosa nauha Suomessa 2024</a>
+        </div>
     </div>
 
     <script>
         const gridElement = document.getElementById('puzzle');
-        const answerElement = document.getElementById('Lohko8');
+        const answerElement = document.getElementById('Block8');
         const imageBox = document.getElementById('image-box');
         const pinkRibbon = document.getElementById('pink-ribbon');
         const watermarkElement = document.getElementById('watermark');
-        const images = ["titpics/Ajovalot.png", "titpics/image2.png", "titpics/image3.png"]; // Placeholder images
+        let images = []; // Placeholder for image sources
         let wrongClicks = 0;
         let timerInterval;
+
+        async function fetchImages() {
+            const response = await fetch('image_map_data.csv');
+            const text = await response.text();
+            images = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+        }
 
         function startImageRotation() {
             let index = 0;
             setInterval(() => {
-                const img = document.createElement('img');
-                img.src = images[index % images.length];
-                img.onload = () => {
-                    img.style.opacity = 0;
-                    imageBox.innerHTML = '';
-                    imageBox.appendChild(img);
-                    const randomEffect = Math.random();
-                    if (randomEffect < 0.25) {
-                        img.style.animation = 'zoomIn 5s forwards';
-                    } else if (randomEffect < 0.5) {
-                        img.style.animation = 'zoomOut 5s forwards';
-                    } else if (randomEffect < 0.75) {
-                        img.style.animation = 'moveUp 5s forwards';
-                    } else {
-                        img.style.animation = 'moveDown 5s forwards';
-                    }
-                    img.style.opacity = 1;
-                };
-                index++;
+                if (images.length > 0) {
+                    const img = document.createElement('img');
+                    img.src = images[index % images.length];
+                    img.onload = () => {
+                        img.style.opacity = 0;
+                        imageBox.innerHTML = '';
+                        imageBox.appendChild(img);
+                        const randomEffect = Math.random();
+                        if (randomEffect < 0.25) {
+                            img.style.animation = 'zoomIn 5s forwards';
+                        } else if (randomEffect < 0.5) {
+                            img.style.animation = 'zoomOut 5s forwards';
+                        } else if (randomEffect < 0.75) {
+                            img.style.animation = 'moveUp 5s forwards';
+                        } else {
+                            img.style.animation = 'moveDown 5s forwards';
+                        }
+                        img.style.opacity = 1;
+                    };
+                    index++;
+                }
             }, 5000);
         }
 
@@ -413,9 +419,10 @@
         setInterval(animateWatermark, 10000); // Double the interval for animation
 
         // Start the game
-        initGame();
-        startImageRotation();
+        fetchImages().then(() => {
+            initGame();
+            startImageRotation();
+        });
     </script>
 </body>
 </html>
-
