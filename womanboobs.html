@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WomanBoobs</title>
+    <title>Kuvien Zoomaus</title>
     <style>
         body {
             background-color: black;
@@ -100,7 +100,7 @@
             background-color: rgba(255, 20, 147, 0.2); /* Pink */
         }
         .grid-item.wrong {
-            background-color: rgba(255, 255, 255, 0.2); /* White */
+            background-color: rgba(255, 20, 147, 0.2); /* Pink */
         }
         .grid-item span {
             transition: color 0.5s;
@@ -123,15 +123,18 @@
             font-family: 'booboo', Arial, sans-serif;
         }
         .pink-wave {
-            animation: pinkWave 5s infinite alternate;
             font-size: 14px;
             color: gray;
             text-decoration: none;
+            transition: color 2s;
+            opacity: 0.2;
         }
-        @keyframes pinkWave {
-            0% { color: #FF69B4; }
-            30% { color: gray; }
-            100% { color: #FF69B4; }
+        .pink-wave.animate {
+            animation: colorChange 10s infinite alternate;
+        }
+        @keyframes colorChange {
+            0% { color: gray; }
+            100% { color: #FF69B4; } /* Harmaan ja pinkin väli */
         }
         @keyframes moveUp {
             0% { transform: translateY(50%); }
@@ -162,9 +165,9 @@
             100% { transform: scale(1.2); }
         }
         @keyframes textChange {
-            0% { color: darkgray; }
-            50% { color: #FF69B4; }
-            100% { color: darkgray; }
+            0% { color: gray; }
+            50% { color: white; }
+            100% { color: gray; }
         }
         .help-text {
             cursor: pointer;
@@ -215,7 +218,7 @@
     </div>
     <div id="bottom-right">
         <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer; opacity: 0.1;" id="pink-ribbon">
-        <a href="https://roosanauha.syopasaatio.fi/" target="_blank" class="pink-wave" style="animation: textChange 5s infinite alternate;">Roosa nauha Suomessa 2024</a>
+        <a href="https://roosanauha.syopasaatio.fi/" target="_blank" class="pink-wave" id="roosa-nauha">Roosa nauha Suomessa 2024</a>
     </div>
 
     <script>
@@ -228,8 +231,11 @@
         const endMessage = document.getElementById('end-message');
         const restartMessage = document.getElementById('restart-message');
         const womanBoobsText = document.getElementById('woman-boobs-text');
+        const roosaNauhaText = document.getElementById('roosa-nauha');
         let helpShown = false;
         let wrongClicks = 0;
+
+        roosaNauhaText.classList.add('animate');
 
         async function fetchImages() {
             const response = await fetch('melonit.csv');
@@ -552,6 +558,33 @@
         }
 
         animateBoobsText();
+
+        // Image stopping rule based on image_map_data.csv coordinates
+        async function fetchImageMapData() {
+            const response = await fetch('image_map_data.csv');
+            const text = await response.text();
+            return text.split('\n').map(line => {
+                const [x, y] = line.split(',').map(Number);
+                return { x, y };
+            });
+        }
+
+        async function scrollToCoordinates() {
+            const coordinates = await fetchImageMapData();
+            const imageContainer = document.getElementById('image-container');
+            const image = document.getElementById('image');
+
+            window.addEventListener('scroll', () => {
+                const scrollY = window.scrollY;
+                coordinates.forEach(coord => {
+                    if (scrollY >= coord.y && scrollY < coord.y + window.innerHeight) {
+                        imageContainer.scrollTo(coord.x, coord.y);
+                    }
+                });
+            });
+        }
+
+        scrollToCoordinates();
     </script>
 </body>
 </html>
