@@ -189,6 +189,7 @@
                 const img = document.createElement('img');
                 img.src = images[index % images.length];
                 img.onload = () => {
+                    img.style.width = '300px';
                     img.style.opacity = 0;
                     imageBox.innerHTML = '';
                     imageBox.appendChild(img);
@@ -273,11 +274,11 @@
 
             // Ensure no more than one empty cell
             let emptyCount = 0;
-            grid.forEach(row => row.forEach(cell => {
+            grid.forEach(row => row.forEach((cell, index) => {
                 if (!cell) {
                     emptyCount++;
                     if (emptyCount > 1) {
-                        cell = getRandomLetter();
+                        grid[row][index] = getRandomLetter();
                     }
                 }
             }));
@@ -381,7 +382,7 @@
             // Display the image
             const img = document.createElement('img');
             img.src = `titpics/${word}.png`;
-            img.style.width = '100%';
+            img.style.width = '300px';
             img.style.height = '100%';
             img.style.objectFit = 'cover';
             imageBox.innerHTML = '';
