@@ -45,6 +45,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
         }
         #right {
             grid-area: middle-right;
@@ -140,6 +141,18 @@
             0% { transform: translateY(0); }
             100% { transform: translateY(100%); }
         }
+        @keyframes moveLeft {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+        @keyframes moveRight {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(100%); }
+        }
+        @keyframes zoomIn {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.2); }
+        }
         @keyframes textChange {
             0% { color: gray; }
             50% { color: white; }
@@ -148,11 +161,32 @@
         .help-text {
             cursor: pointer;
         }
+        #woman-boobs-text {
+            color: #006400;
+            font-family: 'booboo', Arial, sans-serif;
+            font-size: 24px;
+            margin-bottom: 20px;
+            animation: fadeIn 3s forwards;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        .boobs-bounce {
+            animation: bounce 5s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-30px); }
+            60% { transform: translateY(-15px); }
+        }
     </style>
 </head>
 <body>
     <div id="top-left"></div>
-    <div id="top-center"></div>
+    <div id="top-center">
+        <div id="woman-boobs-text">W o m a n &nbsp; B o o b s &nbsp; '24</div>
+    </div>
     <div id="top-right"></div>
     <div id="middle-left">
         <div id="image-box"></div>
@@ -186,6 +220,7 @@
         const helpText = document.getElementById('help-text');
         const endMessage = document.getElementById('end-message');
         const restartMessage = document.getElementById('restart-message');
+        const womanBoobsText = document.getElementById('woman-boobs-text');
         let helpShown = false;
         let wrongClicks = 0;
 
@@ -193,7 +228,8 @@
             const response = await fetch('melonit.csv');
             const text = await response.text();
             const words = text.split('\n').map(word => word.trim()).filter(word => word.length > 0);
-            return words.map(word => `titpics/${word}.png`);
+            const imagePaths = words.map(word => `titpics/${word}.png`);
+            return imagePaths.sort(() => Math.random() - 0.5);  // Shuffle the array for random order
         }
 
         async function startImageRotation() {
@@ -203,25 +239,29 @@
                 const img = new Image();
                 img.src = images[index % images.length];
                 img.onload = () => {
-                    img.style.width = '300px';
-                    img.style.height = 'auto';
-                    if (img.naturalWidth < img.naturalHeight) {
+                    const isPortrait = img.naturalWidth < img.naturalHeight;
+                    const isSquare = img.naturalWidth === img.naturalHeight;
+
+                    if (isSquare) {
+                        img.style.width = '300px';
                         img.style.height = '300px';
+                        img.style.animation = 'zoomIn 7s infinite alternate';
+                    } else if (isPortrait) {
+                        img.style.width = '300px';
+                        img.style.height = 'auto';
+                        img.style.animation = 'moveUp 7s forwards';
+                    } else {
                         img.style.width = 'auto';
+                        img.style.height = '300px';
+                        img.style.animation = 'moveLeft 7s forwards';
                     }
                     img.style.opacity = 0;
                     imageBox.innerHTML = '';
                     imageBox.appendChild(img);
-                    const randomEffect = Math.random();
-                    if (randomEffect < 0.5) {
-                        img.style.animation = 'moveUp 10s forwards';
-                    } else {
-                        img.style.animation = 'moveDown 10s forwards';
-                    }
                     img.style.opacity = 1;
                 };
                 index++;
-            }, 5000);
+            }, 7000);
         }
 
         // Letter frequency based on Wordfeud points
@@ -370,7 +410,7 @@
 
             helpText.addEventListener('click', () => {
                 helpText.innerHTML = `<b>VAUVANI, NE OVAT ISIN <span style="color: #A9A9A9;">${word.toUpperCase()}</span></b>`;
-                setTimeout(initGame, 3000);
+                setTimeout(initGame, 6000);
             });
         }
 
@@ -399,15 +439,26 @@
             const img = new Image();
             img.src = `titpics/${word}.png`;
             img.onload = () => {
-                img.style.width = '300px';
-                img.style.height = 'auto';
-                if (img.naturalWidth < img.naturalHeight) {
+                const isPortrait = img.naturalWidth < img.naturalHeight;
+                const isSquare = img.naturalWidth === img.naturalHeight;
+
+                if (isSquare) {
+                    img.style.width = '300px';
                     img.style.height = '300px';
+                    img.style.animation = 'zoomIn 7s infinite alternate';
+                } else if (isPortrait) {
+                    img.style.width = '300px';
+                    img.style.height = 'auto';
+                    img.style.animation = 'moveUp 7s forwards';
+                } else {
                     img.style.width = 'auto';
+                    img.style.height = '300px';
+                    img.style.animation = 'moveLeft 7s forwards';
                 }
-                img.style.objectFit = 'cover';
+                img.style.opacity = 0;
                 imageBox.innerHTML = '';
                 imageBox.appendChild(img);
+                img.style.opacity = 1;
             };
         }
 
@@ -475,6 +526,22 @@
         // Start the game
         initGame();
         startImageRotation();
+
+        // Animation for WomanBoobs text
+        function animateBoobsText() {
+            const boobsText = document.getElementById('woman-boobs-text');
+            boobsText.innerHTML = 'W o m a n &nbsp; B o o b s &nbsp; \'24';
+            const bElement = boobsText.querySelector('b');
+            bElement.classList.add('boobs-bounce');
+            setInterval(() => {
+                bElement.classList.add('boobs-bounce');
+                setTimeout(() => {
+                    bElement.classList.remove('boobs-bounce');
+                }, 1000);
+            }, 15000);
+        }
+
+        animateBoobsText();
     </script>
 </body>
 </html>
