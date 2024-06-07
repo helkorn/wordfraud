@@ -29,12 +29,13 @@
             align-items: center;
             overflow: hidden;
             position: relative;
+            padding-right: 50px; /* Siirretään laatikko 50px irti reunasta */
         }
         #image-box {
             width: 400px;
             height: 400px;
             border: 1px solid silver;
-            position: absolute;
+            position: relative; /* Ei absolute, jotta pysyy sisällään */
             right: 0;
         }
         #Block5 {
@@ -209,8 +210,9 @@
                     const img = document.createElement('img');
                     img.src = images[index % images.length];
                     img.onload = () => {
-                        img.style.width = '400px';
-                        img.style.height = 'auto';
+                        img.style.width = '100%';
+                        img.style.height = '100%';
+                        img.style.objectFit = 'cover';
                         img.style.opacity = 0;
                         imageBox.innerHTML = '';
                         imageBox.appendChild(img);
@@ -473,4 +475,5 @@
     </script>
 </body>
 </html>
+
 
