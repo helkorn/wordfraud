@@ -20,7 +20,25 @@
             font-family: Arial, sans-serif;
         }
         #top-left { grid-area: top-left; }
-        #top-center { grid-area: top-center; }
+        #top-center {
+            grid-area: top-center;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-bottom: 10px;
+            position: relative;
+        }
+        #top-center .animated-text {
+            font-family: 'Booboo', Arial, sans-serif;
+            color: #32CD32; /* Brightened Dark Green */
+            font-size: 16px;
+        }
+        #top-center #timer {
+            font-family: 'Timer', monospace;
+            color: #32CD32; /* Brightened Dark Green */
+            font-size: 16px;
+            margin-left: 10px;
+        }
         #top-right { grid-area: top-right; }
         #middle-left {
             grid-area: middle-left;
@@ -34,7 +52,6 @@
             overflow: hidden;
             margin-left: auto;
             margin-right: auto;
-            margin-top: 10px;
         }
         #image-box {
             position: absolute;
@@ -46,7 +63,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
         }
         #right {
             grid-area: middle-right;
@@ -54,25 +70,19 @@
             flex-direction: column;
             justify-content: center;
             align-items: flex-start;
-            position: relative;
-        }
-        #right img {
-            border: 1px solid silver;
         }
         #footer-left { grid-area: bottom-left; }
         #footer-middle {
             grid-area: bottom-center;
             display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
+            justify-content: center;
+            align-items: flex-start;
             padding-top: 10px;
             height: 100%;
-            position: relative;
         }
-        #footer-middle-text {
-            position: absolute;
-            top: 10px;
+        #footer-middle div {
+            text-align: center;
+            margin-top: -30px;
         }
         #footer-right {
             grid-area: bottom-right;
@@ -96,24 +106,23 @@
             justify-content: center;
             align-items: center;
             background-color: black;
-            font-size: 20px;
+            font-size: 24px;
             cursor: pointer;
-            transition: background-color 0.5s, transform 0.1s;
+            transition: background-color 0.5s;
             border-radius: 4px; /* Slightly rounded corners */
         }
         .grid-item.clicked {
-            background-color: rgba(255, 182, 193, 0.7); /* LightPink with some transparency */
+            background-color: #006400; /* DarkGreen */
         }
         .grid-item.wrong {
-            background-color: rgba(255, 255, 255, 0.5); /* White with some transparency */
-            animation: shake 0.1s;
+            background-color: #8B0000; /* DarkRed */
         }
         .grid-item span {
             transition: color 0.5s;
             text-transform: uppercase;
         }
         .blink {
-            animation: blink 2s infinite;
+            animation: blink 1s infinite;
             font-weight: bold;
         }
         @keyframes blink {
@@ -125,89 +134,61 @@
             }
         }
         .animated-text {
-            color: gray;
-            font-family: 'booboo', Arial, sans-serif;
+            color: #32CD32; /* Brightened Dark Green */
+            font-family: 'Booboo', Arial, sans-serif;
         }
-        .purple-wave {
-            animation: purpleWave 10s infinite alternate;
-            font-size: 14px;
-            color: gray;
-            text-decoration: none;
+        #hover-icon {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            z-index: 10;
+            animation: hoverMove 3s infinite;
         }
-        @keyframes purpleWave {
-            0% { color: #808080; }
-            20% { color: #800080; }
-            40% { color: #808080; }
-            60% { color: #FF69B4; }
-            80% { color: #808080; }
-            100% { color: #800080; }
+        @keyframes hoverMove {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(10px); }
+            50% { transform: translateY(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateY(-10px); }
         }
-        @keyframes moveUp {
-            0% { transform: translateY(50%); }
-            25% { transform: translateY(0); }
-            75% { transform: translateY(0); }
-            100% { transform: translateY(50%); }
-        }
-        @keyframes moveDown {
-            0% { transform: translateY(-50%); }
-            25% { transform: translateY(0); }
-            75% { transform: translateY(0); }
-            100% { transform: translateY(-50%); }
-        }
-        @keyframes moveLeft {
-            0% { transform: translateX(50%); }
-            25% { transform: translateX(0); }
-            75% { transform: translateX(0); }
-            100% { transform: translateX(50%); }
-        }
-        @keyframes moveRight {
-            0% { transform: translateX(-50%); }
-            25% { transform: translateX(0); }
-            75% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+        #hover-icon.faded {
+            opacity: 0.5;
         }
         @keyframes zoomIn {
             0% { transform: scale(1); }
-            100% { transform: scale(1.2); }
+            100% { transform: scale(1.5); }
         }
         @keyframes zoomOut {
-            0% { transform: scale(1.2); }
+            0% { transform: scale(1.5); }
             100% { transform: scale(1); }
         }
-        @keyframes textChange {
-            0% { color: gray; }
-            50% { color: white; }
-            100% { color: gray; }
+        @keyframes moveUp {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-100%); }
         }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-2px); }
-            50% { transform: translateX(2px); }
-            75% { transform: translateX(-2px); }
+        @keyframes moveDown {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100%); }
         }
-        @keyframes flip {
-            0%, 100% { transform: rotateX(0); }
-            50% { transform: rotateX(180deg); }
+        @keyframes pinkWave {
+            0% { color: #FF69B4; }
+            50% { color: gray; }
+            100% { color: #FF69B4; }
         }
-        .help-text {
-            cursor: pointer;
-            animation: blink 1s infinite alternate;
-        }
-        #help-text {
-            color: #808080;
-            font-family: 'booboo', Arial, sans-serif;
-        }
-        #typed-text {
-            font-family: 'fontTW', Arial, sans-serif;
+        .pink-wave {
+            animation: pinkWave 5s infinite alternate;
             font-size: 14px;
-            white-space: pre-wrap;
-            color: white;
+            color: gray;
+            text-decoration: none;
         }
     </style>
 </head>
 <body>
     <div id="top-left"></div>
-    <div id="top-center"></div>
+    <div id="top-center">
+        <div id="timer-text" class="animated-text">LÖYDÄ LEMPIRINTASI</div>
+        <div id="timer" class="animated-text">00:00</div>
+    </div>
     <div id="top-right"></div>
     <div id="middle-left">
         <div id="image-box"></div>
@@ -217,20 +198,13 @@
     </div>
     <div id="right">
         <img src="titpics/spessut/WomanBoobs.png" width="300">
-        <div id="watermark" style="font-size: 12px; padding-top: 5px; color: #808080;">© Timin Photography GmbH</div>
+        <div id="watermark" style="font-size: 12px; padding-top: 5px; color: gray;">© Timin Photography GmbH</div>
     </div>
-    <div id="footer-left"></div>
-    <div id="footer-middle">
-        <div id="footer-middle-text">
-            <div id="help-text">LEMPINIMI RINNOILLE. <span class="help-text">APUA?</span></div>
-            <div id="typed-text"></div>
-            <div id="end-message" class="animated-text"></div>
-            <div id="restart-message" class="animated-text"></div>
-        </div>
-    </div>
+    <div id="bottom-left"></div>
+    <div id="footer-middle"></div>
     <div id="bottom-right">
         <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer;" id="pink-ribbon">
-        <a href="https://roosanauha.syopasaatio.fi/" target="_blank" class="purple-wave">Roosa nauha Suomessa 2024</a>
+        <a href="https://roosanauha.syopasaatio.fi/" target="_blank" class="pink-wave">Roosa nauha Suomessa 2024</a>
     </div>
 
     <script>
@@ -239,78 +213,54 @@
         const imageBox = document.getElementById('image-box');
         const pinkRibbon = document.getElementById('pink-ribbon');
         const watermarkElement = document.getElementById('watermark');
-        const helpText = document.querySelector('.help-text');
-        const typedText = document.getElementById('typed-text');
-        const endMessage = document.getElementById('end-message');
-        const restartMessage = document.getElementById('restart-message');
+        const images = ["titpics/image1.png", "titpics/image2.png", "titpics/image3.png"]; // Placeholder images
         let helpShown = false;
         let wrongClicks = 0;
+        let timerInterval;
 
-        async function fetchImages() {
-            const response = await fetch('image_map_data.csv');
-            const text = await response.text();
-            const rows = text.split('\n').slice(1); // Skip the header row
-            const images = rows.map(row => {
-                const [name, coords, shape] = row.split(',');
-                return { name: name.trim(), coords: coords.trim(), shape: shape.trim() };
-            });
-            return images.filter(image => image.name); // Remove any empty rows
-        }
-
-        function getRandomElement(arr) {
-            return arr[Math.floor(Math.random() * arr.length)];
-        }
-
-        function applyImageEffect(img, effect) {
-            img.style.transition = 'transform 5s ease-in-out, opacity 5s ease-in-out';
-            if (effect === 'zoomIn') {
-                img.style.animation = 'zoomIn 5s alternate infinite';
-            } else if (effect === 'zoomOut') {
-                img.style.animation = 'zoomOut 5s alternate infinite';
-            } else if (effect === 'moveUp') {
-                img.style.animation = 'moveUp 5s infinite';
-            } else if (effect === 'moveDown') {
-                img.style.animation = 'moveDown 5s infinite';
-            } else if (effect === 'moveLeft') {
-                img.style.animation = 'moveLeft 5s infinite';
-            } else if (effect === 'moveRight') {
-                img.style.animation = 'moveRight 5s infinite';
-            }
-        }
-
-        async function startImageRotation() {
-            const images = await fetchImages();
+        function startImageRotation() {
+            let index = 0;
             setInterval(() => {
-                const { name, coords, shape } = getRandomElement(images);
-                const img = new Image();
-                img.src = `titpics/${name}`;
+                const img = document.createElement('img');
+                img.src = images[index % images.length];
                 img.onload = () => {
-                    const isPortrait = img.naturalWidth < img.naturalHeight;
-                    const isSquare = img.naturalWidth === img.naturalHeight;
-
-                    if (isSquare) {
-                        img.style.width = '300px';
-                        img.style.height = '300px';
-                        applyImageEffect(img, Math.random() > 0.5 ? 'zoomIn' : 'zoomOut');
-                    } else if (isPortrait) {
-                        img.style.width = '300px';
-                        img.style.height = 'auto';
-                        applyImageEffect(img, Math.random() > 0.7 ? 'moveUp' : 'zoomIn');
-                    } else {
-                        img.style.width = 'auto';
-                        img.style.height = '300px';
-                        applyImageEffect(img, Math.random() > 0.7 ? 'moveLeft' : 'zoomIn');
-                    }
                     img.style.opacity = 0;
                     imageBox.innerHTML = '';
                     imageBox.appendChild(img);
-                    setTimeout(() => {
-                        img.style.opacity = 1;
-                    }, 100); // Allow some time for the image to be added to the DOM
+                    const randomEffect = Math.random();
+                    if (randomEffect < 0.25) {
+                        img.style.animation = 'zoomIn 5s forwards';
+                    } else if (randomEffect < 0.5) {
+                        img.style.animation = 'zoomOut 5s forwards';
+                    } else if (randomEffect < 0.75) {
+                        img.style.animation = 'moveUp 5s forwards';
+                    } else {
+                        img.style.animation = 'moveDown 5s forwards';
+                    }
+                    img.style.opacity = 1;
                 };
-                img.onerror = () => {
-                    console.error(`Failed to load image: titpics/${name}`);
-                };
+                index++;
+            }, 5000);
+        }
+
+        // Function to start the timer
+        function startTimer() {
+            let seconds = 0;
+            timerInterval = setInterval(() => {
+                seconds++;
+                let minutes = Math.floor(seconds / 60);
+                let displaySeconds = seconds % 60;
+                document.getElementById('timer').textContent = `${String(minutes).padStart(2, '0')}:${String(displaySeconds).padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // Function to stop the timer and start the blinking animation
+        function stopTimer() {
+            clearInterval(timerInterval);
+            const timerElement = document.getElementById('timer');
+            timerElement.classList.add('blink');
+            setTimeout(() => {
+                timerElement.classList.remove('blink');
             }, 5000);
         }
 
@@ -383,11 +333,11 @@
 
             // Ensure no more than one empty cell
             let emptyCount = 0;
-            grid.forEach(row => row.forEach((cell, index) => {
+            grid.forEach(row => row.forEach(cell => {
                 if (!cell) {
                     emptyCount++;
                     if (emptyCount > 1) {
-                        grid[row][index] = getRandomLetter();
+                        cell = getRandomLetter();
                     }
                 }
             }));
@@ -421,6 +371,9 @@
             firstLetterElement.classList.add('clicked');
             firstLetterElement.dataset.found = true;
             foundLetters++;
+
+            // Start the timer
+            startTimer();
         }
 
         // Function to handle cell click
@@ -437,6 +390,7 @@
                 if (currentIndex + 1 === word.length) {
                     showAnswer(word);
                     animateCorrectAnswer();
+                    stopTimer();
                 }
             } else {
                 cell.classList.add('wrong');
@@ -453,39 +407,27 @@
         // Function to show help message
         function showHelpMessage(word) {
             helpShown = true;
-            const helpText = document.getElementById('help-text');
-            helpText.innerHTML = 'ETSI SEURAAVA KIRJAIN<span class="blink">..</span>';
-            const blinkDots = helpText.querySelector('.blink');
-            const interval = setInterval(() => {
-                blinkDots.style.opacity = blinkDots.style.opacity == 1 ? 0 : 1;
-            }, 500);
-
-            const onGreenClick = (event) => {
-                if (event.target.classList.contains('clicked')) {
-                    helpText.innerHTML = 'LEMPINIMI RINNOILLE. <span class="help-text" style="animation: blink 1s infinite alternate; color: #808080;">APUA?</span>';
-                    clearInterval(interval);
-                    document.removeEventListener('click', onGreenClick);
-                }
-            };
-
-            document.addEventListener('click', onGreenClick);
+            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #32CD32; font-weight: bold;"><a href="#" style="color: inherit; text-decoration: none;">ÄITI EN KEKSI ANNA <span style="animation: blink 1s infinite alternate;">MAITOA</span></a></div>`;
+            answerElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #32CD32; font-weight: bold;">VAUVANI, NE ON ISIN ${word.toUpperCase()}</div>`;
+            });
         }
 
         // Function to show the answer and the corresponding image
         function showAnswer(word) {
-            endMessage.innerHTML = `<b>LEMPIRINTASI OVAT: <span style="color: #A9A9A9;">${word}</span></b>`;
-            endMessage.style.opacity = 1;
-
+            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #32CD32;">LEMPIRINTASI OVAT: ${word}</div>`;
             setTimeout(() => {
-                endMessage.style.opacity = 0;
-                restartMessage.innerHTML = "<b>PELAA UUDELLEEN KLIKKAAMALLA ROOSA-NAUHAA</b>";
-                restartMessage.style.opacity = 1;
-            }, 3500);
-
-            setTimeout(() => {
-                initGame();
-                startImageRotation();
-            }, 6500);
+                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #32CD32;">UUSI PELI ROOSA-NAUHASTA <span class="blink">::</span></div>`;
+            }, 4000); // Show the correct answer for longer duration before changing the message
+            // Add code to display the image in the left box
+            const img = document.createElement('img');
+            img.src = `titpics/${word}.png`;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            imageBox.innerHTML = '';
+            imageBox.appendChild(img);
         }
 
         // Function to animate correct answer
@@ -529,40 +471,6 @@
         }
 
         setInterval(animateWatermark, 10000); // Double the interval for animation
-
-        // Flip the G character in the watermark
-        function flipG() {
-            const watermarkText = watermarkElement.textContent;
-            const newText = watermarkText.split('').map((char, index) => {
-                if (char === 'G') {
-                    return `<span class="flip">${char}</span>`;
-                }
-                return char;
-            }).join('');
-            watermarkElement.innerHTML = newText;
-        }
-
-        setInterval(flipG, 20000); // Flip the G character every 20 seconds
-
-        // Handle help text click
-        helpText.addEventListener('click', () => {
-            typedText.innerHTML = '';
-            const helpMessage = "Ne voivat suunnata ylös, ne voivat suunnata alas, yksin tai kaksin ja joskus piiloon kokonaan. Etsi oma suuntasi ja saat oman lempinimesi rinnoille.";
-            let i = 0;
-
-            const typingInterval = setInterval(() => {
-                if (i < helpMessage.length) {
-                    typedText.textContent += helpMessage.charAt(i);
-                    i++;
-                } else {
-                    clearInterval(typingInterval);
-                    setTimeout(() => {
-                        helpText.innerHTML = 'LEMPINIMI RINNOILLE. <span class="help-text" style="animation: blink 1s infinite alternate; color: #808080;">APUA?</span>';
-                        typedText.innerHTML = '';
-                    }, 2000);
-                }
-            }, 50);
-        });
 
         // Start the game
         initGame();
