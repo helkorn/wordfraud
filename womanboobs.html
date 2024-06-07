@@ -97,10 +97,10 @@
             border-radius: 4px; /* Slightly rounded corners */
         }
         .grid-item.clicked {
-            background-color: #006400; /* DarkGreen */
+            background-color: rgba(255, 20, 147, 0.2); /* Pink */
         }
         .grid-item.wrong {
-            background-color: #8B0000; /* DarkRed */
+            background-color: rgba(255, 255, 255, 0.2); /* White */
         }
         .grid-item span {
             transition: color 0.5s;
@@ -162,15 +162,14 @@
             100% { transform: scale(1.2); }
         }
         @keyframes textChange {
-            0% { color: gray; }
-            50% { color: white; }
-            100% { color: gray; }
+            0% { color: darkgray; }
+            50% { color: #FF69B4; }
+            100% { color: darkgray; }
         }
         .help-text {
             cursor: pointer;
         }
         #woman-boobs-text {
-            color: #006400;
             font-family: 'booboo', Arial, sans-serif;
             font-size: 24px;
             margin-bottom: 20px;
@@ -193,7 +192,7 @@
 <body>
     <div id="top-left"></div>
     <div id="top-center">
-        <div id="woman-boobs-text">W o m a n &nbsp; B o o b s &nbsp; '24</div>
+        <div id="woman-boobs-text"></div>
     </div>
     <div id="top-right"></div>
     <div id="middle-left">
@@ -209,14 +208,14 @@
     <div id="footer-left"></div>
     <div id="footer-middle">
         <div id="footer-middle-text">
-            <div id="help-text" class="animated-text">LEMPINIMI RINNOILLE. <span class="help-text" style="animation: blink 1s infinite alternate; color: #808080;">APUA?</span></div>
+            <div id="help-text" class="animated-text"></div>
             <div id="end-message" class="animated-text"></div>
             <div id="restart-message" class="animated-text"></div>
         </div>
     </div>
     <div id="bottom-right">
-        <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer;" id="pink-ribbon">
-        <a href="https://roosanauha.syopasaatio.fi/" target="_blank" class="pink-wave">Roosa nauha Suomessa 2024</a>
+        <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer; opacity: 0.1;" id="pink-ribbon">
+        <a href="https://roosanauha.syopasaatio.fi/" target="_blank" class="pink-wave" style="animation: textChange 5s infinite alternate;">Roosa nauha Suomessa 2024</a>
     </div>
 
     <script>
@@ -236,7 +235,9 @@
             const response = await fetch('melonit.csv');
             const text = await response.text();
             const words = text.split('\n').map(word => word.trim()).filter(word => word.length > 0);
-            const imagePaths = words.map(word => `titpics/${word}.png`);
+            const bannedWords = ["Bonnie ja Clyde", "Hauskat laukut", "Ismo ja Seppo", "Michelin-manit", "Mikkelin Pimut", "Sanni ja Alma"];
+            const filteredWords = words.filter(word => !bannedWords.includes(word));
+            const imagePaths = filteredWords.map(word => `titpics/${word}.png`);
             return imagePaths.sort(() => Math.random() - 0.5);  // Shuffle the array for random order
         }
 
@@ -300,7 +301,9 @@
             const response = await fetch('melonit.csv');
             const text = await response.text();
             const words = text.split('\n').map(word => word.trim()).filter(word => word.length > 0);
-            return words[Math.floor(Math.random() * words.length)];
+            const bannedWords = ["Bonnie ja Clyde", "Hauskat laukut", "Ismo ja Seppo", "Michelin-manit", "Mikkelin Pimut", "Sanni ja Alma"];
+            const filteredWords = words.filter(word => !bannedWords.includes(word));
+            return filteredWords[Math.floor(Math.random() * filteredWords.length)];
         }
 
         // Function to create the grid with random letters and one word
@@ -415,13 +418,8 @@
             helpShown = true;
             const helpText = document.createElement('div');
             helpText.style = "animation: fadein 1s; font-size: 14px; color: #808080; font-family: 'booboo', Arial, sans-serif; margin-top: 10px;";
-            helpText.innerHTML = `<b>ÄITI EN KEKSI, ANNA <span style="animation: blink 1s infinite alternate; color: #A9A9A9;">MAITOA</span></b>`;
+            helpText.innerHTML = `<b>HELP TEXT PLACEHOLDER</b>`;
             answerElement.appendChild(helpText);
-
-            helpText.addEventListener('click', () => {
-                helpText.innerHTML = `<b>VAUVANI, NE OVAT ISIN <span style="color: #A9A9A9;">${word.toUpperCase()}</span></b>`;
-                setTimeout(initGame, 6000);
-            });
         }
 
         // Function to show the answer and the corresponding image
@@ -540,15 +538,17 @@
         // Animation for WomanBoobs text
         function animateBoobsText() {
             const boobsText = document.getElementById('woman-boobs-text');
-            boobsText.innerHTML = 'W o m a n &nbsp; B o o b s &nbsp; \'24';
+            boobsText.innerHTML = '';
             const bElement = boobsText.querySelector('b');
-            bElement.classList.add('boobs-bounce');
-            setInterval(() => {
+            if (bElement) {
                 bElement.classList.add('boobs-bounce');
-                setTimeout(() => {
-                    bElement.classList.remove('boobs-bounce');
-                }, 1000);
-            }, 15000);
+                setInterval(() => {
+                    bElement.classList.add('boobs-bounce');
+                    setTimeout(() => {
+                        bElement.classList.remove('boobs-bounce');
+                    }, 1000);
+                }, 15000);
+            }
         }
 
         animateBoobsText();
