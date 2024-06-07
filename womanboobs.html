@@ -12,7 +12,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
         }
@@ -23,6 +23,7 @@
             width: 100%;
             max-width: 600px;
             padding: 20px;
+            box-sizing: border-box;
         }
         #image-box {
             width: 100%;
@@ -35,22 +36,29 @@
         }
         #puzzle {
             display: grid;
-            grid-template-columns: repeat(5, 40px);
-            grid-template-rows: repeat(5, 40px);
-            gap: 5px;
+            grid-template-columns: repeat(5, 1fr);
+            grid-gap: 5px;
             margin-bottom: 20px;
+            width: 100%;
+            max-width: 200px;
         }
         .grid-item {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            width: 100%;
+            padding-top: 100%; /* 1:1 Aspect Ratio */
+            position: relative;
             background-color: black;
-            font-size: 20px;
             cursor: pointer;
             transition: background-color 0.5s;
             border-radius: 4px; /* Slightly rounded corners */
+        }
+        .grid-item span {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-transform: uppercase;
+            font-size: 20px;
+            transition: color 0.5s;
         }
         .grid-item.clicked {
             background-color: #FF1493; /* Pink without transparency */
@@ -58,14 +66,11 @@
         .grid-item.wrong {
             background-color: #FF1493; /* Pink without transparency */
         }
-        .grid-item span {
-            transition: color 0.5s;
-            text-transform: uppercase;
-        }
         .animated-text {
             color: #FF69B4; /* Brightened pink color */
             font-family: 'booboo', Arial, sans-serif;
             margin-bottom: 20px;
+            text-align: center;
         }
         .pink-wave {
             font-size: 14px;
@@ -74,6 +79,7 @@
             transition: color 2s;
             opacity: 0.2;
             margin-bottom: 20px;
+            text-align: center;
         }
         .pink-wave.animate {
             animation: colorChange 10s infinite alternate;
@@ -86,6 +92,10 @@
             font-size: 12px;
             color: #808080;
             margin-bottom: 20px;
+            text-align: center;
+        }
+        #footer-middle-text {
+            text-align: center;
         }
     </style>
 </head>
@@ -95,8 +105,10 @@
             <img src="titpics/spessut/WomanBoobs.png" alt="Woman Boobs Image">
             <div id="watermark">© Timin Photography</div>
         </div>
-        <div class="animated-text" id="woman-boobs-text"></div>
-        <div id="puzzle"></div>
+        <div class="animated-text" id="woman-boobs-text">Woman Boobs Text</div>
+        <div id="puzzle">
+            <!-- Puzzle items will be generated here -->
+        </div>
         <div class="pink-wave animate" id="roosa-nauha">
             <a href="https://roosanauha.syopasaatio.fi/" target="_blank">Roosa nauha Suomessa 2024</a>
         </div>
@@ -468,3 +480,4 @@
     </script>
 </body>
 </html>
+
