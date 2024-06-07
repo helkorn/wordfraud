@@ -25,7 +25,7 @@
         #Block4 {
             grid-area: Block4;
             display: flex;
-            justify-content: center;
+            justify-content: flex-end; /* Right align */
             align-items: center;
             border: 1px solid silver;
             width: 300px;
@@ -33,6 +33,7 @@
             overflow: hidden;
             margin-left: auto;
             margin-right: auto;
+            position: relative;
         }
         #image-box {
             position: absolute;
@@ -67,7 +68,7 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            align-items: flex-start;
+            align-items: center;
             padding: 10px;
             position: relative;
         }
@@ -90,10 +91,10 @@
             border-radius: 4px; /* Slightly rounded corners */
         }
         .grid-item.clicked {
-            background-color: rgba(255, 192, 203, 0.5); /* Pink light, slightly transparent */
+            background-color: rgba(255, 105, 180, 0.7); /* Deeper pink, slightly transparent */
         }
         .grid-item.wrong {
-            background-color: rgba(255, 255, 255, 0.5); /* White, slightly transparent */
+            background-color: rgba(255, 255, 255, 0.7); /* Deeper white, slightly transparent */
         }
         .grid-item span {
             transition: color 0.5s;
@@ -159,7 +160,7 @@
     </div>
     <div id="Block6">
         <img src="titpics/spessut/WomanBoobs.png" width="300">
-        <div id="watermark" style="font-size: 12px; padding-top: 5px; color: #808080;">© Timin Photography GmbH</div>
+        <div id="watermark" style="font-size: 12px; padding-top: 5px; color: #A9A9A9;">© Timin Photography GmbH</div>
     </div>
     <div id="Block7"></div>
     <div id="Block8">
@@ -184,6 +185,15 @@
         let timerInterval;
         let wordCoordinates = {};
 
+        const excludedWords = [
+            "Bonnie ja Clyde",
+            "Hauskat laukut",
+            "Ismo ja Seppo",
+            "Michelin-manit",
+            "Mikkelin Pimut",
+            "Sanni ja Alma"
+        ];
+
         async function fetchImages() {
             const response = await fetch('image_map_data.csv');
             const text = await response.text();
@@ -196,33 +206,34 @@
         }
 
         async function startImageRotation() {
-            const images = await fetchImages();
             let index = 0;
             setInterval(() => {
-                const img = document.createElement('img');
-                img.src = images[index % images.length];
-                img.onload = () => {
-                    img.style.width = '300px';
-                    img.style.height = 'auto';
-                    img.style.opacity = 0;
-                    imageBox.innerHTML = '';
-                    imageBox.appendChild(img);
-                    const randomEffect = Math.random();
-                    if (randomEffect < 0.25) {
-                        img.style.animation = 'zoomIn 5s forwards';
-                    } else if (randomEffect < 0.5) {
-                        img.style.animation = 'zoomOut 5s forwards';
-                    } else if (randomEffect < 0.75) {
-                        img.style.animation = 'moveUp 5s forwards';
-                    } else {
-                        img.style.animation = 'moveDown 5s forwards';
-                    }
-                    img.style.opacity = 1;
-                };
-                img.onerror = () => {
-                    console.error(`Failed to load image: ${img.src}`);
-                };
-                index++;
+                if (images.length > 0) {
+                    const img = document.createElement('img');
+                    img.src = images[index % images.length];
+                    img.onload = () => {
+                        img.style.width = '300px';
+                        img.style.height = 'auto';
+                        img.style.opacity = 0;
+                        imageBox.innerHTML = '';
+                        imageBox.appendChild(img);
+                        const randomEffect = Math.random();
+                        if (randomEffect < 0.25) {
+                            img.style.animation = 'zoomIn 5s forwards';
+                        } else if (randomEffect < 0.5) {
+                            img.style.animation = 'zoomOut 5s forwards';
+                        } else if (randomEffect < 0.75) {
+                            img.style.animation = 'moveUp 5s forwards';
+                        } else {
+                            img.style.animation = 'moveDown 5s forwards';
+                        }
+                        img.style.opacity = 1;
+                    };
+                    img.onerror = () => {
+                        console.error(`Failed to load image: ${img.src}`);
+                    };
+                    index++;
+                }
             }, 5000);
         }
 
@@ -251,7 +262,9 @@
         async function fetchWord() {
             const response = await fetch('melonit.csv');
             const text = await response.text();
-            const words = text.split('\n').map(word => word.trim()).filter(word => word.length > 0);
+            const words = text.split('\n')
+                .map(word => word.trim())
+                .filter(word => word.length > 0 && !excludedWords.includes(word) && word.indexOf(' ') === -1);
             return words[Math.floor(Math.random() * words.length)];
         }
 
@@ -461,4 +474,3 @@
     </script>
 </body>
 </html>
-
