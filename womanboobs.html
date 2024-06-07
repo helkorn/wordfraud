@@ -34,7 +34,6 @@
             overflow: hidden;
             margin-left: auto;
             margin-right: auto;
-            margin-top: 10px;
         }
         #image-box {
             position: absolute;
@@ -46,7 +45,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
         }
         #right {
             grid-area: middle-right;
@@ -54,10 +52,6 @@
             flex-direction: column;
             justify-content: center;
             align-items: flex-start;
-            position: relative;
-        }
-        #right img {
-            border: 1px solid silver;
         }
         #footer-left { grid-area: bottom-left; }
         #footer-middle {
@@ -98,22 +92,21 @@
             background-color: black;
             font-size: 20px;
             cursor: pointer;
-            transition: background-color 0.5s, transform 0.1s;
+            transition: background-color 0.5s;
             border-radius: 4px; /* Slightly rounded corners */
         }
         .grid-item.clicked {
-            background-color: rgba(255, 182, 193, 0.7); /* LightPink with some transparency */
+            background-color: #006400; /* DarkGreen */
         }
         .grid-item.wrong {
-            background-color: rgba(255, 255, 255, 0.5); /* White with some transparency */
-            animation: shake 0.1s;
+            background-color: #8B0000; /* DarkRed */
         }
         .grid-item span {
             transition: color 0.5s;
             text-transform: uppercase;
         }
         .blink {
-            animation: blink 2s infinite;
+            animation: blink 1s infinite;
             font-weight: bold;
         }
         @keyframes blink {
@@ -128,80 +121,32 @@
             color: gray;
             font-family: 'booboo', Arial, sans-serif;
         }
-        .purple-wave {
-            animation: purpleWave 10s infinite alternate;
+        .pink-wave {
+            animation: pinkWave 5s infinite alternate;
             font-size: 14px;
             color: gray;
             text-decoration: none;
         }
-        @keyframes purpleWave {
-            0% { color: #808080; }
-            20% { color: #800080; }
-            40% { color: #808080; }
-            60% { color: #FF69B4; }
-            80% { color: #808080; }
-            100% { color: #800080; }
+        @keyframes pinkWave {
+            0% { color: #FF69B4; }
+            30% { color: gray; }
+            100% { color: #FF69B4; }
         }
         @keyframes moveUp {
-            0% { transform: translateY(50%); }
-            25% { transform: translateY(0); }
-            75% { transform: translateY(0); }
-            100% { transform: translateY(50%); }
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-100%); }
         }
         @keyframes moveDown {
-            0% { transform: translateY(-50%); }
-            25% { transform: translateY(0); }
-            75% { transform: translateY(0); }
-            100% { transform: translateY(-50%); }
-        }
-        @keyframes moveLeft {
-            0% { transform: translateX(50%); }
-            25% { transform: translateX(0); }
-            75% { transform: translateX(0); }
-            100% { transform: translateX(50%); }
-        }
-        @keyframes moveRight {
-            0% { transform: translateX(-50%); }
-            25% { transform: translateX(0); }
-            75% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        @keyframes zoomIn {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.2); }
-        }
-        @keyframes zoomOut {
-            0% { transform: scale(1.2); }
-            100% { transform: scale(1); }
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100%); }
         }
         @keyframes textChange {
             0% { color: gray; }
             50% { color: white; }
             100% { color: gray; }
         }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-2px); }
-            50% { transform: translateX(2px); }
-            75% { transform: translateX(-2px); }
-        }
-        @keyframes flip {
-            0%, 100% { transform: rotateX(0); }
-            50% { transform: rotateX(180deg); }
-        }
         .help-text {
             cursor: pointer;
-            animation: blink 1s infinite alternate;
-        }
-        #help-text {
-            color: #808080;
-            font-family: 'booboo', Arial, sans-serif;
-        }
-        #typed-text {
-            font-family: 'fontTW', Arial, sans-serif;
-            font-size: 14px;
-            white-space: pre-wrap;
-            color: white;
         }
     </style>
 </head>
@@ -222,15 +167,14 @@
     <div id="footer-left"></div>
     <div id="footer-middle">
         <div id="footer-middle-text">
-            <div id="help-text">LEMPINIMI RINNOILLE. <span class="help-text">APUA?</span></div>
-            <div id="typed-text"></div>
+            <div id="help-text" class="animated-text">LEMPINIMI RINNOILLE. <span class="help-text" style="animation: blink 1s infinite alternate; color: #808080;">APUA?</span></div>
             <div id="end-message" class="animated-text"></div>
             <div id="restart-message" class="animated-text"></div>
         </div>
     </div>
     <div id="bottom-right">
         <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer;" id="pink-ribbon">
-        <a href="https://roosanauha.syopasaatio.fi/" target="_blank" class="purple-wave">Roosa nauha Suomessa 2024</a>
+        <a href="https://roosanauha.syopasaatio.fi/" target="_blank" class="pink-wave">Roosa nauha Suomessa 2024</a>
     </div>
 
     <script>
@@ -239,78 +183,44 @@
         const imageBox = document.getElementById('image-box');
         const pinkRibbon = document.getElementById('pink-ribbon');
         const watermarkElement = document.getElementById('watermark');
-        const helpText = document.querySelector('.help-text');
-        const typedText = document.getElementById('typed-text');
+        const helpText = document.getElementById('help-text');
         const endMessage = document.getElementById('end-message');
         const restartMessage = document.getElementById('restart-message');
         let helpShown = false;
         let wrongClicks = 0;
 
         async function fetchImages() {
-            const response = await fetch('image_map_data.csv');
+            const response = await fetch('melonit.csv');
             const text = await response.text();
-            const rows = text.split('\n').slice(1); // Skip the header row
-            const images = rows.map(row => {
-                const [name, coords, shape] = row.split(',');
-                return { name: name.trim(), coords: coords.trim(), shape: shape.trim() };
-            });
-            return images.filter(image => image.name); // Remove any empty rows
-        }
-
-        function getRandomElement(arr) {
-            return arr[Math.floor(Math.random() * arr.length)];
-        }
-
-        function applyImageEffect(img, effect) {
-            img.style.transition = 'transform 5s ease-in-out, opacity 5s ease-in-out';
-            if (effect === 'zoomIn') {
-                img.style.animation = 'zoomIn 5s alternate infinite';
-            } else if (effect === 'zoomOut') {
-                img.style.animation = 'zoomOut 5s alternate infinite';
-            } else if (effect === 'moveUp') {
-                img.style.animation = 'moveUp 5s infinite';
-            } else if (effect === 'moveDown') {
-                img.style.animation = 'moveDown 5s infinite';
-            } else if (effect === 'moveLeft') {
-                img.style.animation = 'moveLeft 5s infinite';
-            } else if (effect === 'moveRight') {
-                img.style.animation = 'moveRight 5s infinite';
-            }
+            const words = text.split('\n').map(word => word.trim()).filter(word => word.length > 0);
+            return words.map(word => `titpics/${word}.png`);
         }
 
         async function startImageRotation() {
             const images = await fetchImages();
+            let index = 0;
             setInterval(() => {
-                const { name, coords, shape } = getRandomElement(images);
                 const img = new Image();
-                img.src = `titpics/${name}`;
+                img.src = images[index % images.length];
                 img.onload = () => {
-                    const isPortrait = img.naturalWidth < img.naturalHeight;
-                    const isSquare = img.naturalWidth === img.naturalHeight;
-
-                    if (isSquare) {
-                        img.style.width = '300px';
+                    img.style.width = '300px';
+                    img.style.height = 'auto';
+                    if (img.naturalWidth < img.naturalHeight) {
                         img.style.height = '300px';
-                        applyImageEffect(img, Math.random() > 0.5 ? 'zoomIn' : 'zoomOut');
-                    } else if (isPortrait) {
-                        img.style.width = '300px';
-                        img.style.height = 'auto';
-                        applyImageEffect(img, Math.random() > 0.7 ? 'moveUp' : 'zoomIn');
-                    } else {
                         img.style.width = 'auto';
-                        img.style.height = '300px';
-                        applyImageEffect(img, Math.random() > 0.7 ? 'moveLeft' : 'zoomIn');
                     }
                     img.style.opacity = 0;
                     imageBox.innerHTML = '';
                     imageBox.appendChild(img);
-                    setTimeout(() => {
-                        img.style.opacity = 1;
-                    }, 100); // Allow some time for the image to be added to the DOM
+                    const randomEffect = Math.random();
+                    if (randomEffect < 0.5) {
+                        img.style.animation = 'moveUp 10s forwards';
+                    } else {
+                        img.style.animation = 'moveDown 10s forwards';
+                    }
+                    img.style.opacity = 1;
                 };
-                img.onerror = () => {
-                    console.error(`Failed to load image: titpics/${name}`);
-                };
+                index++;
             }, 5000);
         }
 
@@ -453,22 +363,15 @@
         // Function to show help message
         function showHelpMessage(word) {
             helpShown = true;
-            const helpText = document.getElementById('help-text');
-            helpText.innerHTML = 'ETSI SEURAAVA KIRJAIN<span class="blink">..</span>';
-            const blinkDots = helpText.querySelector('.blink');
-            const interval = setInterval(() => {
-                blinkDots.style.opacity = blinkDots.style.opacity == 1 ? 0 : 1;
-            }, 500);
+            const helpText = document.createElement('div');
+            helpText.style = "animation: fadein 1s; font-size: 14px; color: #808080; font-family: 'booboo', Arial, sans-serif; margin-top: 10px;";
+            helpText.innerHTML = `<b>ÄITI EN KEKSI, ANNA <span style="animation: blink 1s infinite alternate; color: #A9A9A9;">MAITOA</span></b>`;
+            answerElement.appendChild(helpText);
 
-            const onGreenClick = (event) => {
-                if (event.target.classList.contains('clicked')) {
-                    helpText.innerHTML = 'LEMPINIMI RINNOILLE. <span class="help-text" style="animation: blink 1s infinite alternate; color: #808080;">APUA?</span>';
-                    clearInterval(interval);
-                    document.removeEventListener('click', onGreenClick);
-                }
-            };
-
-            document.addEventListener('click', onGreenClick);
+            helpText.addEventListener('click', () => {
+                helpText.innerHTML = `<b>VAUVANI, NE OVAT ISIN <span style="color: #A9A9A9;">${word.toUpperCase()}</span></b>`;
+                setTimeout(initGame, 3000);
+            });
         }
 
         // Function to show the answer and the corresponding image
@@ -482,10 +385,30 @@
                 restartMessage.style.opacity = 1;
             }, 3500);
 
-            setTimeout(() => {
-                initGame();
-                startImageRotation();
-            }, 6500);
+            setInterval(() => {
+                if (endMessage.style.opacity == 1) {
+                    endMessage.style.opacity = 0;
+                    restartMessage.style.opacity = 1;
+                } else {
+                    endMessage.style.opacity = 1;
+                    restartMessage.style.opacity = 0;
+                }
+            }, 7000); // 3.5 seconds for each message
+
+            // Display the image
+            const img = new Image();
+            img.src = `titpics/${word}.png`;
+            img.onload = () => {
+                img.style.width = '300px';
+                img.style.height = 'auto';
+                if (img.naturalWidth < img.naturalHeight) {
+                    img.style.height = '300px';
+                    img.style.width = 'auto';
+                }
+                img.style.objectFit = 'cover';
+                imageBox.innerHTML = '';
+                imageBox.appendChild(img);
+            };
         }
 
         // Function to animate correct answer
@@ -530,38 +453,23 @@
 
         setInterval(animateWatermark, 10000); // Double the interval for animation
 
-        // Flip the G character in the watermark
-        function flipG() {
-            const watermarkText = watermarkElement.textContent;
-            const newText = watermarkText.split('').map((char, index) => {
-                if (char === 'G') {
-                    return `<span class="flip">${char}</span>`;
-                }
-                return char;
-            }).join('');
-            watermarkElement.innerHTML = newText;
-        }
-
-        setInterval(flipG, 20000); // Flip the G character every 20 seconds
-
         // Handle help text click
         helpText.addEventListener('click', () => {
-            typedText.innerHTML = '';
-            const helpMessage = "Ne voivat suunnata ylös, ne voivat suunnata alas, yksin tai kaksin ja joskus piiloon kokonaan. Etsi oma suuntasi ja saat oman lempinimesi rinnoille.";
-            let i = 0;
+            helpText.innerHTML = 'ETSI SEURAAVA KIRJAIN<span class="blink">..</span>';
+            const blinkDots = helpText.querySelector('.blink');
+            const interval = setInterval(() => {
+                blinkDots.style.opacity = blinkDots.style.opacity == 1 ? 0 : 1;
+            }, 500);
 
-            const typingInterval = setInterval(() => {
-                if (i < helpMessage.length) {
-                    typedText.textContent += helpMessage.charAt(i);
-                    i++;
-                } else {
-                    clearInterval(typingInterval);
-                    setTimeout(() => {
-                        helpText.innerHTML = 'LEMPINIMI RINNOILLE. <span class="help-text" style="animation: blink 1s infinite alternate; color: #808080;">APUA?</span>';
-                        typedText.innerHTML = '';
-                    }, 2000);
+            const onGreenClick = (event) => {
+                if (event.target.classList.contains('clicked')) {
+                    helpText.innerHTML = 'LEMPINIMI RINNOILLE. <span class="help-text" style="animation: blink 1s infinite alternate; color: #808080;">APUA?</span>';
+                    clearInterval(interval);
+                    document.removeEventListener('click', onGreenClick);
                 }
-            }, 50);
+            };
+
+            document.addEventListener('click', onGreenClick);
         });
 
         // Start the game
