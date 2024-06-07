@@ -28,11 +28,19 @@
         #image-box {
             width: 100%;
             max-width: 300px;
-            margin-bottom: 20px;
+            margin-bottom: 5px;
+            position: relative;
         }
         #image-box img {
             width: 100%;
             height: auto;
+        }
+        #watermark {
+            font-size: 12px;
+            color: #808080;
+            margin-bottom: 20px;
+            text-align: left;
+            width: 100%;
         }
         #puzzle {
             display: grid;
@@ -88,12 +96,6 @@
             0% { color: gray; }
             100% { color: #FF69B4; } /* Harmaan ja pinkin väli */
         }
-        #watermark {
-            font-size: 12px;
-            color: #808080;
-            margin-bottom: 20px;
-            text-align: center;
-        }
         #footer-middle-text {
             text-align: center;
         }
@@ -103,7 +105,7 @@
     <div class="container">
         <div id="image-box">
             <img src="titpics/spessut/WomanBoobs.png" alt="Woman Boobs Image">
-            <div id="watermark">© Timin Photography</div>
+            <div id="watermark">© Timi Photography</div>
         </div>
         <div class="animated-text" id="woman-boobs-text">Woman Boobs Text</div>
         <div id="puzzle">
