@@ -43,11 +43,11 @@
         }
         #puzzle {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(6, 1fr);
             grid-gap: 5px;
             margin-bottom: 20px;
             width: 100%;
-            max-width: 200px;
+            max-width: 300px;
         }
         .grid-item {
             width: 100%;
@@ -84,7 +84,7 @@
             color: #FF69B4; /* Brightened pink color */
             text-decoration: none;
             transition: color 2s;
-            opacity: 0.2;
+            opacity: 0.8;
             margin-bottom: 20px;
             text-align: center;
         }
@@ -98,22 +98,37 @@
         #footer-middle-text {
             text-align: center;
         }
+        #kuvaruletti {
+            width: 300px;
+            height: 300px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        #kuvaruletti img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+        }
+        #roosa-nauha-section {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+        #roosa-nauha-section img {
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
-    <!-- Roosa nauha osio -->
-    <div class="container" id="roosa-nauha-section">
+    <!-- WomanBoobs osio -->
+    <div class="container" id="womanboobs-section">
         <div id="image-box">
             <img src="titpics/spessut/WomanBoobs.png" alt="Woman Boobs Image">
             <div id="watermark">© Timi Photography</div>
         </div>
         <div class="animated-text" id="woman-boobs-text">Tissit mainittu.</div>
-        <div id="roosa-nauha-image-box">
-            <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer;" id="pink-ribbon">
-        </div>
-        <div class="pink-wave animate" id="roosa-nauha">
-            <a href="https://roosanauha.syopasaatio.fi/" target="_blank">Roosa nauha Suomessa 2024</a>
-        </div>
     </div>
 
     <!-- Sanapeli osio -->
@@ -130,12 +145,15 @@
         </div>
     </div>
 
+    <!-- Roosa nauha osio -->
+    <div class="container" id="roosa-nauha-section">
+        <img src="titpics/spessut/Pink_ribbon.svg" height="50" alt="Roosa nauha logo">
+        <a href="https://roosanauha.syopasaatio.fi/" target="_blank" class="pink-wave animate">Roosa nauha Suomessa 2024</a>
+    </div>
+
     <script>
         // Roosa nauha osio
-        const imageBox = document.getElementById('image-box');
-        const pinkRibbon = document.getElementById('pink-ribbon');
         const roosaNauhaText = document.getElementById('roosa-nauha');
-
         roosaNauhaText.classList.add('animate');
 
         // Sanapeli osio
@@ -156,15 +174,15 @@
             const word = (await fetchWord()).toUpperCase();
 
             let grid = [];
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < 6; i++) {
                 grid[i] = [];
-                for (let j = 0; j < 5; j++) {
+                for (let j = 0; j < 6; j++) {
                     grid[i][j] = getRandomLetter();
                 }
             }
 
-            let startX = Math.floor(Math.random() * 5);
-            let startY = Math.floor(Math.random() * 5);
+            let startX = Math.floor(Math.random() * 6);
+            let startY = Math.floor(Math.random() * 6);
 
             let positions = [{ x: startX, y: startY }];
             grid[startY][startX] = word.charAt(0);
@@ -175,7 +193,7 @@
                 let possibleDirections = directions.filter(dir => {
                     let newX = lastPos.x + dir[0];
                     let newY = lastPos.y + dir[1];
-                    return newX >= 0 && newX < 5 && newY >= 0 && newY < 5 && !positions.some(pos => pos.x === newX && pos.y === newY);
+                    return newX >= 0 && newX < 6 && newY >= 0 && newY < 6 && !positions.some(pos => pos.x === newX && pos.y === newY);
                 });
 
                 if (possibleDirections.length === 0) break;
@@ -304,8 +322,9 @@
                     img.style.animation = 'moveLeft 5s forwards';
                 }
                 img.style.opacity = 0;
-                imageBox.innerHTML = '';
-                imageBox.appendChild(img);
+                const kuvaruletti = document.getElementById('kuvaruletti');
+                kuvaruletti.innerHTML = '';
+                kuvaruletti.appendChild(img);
                 img.style.opacity = 1;
             };
         }
@@ -396,3 +415,4 @@
     </script>
 </body>
 </html>
+
