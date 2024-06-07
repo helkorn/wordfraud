@@ -20,25 +20,7 @@
             font-family: Arial, sans-serif;
         }
         #top-left { grid-area: top-left; }
-        #top-center {
-            grid-area: top-center;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            padding-bottom: 10px;
-            position: relative;
-        }
-        #top-center .animated-text {
-            font-family: 'Booboo', Arial, sans-serif;
-            color: #32CD32; /* Brightened Dark Green */
-            font-size: 16px;
-        }
-        #top-center #timer {
-            font-family: 'Timer', monospace;
-            color: #32CD32; /* Brightened Dark Green */
-            font-size: 16px;
-            margin-left: 10px;
-        }
+        #top-center { grid-area: top-center; }
         #top-right { grid-area: top-right; }
         #middle-left {
             grid-area: middle-left;
@@ -75,14 +57,11 @@
         #footer-middle {
             grid-area: bottom-center;
             display: flex;
+            flex-direction: column;
             justify-content: center;
-            align-items: flex-start;
+            align-items: center;
             padding-top: 10px;
             height: 100%;
-        }
-        #footer-middle div {
-            text-align: center;
-            margin-top: -30px;
         }
         #footer-right {
             grid-area: bottom-right;
@@ -134,25 +113,19 @@
             }
         }
         .animated-text {
-            color: #32CD32; /* Brightened Dark Green */
-            font-family: 'Booboo', Arial, sans-serif;
+            color: gray;
+            font-family: 'booboo', Arial, sans-serif;
         }
-        #hover-icon {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            z-index: 10;
-            animation: hoverMove 3s infinite;
+        .pink-wave {
+            animation: pinkWave 5s infinite alternate;
+            font-size: 14px;
+            color: gray;
+            text-decoration: none;
         }
-        @keyframes hoverMove {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(10px); }
-            50% { transform: translateY(10px); }
-            75% { transform: translateX(-10px); }
-            100% { transform: translateY(-10px); }
-        }
-        #hover-icon.faded {
-            opacity: 0.5;
+        @keyframes pinkWave {
+            0% { color: #FF69B4; }
+            50% { color: gray; }
+            100% { color: #FF69B4; }
         }
         @keyframes zoomIn {
             0% { transform: scale(1); }
@@ -170,25 +143,11 @@
             0% { transform: translateY(0); }
             100% { transform: translateY(100%); }
         }
-        @keyframes pinkWave {
-            0% { color: #FF69B4; }
-            50% { color: gray; }
-            100% { color: #FF69B4; }
-        }
-        .pink-wave {
-            animation: pinkWave 5s infinite alternate;
-            font-size: 14px;
-            color: gray;
-            text-decoration: none;
-        }
     </style>
 </head>
 <body>
     <div id="top-left"></div>
-    <div id="top-center">
-        <div id="timer-text" class="animated-text">LÖYDÄ LEMPIRINTASI</div>
-        <div id="timer" class="animated-text">00:00</div>
-    </div>
+    <div id="top-center"></div>
     <div id="top-right"></div>
     <div id="middle-left">
         <div id="image-box"></div>
@@ -198,10 +157,13 @@
     </div>
     <div id="right">
         <img src="titpics/spessut/WomanBoobs.png" width="300">
-        <div id="watermark" style="font-size: 12px; padding-top: 5px; color: gray;">© Timin Photography GmbH</div>
+        <div id="watermark" style="font-size: 12px; padding-top: 5px; color: #808080;">© Timin Photography GmbH</div>
     </div>
-    <div id="bottom-left"></div>
-    <div id="footer-middle"></div>
+    <div id="footer-left"></div>
+    <div id="footer-middle">
+        <div id="end-message" class="animated-text"></div>
+        <div id="restart-message" class="animated-text"></div>
+    </div>
     <div id="bottom-right">
         <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer;" id="pink-ribbon">
         <a href="https://roosanauha.syopasaatio.fi/" target="_blank" class="pink-wave">Roosa nauha Suomessa 2024</a>
@@ -240,27 +202,6 @@
                     img.style.opacity = 1;
                 };
                 index++;
-            }, 5000);
-        }
-
-        // Function to start the timer
-        function startTimer() {
-            let seconds = 0;
-            timerInterval = setInterval(() => {
-                seconds++;
-                let minutes = Math.floor(seconds / 60);
-                let displaySeconds = seconds % 60;
-                document.getElementById('timer').textContent = `${String(minutes).padStart(2, '0')}:${String(displaySeconds).padStart(2, '0')}`;
-            }, 1000);
-        }
-
-        // Function to stop the timer and start the blinking animation
-        function stopTimer() {
-            clearInterval(timerInterval);
-            const timerElement = document.getElementById('timer');
-            timerElement.classList.add('blink');
-            setTimeout(() => {
-                timerElement.classList.remove('blink');
             }, 5000);
         }
 
@@ -371,9 +312,6 @@
             firstLetterElement.classList.add('clicked');
             firstLetterElement.dataset.found = true;
             foundLetters++;
-
-            // Start the timer
-            startTimer();
         }
 
         // Function to handle cell click
@@ -390,7 +328,6 @@
                 if (currentIndex + 1 === word.length) {
                     showAnswer(word);
                     animateCorrectAnswer();
-                    stopTimer();
                 }
             } else {
                 cell.classList.add('wrong');
@@ -407,20 +344,40 @@
         // Function to show help message
         function showHelpMessage(word) {
             helpShown = true;
-            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #32CD32; font-weight: bold;"><a href="#" style="color: inherit; text-decoration: none;">ÄITI EN KEKSI ANNA <span style="animation: blink 1s infinite alternate;">MAITOA</span></a></div>`;
+            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #808080; font-family: 'booboo', Arial, sans-serif;">ÄITI EN KEKSI, ANNA <span style="animation: blink 1s infinite alternate; color: #A9A9A9;">MAITOA</span></div>`;
             answerElement.addEventListener('click', (e) => {
                 e.preventDefault();
-                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #32CD32; font-weight: bold;">VAUVANI, NE ON ISIN ${word.toUpperCase()}</div>`;
+                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #808080; font-family: 'booboo', Arial, sans-serif;">VAUVANI, NE OVAT ISIN ${word.toUpperCase()}</div>`;
             });
         }
 
         // Function to show the answer and the corresponding image
         function showAnswer(word) {
-            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #32CD32;">LEMPIRINTASI OVAT: ${word}</div>`;
+            const endMessage = document.getElementById('end-message');
+            const restartMessage = document.getElementById('restart-message');
+
+            endMessage.textContent = `LEMPIRINTASI OVAT: ${word}`;
             setTimeout(() => {
-                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #32CD32;">UUSI PELI ROOSA-NAUHASTA <span class="blink">::</span></div>`;
-            }, 4000); // Show the correct answer for longer duration before changing the message
-            // Add code to display the image in the left box
+                endMessage.style.opacity = 1;
+            }, 500);
+
+            setTimeout(() => {
+                endMessage.style.opacity = 0;
+                restartMessage.textContent = "PELAA UUDELLEEN KLIKKAAMALLA ROOSA-NAUHAA";
+                restartMessage.style.opacity = 1;
+            }, 3500);
+
+            setInterval(() => {
+                if (endMessage.style.opacity == 1) {
+                    endMessage.style.opacity = 0;
+                    restartMessage.style.opacity = 1;
+                } else {
+                    endMessage.style.opacity = 1;
+                    restartMessage.style.opacity = 0;
+                }
+            }, 7000); // 3.5 seconds for each message
+
+            // Display the image
             const img = document.createElement('img');
             img.src = `titpics/${word}.png`;
             img.style.width = '100%';
@@ -478,3 +435,4 @@
     </script>
 </body>
 </html>
+
