@@ -25,18 +25,16 @@
         #Block4 {
             grid-area: Block4;
             display: flex;
-            justify-content: flex-end; /* Move the box to the right */
+            justify-content: flex-end;
             align-items: center;
             position: relative;
-            border: 1px solid silver;
-            width: 300px;
-            height: 300px;
             overflow: hidden;
         }
         #image-box {
-            position: absolute;
-            width: 100%;
-            height: 100%;
+            position: relative;
+            width: 300px;
+            height: 300px;
+            border: 1px solid silver;
         }
         #Block5 {
             grid-area: Block5;
@@ -65,7 +63,7 @@
             grid-area: Block9;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
+            justify-content: flex-end;
             align-items: flex-start;
             padding: 10px;
             position: relative;
@@ -89,10 +87,10 @@
             border-radius: 4px; /* Slightly rounded corners */
         }
         .grid-item.clicked {
-            background-color: #006400; /* DarkGreen */
+            background-color: rgba(255, 192, 203, 0.5); /* Pink light, slightly transparent */
         }
         .grid-item.wrong {
-            background-color: #8B0000; /* DarkRed */
+            background-color: rgba(255, 255, 255, 0.5); /* White, slightly transparent */
         }
         .grid-item span {
             transition: color 0.5s;
@@ -116,10 +114,14 @@
         }
         .roosa-text {
             font-size: 14px;
-            color: #d08090; /* Midway between gray and pink */
+            animation: colorChange 5s infinite alternate;
             text-decoration: none;
             margin-top: 10px;
             margin-left: 10px;
+        }
+        @keyframes colorChange {
+            0% { color: rgba(255, 192, 203, 0.5); } /* Pink light */
+            100% { color: gray; }
         }
         @keyframes zoomIn {
             0% { transform: scale(1); }
@@ -136,6 +138,10 @@
         @keyframes moveDown {
             0% { transform: translateY(0); }
             100% { transform: translateY(100%); }
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
         }
     </style>
 </head>
@@ -159,8 +165,8 @@
         <div id="restart-message" class="animated-text"></div>
     </div>
     <div id="Block9">
-        <div style="display: flex; align-items: flex-start;">
-            <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer;" id="pink-ribbon">
+        <div style="display: flex; align-items: flex-start; margin-bottom: 10px;">
+            <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer; opacity: 0.3;" id="pink-ribbon">
             <a href="https://roosanauha.syopasaatio.fi/" target="_blank" class="roosa-text">Roosa nauha Suomessa 2024</a>
         </div>
     </div>
@@ -174,11 +180,17 @@
         let images = []; // Placeholder for image sources
         let wrongClicks = 0;
         let timerInterval;
+        let wordCoordinates = {};
 
         async function fetchImages() {
             const response = await fetch('image_map_data.csv');
             const text = await response.text();
-            images = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+            const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+            images = lines.map(line => line.split(',')[0]);
+            lines.forEach(line => {
+                const [image, x, y] = line.split(',');
+                wordCoordinates[image.split('/').pop().split('.')[0].toUpperCase()] = { x: parseFloat(x), y: parseFloat(y) };
+            });
         }
 
         function startImageRotation() {
@@ -329,8 +341,7 @@
             if (letter === word[currentIndex].toUpperCase()) {
                 cell.classList.add('clicked');
                 if (currentIndex + 1 === word.length) {
-                    showAnswer(word);
-                    animateCorrectAnswer();
+                    endGame(word);
                 }
             } else {
                 cell.classList.add('wrong');
@@ -341,51 +352,48 @@
             }
         }
 
-        // Function to show the answer and the corresponding image
-        function showAnswer(word) {
+        function endGame(word) {
+            // End game logic for Block5: Blink and fade out
+            const pinkCells = [...gridElement.children].filter(cell => cell.classList.contains('clicked'));
+            pinkCells.forEach(cell => {
+                cell.style.animation = 'blink 0.5s alternate 6, fadeOut 3s forwards';
+            });
+
+            // End game logic for Block8: Show and alternate messages
             const endMessage = document.getElementById('end-message');
             const restartMessage = document.getElementById('restart-message');
+            let showMessage1 = true;
 
-            endMessage.innerHTML = `LEMPIRINTASI OVAT: <span style="color: #A9A9A9;">${word}</span>`;
-            endMessage.style.opacity = 1;
-
-            setTimeout(() => {
-                endMessage.style.opacity = 0;
-                restartMessage.innerHTML = "PELAA UUDELLEEN KLIKKAAMALLA ROOSA-NAUHAA";
-                restartMessage.style.opacity = 1;
-            }, 3500);
-
-            setInterval(() => {
-                if (endMessage.style.opacity == 1) {
-                    endMessage.style.opacity = 0;
-                    restartMessage.style.opacity = 1;
+            const updateMessages = () => {
+                if (showMessage1) {
+                    endMessage.innerHTML = `LEMPIRINTASI OVAT: <span style="color: #A9A9A9;">${word}</span>`;
+                    restartMessage.innerHTML = "";
                 } else {
-                    endMessage.style.opacity = 1;
-                    restartMessage.style.opacity = 0;
+                    endMessage.innerHTML = "";
+                    restartMessage.innerHTML = "UUSI PELI KLIKKAAMALLA ROOSA-NAUHAA";
                 }
-            }, 7000); // 3.5 seconds for each message
+                showMessage1 = !showMessage1;
+            };
+            updateMessages();
+            const messageInterval = setInterval(updateMessages, 2000);
 
-            // Display the image
+            // End game logic for Block4: Show corresponding image
             const img = document.createElement('img');
             img.src = `titpics/${word}.png`;
+            img.style.position = 'absolute';
             img.style.width = '100%';
             img.style.height = '100%';
             img.style.objectFit = 'cover';
+            img.style.animation = 'zoomIn 5s forwards';
             imageBox.innerHTML = '';
             imageBox.appendChild(img);
-        }
 
-        // Function to animate correct answer
-        function animateCorrectAnswer() {
-            const clickedCells = [...gridElement.children].filter(cell => cell.classList.contains('clicked'));
-            clickedCells.forEach(cell => {
-                cell.style.animation = 'flash 0.5s alternate 3';
-            });
             setTimeout(() => {
-                clickedCells.forEach(cell => {
-                    cell.style.animation = '';
-                });
-            }, 1500);
+                clearInterval(messageInterval);
+                endMessage.innerHTML = "";
+                restartMessage.innerHTML = "";
+                startImageRotation();
+            }, 5000);
         }
 
         // Add event listener to the Pink Ribbon image
@@ -425,3 +433,4 @@
     </script>
 </body>
 </html>
+
