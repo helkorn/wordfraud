@@ -27,7 +27,7 @@
         #image-box {
             width: 100%;
             max-width: 300px;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
             position: relative;
         }
         #image-box img {
@@ -39,6 +39,7 @@
             color: #808080;
             text-align: left;
             width: 100%;
+            margin-bottom: 10px;
         }
         #puzzle {
             display: grid;
@@ -107,10 +108,12 @@
             <div id="watermark">© Timi Photography</div>
         </div>
         <div class="animated-text" id="woman-boobs-text">Tissit mainittu.</div>
+        <div id="roosa-nauha-image-box">
+            <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer;" id="pink-ribbon">
+        </div>
         <div class="pink-wave animate" id="roosa-nauha">
             <a href="https://roosanauha.syopasaatio.fi/" target="_blank">Roosa nauha Suomessa 2024</a>
         </div>
-        <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer; opacity: 0.05;" id="pink-ribbon">
     </div>
 
     <!-- Sanapeli osio -->
@@ -122,7 +125,9 @@
 
     <!-- Kuvaruletti osio -->
     <div class="container" id="kuvaruletti-section">
-        <!-- Kuvaruletti will be implemented here -->
+        <div id="kuvaruletti">
+            <!-- Kuvaruletti will be implemented here -->
+        </div>
     </div>
 
     <script>
@@ -377,8 +382,9 @@
                         img.style.animation = 'moveLeft 5s forwards';
                     }
                     img.style.opacity = 0;
-                    imageBox.innerHTML = '';
-                    imageBox.appendChild(img);
+                    const kuvaruletti = document.getElementById('kuvaruletti');
+                    kuvaruletti.innerHTML = '';
+                    kuvaruletti.appendChild(img);
                     img.style.opacity = 1;
                 };
                 index++;
