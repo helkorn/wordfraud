@@ -107,7 +107,7 @@
             <img src="titpics/spessut/WomanBoobs.png" alt="Woman Boobs Image">
             <div id="watermark">© Timi Photography</div>
         </div>
-        <div class="animated-text" id="woman-boobs-text">Woman Boobs Text</div>
+        <div class="animated-text" id="woman-boobs-text">Roosa nauha on osa maailmanlaajuista liikettä.</div>
         <div id="puzzle">
             <!-- Puzzle items will be generated here -->
         </div>
@@ -320,16 +320,18 @@
 
         // Function to show the answer and the corresponding image
         function showAnswer(word) {
-            const endMessage = document.getElementById('end-message');
-            const restartMessage = document.getElementById('restart-message');
+            const endMessage = document.createElement('div');
+            const restartMessage = document.createElement('div');
 
             endMessage.innerHTML = `<b>LEMPIRINTASI OVAT: <span style="color: #A9A9A9;">${word}</span></b>`;
             endMessage.style.opacity = 1;
+            document.getElementById('footer-middle-text').appendChild(endMessage);
 
             setTimeout(() => {
                 endMessage.style.opacity = 0;
                 restartMessage.innerHTML = "<b>PELAA UUDELLEEN KLIKKAAMALLA ROOSA-NAUHAA</b>";
                 restartMessage.style.opacity = 1;
+                document.getElementById('footer-middle-text').appendChild(restartMessage);
             }, 3500);
 
             setInterval(() => {
