@@ -134,20 +134,28 @@
             100% { color: #FF69B4; }
         }
         @keyframes moveUp {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-100%); }
+            0% { transform: translateY(50%); }
+            25% { transform: translateY(0); }
+            75% { transform: translateY(0); }
+            100% { transform: translateY(50%); }
         }
         @keyframes moveDown {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(100%); }
+            0% { transform: translateY(-50%); }
+            25% { transform: translateY(0); }
+            75% { transform: translateY(0); }
+            100% { transform: translateY(-50%); }
         }
         @keyframes moveLeft {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-100%); }
+            0% { transform: translateX(50%); }
+            25% { transform: translateX(0); }
+            75% { transform: translateX(0); }
+            100% { transform: translateX(50%); }
         }
         @keyframes moveRight {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(100%); }
+            0% { transform: translateX(-50%); }
+            25% { transform: translateX(0); }
+            75% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
         }
         @keyframes zoomIn {
             0% { transform: scale(1); }
@@ -235,25 +243,27 @@
         async function startImageRotation() {
             const images = await fetchImages();
             let index = 0;
+            const getNextIndex = () => Math.floor(Math.random() * images.length);
             setInterval(() => {
                 const img = new Image();
-                img.src = images[index % images.length];
+                img.src = images[getNextIndex()];
                 img.onload = () => {
                     const isPortrait = img.naturalWidth < img.naturalHeight;
                     const isSquare = img.naturalWidth === img.naturalHeight;
+                    const isLandscape = img.naturalWidth > img.naturalHeight;
 
                     if (isSquare) {
                         img.style.width = '300px';
                         img.style.height = '300px';
-                        img.style.animation = 'zoomIn 7s infinite alternate';
+                        img.style.animation = 'zoomIn 5s infinite alternate';
                     } else if (isPortrait) {
                         img.style.width = '300px';
                         img.style.height = 'auto';
-                        img.style.animation = 'moveUp 7s forwards';
-                    } else {
+                        img.style.animation = 'moveUp 5s forwards';
+                    } else if (isLandscape) {
                         img.style.width = 'auto';
                         img.style.height = '300px';
-                        img.style.animation = 'moveLeft 7s forwards';
+                        img.style.animation = 'moveLeft 5s forwards';
                     }
                     img.style.opacity = 0;
                     imageBox.innerHTML = '';
@@ -261,7 +271,7 @@
                     img.style.opacity = 1;
                 };
                 index++;
-            }, 7000);
+            }, 5000);
         }
 
         // Letter frequency based on Wordfeud points
@@ -445,15 +455,15 @@
                 if (isSquare) {
                     img.style.width = '300px';
                     img.style.height = '300px';
-                    img.style.animation = 'zoomIn 7s infinite alternate';
+                    img.style.animation = 'zoomIn 5s infinite alternate';
                 } else if (isPortrait) {
                     img.style.width = '300px';
                     img.style.height = 'auto';
-                    img.style.animation = 'moveUp 7s forwards';
-                } else {
+                    img.style.animation = 'moveUp 5s forwards';
+                } else if (isLandscape) {
                     img.style.width = 'auto';
                     img.style.height = '300px';
-                    img.style.animation = 'moveLeft 7s forwards';
+                    img.style.animation = 'moveLeft 5s forwards';
                 }
                 img.style.opacity = 0;
                 imageBox.innerHTML = '';
@@ -545,4 +555,3 @@
     </script>
 </body>
 </html>
-
