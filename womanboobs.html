@@ -53,6 +53,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: flex-start;
+            border: 1px solid silver;
         }
         #footer-left { grid-area: bottom-left; }
         #footer-middle {
@@ -93,21 +94,22 @@
             background-color: black;
             font-size: 20px;
             cursor: pointer;
-            transition: background-color 0.5s;
+            transition: background-color 0.5s, transform 0.1s;
             border-radius: 4px; /* Slightly rounded corners */
         }
         .grid-item.clicked {
-            background-color: #006400; /* DarkGreen */
+            background-color: rgba(255, 182, 193, 0.7); /* LightPink with some transparency */
         }
         .grid-item.wrong {
             background-color: #8B0000; /* DarkRed */
+            animation: shake 0.1s;
         }
         .grid-item span {
             transition: color 0.5s;
             text-transform: uppercase;
         }
         .blink {
-            animation: blink 1s infinite;
+            animation: blink 2s infinite;
             font-weight: bold;
         }
         @keyframes blink {
@@ -123,14 +125,17 @@
             font-family: 'booboo', Arial, sans-serif;
         }
         .purple-wave {
-            animation: purpleWave 5s infinite alternate;
+            animation: purpleWave 10s infinite alternate;
             font-size: 14px;
             color: gray;
             text-decoration: none;
         }
         @keyframes purpleWave {
-            0% { color: #800080; }
-            50% { color: #FF69B4; }
+            0% { color: #808080; }
+            20% { color: #800080; }
+            40% { color: #808080; }
+            60% { color: #FF69B4; }
+            80% { color: #808080; }
             100% { color: #800080; }
         }
         @keyframes moveUp {
@@ -169,6 +174,12 @@
             0% { color: gray; }
             50% { color: white; }
             100% { color: gray; }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-2px); }
+            50% { transform: translateX(2px); }
+            75% { transform: translateX(-2px); }
         }
         .help-text {
             cursor: pointer;
@@ -534,3 +545,4 @@
     </script>
 </body>
 </html>
+
