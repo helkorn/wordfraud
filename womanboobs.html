@@ -34,6 +34,7 @@
             overflow: hidden;
             margin-left: auto;
             margin-right: auto;
+            margin-left: 20px; /* Move the box 20px to the right */
         }
         #image-box {
             position: absolute;
@@ -85,7 +86,7 @@
             justify-content: center;
             align-items: center;
             background-color: black;
-            font-size: 24px;
+            font-size: 20px;
             cursor: pointer;
             transition: background-color 0.5s;
             border-radius: 4px; /* Slightly rounded corners */
@@ -175,7 +176,7 @@
         const imageBox = document.getElementById('image-box');
         const pinkRibbon = document.getElementById('pink-ribbon');
         const watermarkElement = document.getElementById('watermark');
-        const images = ["titpics/image1.png", "titpics/image2.png", "titpics/image3.png"]; // Placeholder images
+        const images = ["titpics/Ajovalot.png", "titpics/image2.png", "titpics/image3.png"]; // Placeholder images
         let helpShown = false;
         let wrongClicks = 0;
         let timerInterval;
@@ -344,10 +345,14 @@
         // Function to show help message
         function showHelpMessage(word) {
             helpShown = true;
-            answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #808080; font-family: 'booboo', Arial, sans-serif;">ÄITI EN KEKSI, ANNA <span style="animation: blink 1s infinite alternate; color: #A9A9A9;">MAITOA</span></div>`;
-            answerElement.addEventListener('click', (e) => {
-                e.preventDefault();
-                answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #808080; font-family: 'booboo', Arial, sans-serif;">VAUVANI, NE OVAT ISIN ${word.toUpperCase()}</div>`;
+            const helpText = document.createElement('div');
+            helpText.style = "animation: fadein 1s; font-size: 14px; color: #808080; font-family: 'booboo', Arial, sans-serif;";
+            helpText.innerHTML = `ÄITI EN KEKSI, ANNA <span style="animation: blink 1s infinite alternate; color: #A9A9A9;">MAITOA</span>`;
+            answerElement.appendChild(helpText);
+
+            helpText.addEventListener('click', () => {
+                helpText.innerHTML = `VAUVANI, NE OVAT ISIN <span style="color: #A9A9A9;">${word.toUpperCase()}</span>`;
+                setTimeout(initGame, 3000);
             });
         }
 
@@ -356,14 +361,12 @@
             const endMessage = document.getElementById('end-message');
             const restartMessage = document.getElementById('restart-message');
 
-            endMessage.textContent = `LEMPIRINTASI OVAT: ${word}`;
-            setTimeout(() => {
-                endMessage.style.opacity = 1;
-            }, 500);
+            endMessage.innerHTML = `LEMPIRINTASI OVAT: <span style="color: #A9A9A9;">${word}</span>`;
+            endMessage.style.opacity = 1;
 
             setTimeout(() => {
                 endMessage.style.opacity = 0;
-                restartMessage.textContent = "PELAA UUDELLEEN KLIKKAAMALLA ROOSA-NAUHAA";
+                restartMessage.innerHTML = "PELAA UUDELLEEN KLIKKAAMALLA ROOSA-NAUHAA";
                 restartMessage.style.opacity = 1;
             }, 3500);
 
@@ -435,4 +438,3 @@
     </script>
 </body>
 </html>
-
