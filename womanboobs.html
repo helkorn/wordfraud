@@ -28,17 +28,14 @@
             justify-content: flex-end; /* Right align */
             align-items: center;
             border: 1px solid silver;
-            width: 300px;
-            height: 300px;
             overflow: hidden;
-            margin-left: auto;
-            margin-right: auto;
             position: relative;
         }
         #image-box {
-            position: absolute;
-            width: 100%;
-            height: 100%;
+            position: relative;
+            width: 300px;
+            height: 300px;
+            border: 1px solid silver;
         }
         #Block5 {
             grid-area: Block5;
@@ -101,7 +98,7 @@
             text-transform: uppercase;
         }
         .blink {
-            animation: blink 1s infinite;
+            animation: blink 0.25s alternate 6; /* Faster blink */
             font-weight: bold;
         }
         @keyframes blink {
@@ -231,6 +228,7 @@
                     };
                     img.onerror = () => {
                         console.error(`Failed to load image: ${img.src}`);
+                        alert(`Failed to load image: ${img.src}`);
                     };
                     index++;
                 }
@@ -375,16 +373,16 @@
             // End game logic for Block5: Blink and fade out
             const pinkCells = [...gridElement.children].filter(cell => cell.classList.contains('clicked'));
             pinkCells.forEach(cell => {
-                cell.style.animation = 'blink 0.5s alternate 6';
+                cell.style.animation = 'blink 0.25s alternate 6';
             });
 
             setTimeout(() => {
                 pinkCells.forEach(cell => {
-                    cell.style.transition = 'background-color 3s';
+                    cell.style.transition = 'background-color 1s';
                     cell.style.backgroundColor = 'black';
                     cell.querySelector('span').style.color = '#fff'; // Keep letters visible
                 });
-            }, 3000);
+            }, 1500);
 
             // End game logic for Block8: Show and alternate messages
             const endMessage = document.getElementById('end-message');
@@ -422,6 +420,7 @@
             };
             img.onerror = () => {
                 console.error(`Failed to load image: ${img.src}`);
+                alert(`Failed to load image: ${img.src}`);
             };
 
             setTimeout(() => {
