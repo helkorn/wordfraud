@@ -25,18 +25,19 @@
         #Block4 {
             grid-area: Block4;
             display: flex;
-            justify-content: flex-end;
+            justify-content: center;
             align-items: center;
-            position: relative;
-            overflow: hidden;
-            border-top: 1px solid silver;
-            border-bottom: 1px solid silver;
-        }
-        #image-box {
-            position: relative;
+            border: 1px solid silver;
             width: 300px;
             height: 300px;
-            border: 1px solid silver;
+            overflow: hidden;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #image-box {
+            position: absolute;
+            width: 100%;
+            height: 100%;
         }
         #Block5 {
             grid-area: Block5;
@@ -66,7 +67,7 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            align-items: center;
+            align-items: flex-start;
             padding: 10px;
             position: relative;
         }
@@ -194,33 +195,34 @@
             });
         }
 
-        function startImageRotation() {
+        async function startImageRotation() {
+            const images = await fetchImages();
             let index = 0;
             setInterval(() => {
-                if (images.length > 0) {
-                    const img = document.createElement('img');
-                    img.src = images[index % images.length];
-                    img.onload = () => {
-                        img.style.opacity = 0;
-                        imageBox.innerHTML = '';
-                        imageBox.appendChild(img);
-                        const randomEffect = Math.random();
-                        if (randomEffect < 0.25) {
-                            img.style.animation = 'zoomIn 5s forwards';
-                        } else if (randomEffect < 0.5) {
-                            img.style.animation = 'zoomOut 5s forwards';
-                        } else if (randomEffect < 0.75) {
-                            img.style.animation = 'moveUp 5s forwards';
-                        } else {
-                            img.style.animation = 'moveDown 5s forwards';
-                        }
-                        img.style.opacity = 1;
-                    };
-                    img.onerror = () => {
-                        console.error(`Failed to load image: ${img.src}`);
-                    };
-                    index++;
-                }
+                const img = document.createElement('img');
+                img.src = images[index % images.length];
+                img.onload = () => {
+                    img.style.width = '300px';
+                    img.style.height = 'auto';
+                    img.style.opacity = 0;
+                    imageBox.innerHTML = '';
+                    imageBox.appendChild(img);
+                    const randomEffect = Math.random();
+                    if (randomEffect < 0.25) {
+                        img.style.animation = 'zoomIn 5s forwards';
+                    } else if (randomEffect < 0.5) {
+                        img.style.animation = 'zoomOut 5s forwards';
+                    } else if (randomEffect < 0.75) {
+                        img.style.animation = 'moveUp 5s forwards';
+                    } else {
+                        img.style.animation = 'moveDown 5s forwards';
+                    }
+                    img.style.opacity = 1;
+                };
+                img.onerror = () => {
+                    console.error(`Failed to load image: ${img.src}`);
+                };
+                index++;
             }, 5000);
         }
 
