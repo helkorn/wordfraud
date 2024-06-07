@@ -131,8 +131,19 @@
                 }
             }
 
-            let startX = Math.floor(Math.random() * 6);
-            let startY = Math.floor(Math.random() * 6);
+            let startX, startY, validPosition = false;
+            while (!validPosition) {
+                startX = Math.floor(Math.random() * 4) + 1; // Ensure not starting on the left edge
+                startY = Math.floor(Math.random() * 4) + 1; // Ensure not starting on the top edge
+
+                validPosition = true;
+                for (let i = 0; i < word.length; i++) {
+                    if (startX + i >= 6 || startY + i >= 6) {
+                        validPosition = false;
+                        break;
+                    }
+                }
+            }
 
             let positions = [{ x: startX, y: startY }];
             grid[startY][startX] = word.charAt(0);
@@ -295,3 +306,4 @@
     </script>
 </body>
 </html>
+
