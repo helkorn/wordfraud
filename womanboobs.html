@@ -25,17 +25,17 @@
         #Block4 {
             grid-area: Block4;
             display: flex;
-            justify-content: flex-end; /* Right align */
+            justify-content: flex-end;
             align-items: center;
-            border: 1px solid silver;
             overflow: hidden;
             position: relative;
         }
         #image-box {
-            position: relative;
             width: 300px;
             height: 300px;
             border: 1px solid silver;
+            position: absolute;
+            right: 0;
         }
         #Block5 {
             grid-area: Block5;
@@ -195,9 +195,9 @@
             const response = await fetch('image_map_data.csv');
             const text = await response.text();
             const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
-            images = lines.map(line => `titpics/${line.split(',')[0]}`);
+            images = lines.map(line => `titpics/${line.split(',')[0].trim()}`);
             lines.forEach(line => {
-                const [image, x, y] = line.split(',');
+                const [image, x, y] = line.split(',').map(item => item.trim());
                 wordCoordinates[image.split('/').pop().split('.')[0].toUpperCase()] = { x: parseFloat(x), y: parseFloat(y) };
             });
         }
