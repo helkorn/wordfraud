@@ -176,6 +176,10 @@
             50% { transform: translateX(2px); }
             75% { transform: translateX(-2px); }
         }
+        @keyframes flash {
+            0%, 100% { background-color: rgba(255, 182, 193, 0.7); }
+            50% { background-color: black; }
+        }
         @keyframes flip {
             0%, 100% { transform: rotateX(0); }
             50% { transform: rotateX(180deg); }
@@ -217,6 +221,7 @@
             <div id="typed-text"></div>
             <div id="end-message" class="animated-text"></div>
             <div id="restart-message" class="animated-text"></div>
+            <div id="no-answer-text" class="animated-text" style="font-size: 16px; color: gray; font-family: 'booboo', Arial, sans-serif;"></div>
         </div>
     </div>
     <div id="bottom-right">
@@ -234,6 +239,7 @@
         const typedText = document.getElementById('typed-text');
         const endMessage = document.getElementById('end-message');
         const restartMessage = document.getElementById('restart-message');
+        const noAnswerText = document.getElementById('no-answer-text');
         let helpShown = false;
         let wrongClicks = 0;
 
@@ -390,6 +396,7 @@
         async function initGame() {
             gridElement.innerHTML = ''; // Clear the grid
             answerElement.innerHTML = ''; // Clear any previous help text
+            noAnswerText.innerHTML = 'LEMPINIMI RINNOILLE. <span class="help-text">APUA?</span>';
             const { grid, word } = await createGrid();
             let foundLetters = 0;
 
@@ -552,3 +559,4 @@
     </script>
 </body>
 </html>
+
