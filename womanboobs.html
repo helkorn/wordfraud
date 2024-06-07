@@ -35,7 +35,7 @@
             width: 400px;
             height: 400px;
             border: 1px solid silver;
-            position: relative; /* Ei absolute, jotta pysyy sisällään */
+            position: relative;
             right: 0;
         }
         #Block5 {
@@ -126,19 +126,19 @@
         }
         @keyframes zoomIn {
             0% { transform: scale(1); }
-            100% { transform: scale(1.5); }
+            100% { transform: scale(1.1); } /* Vähäinen zoomaus */
         }
         @keyframes zoomOut {
-            0% { transform: scale(1.5); }
+            0% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
         @keyframes moveUp {
             0% { transform: translateY(0); }
-            100% { transform: translateY(-100%); }
+            100% { transform: translateY(-10%); } /* Vähäinen vieritys */
         }
         @keyframes moveDown {
             0% { transform: translateY(0); }
-            100% { transform: translateY(100%); }
+            100% { transform: translateY(10%); }
         }
         @keyframes fadeOut {
             0% { opacity: 1; }
@@ -218,13 +218,13 @@
                         imageBox.appendChild(img);
                         const randomEffect = Math.random();
                         if (randomEffect < 0.25) {
-                            img.style.animation = 'zoomIn 5s forwards';
+                            img.style.animation = 'zoomIn 10s forwards';
                         } else if (randomEffect < 0.5) {
-                            img.style.animation = 'zoomOut 5s forwards';
+                            img.style.animation = 'zoomOut 10s forwards';
                         } else if (randomEffect < 0.75) {
-                            img.style.animation = 'moveUp 5s forwards';
+                            img.style.animation = 'moveUp 10s forwards';
                         } else {
-                            img.style.animation = 'moveDown 5s forwards';
+                            img.style.animation = 'moveDown 10s forwards';
                         }
                         img.style.opacity = 1;
                     };
@@ -234,7 +234,7 @@
                     };
                     index++;
                 }
-            }, 5000);
+            }, 10000); // 10 sekuntia per kuva
         }
 
         // Letter frequency based on Wordfeud points
@@ -416,7 +416,7 @@
                 img.style.width = '100%';
                 img.style.height = '100%';
                 img.style.objectFit = 'cover';
-                img.style.animation = 'zoomIn 5s forwards';
+                img.style.animation = 'zoomIn 10s forwards';
                 imageBox.innerHTML = '';
                 imageBox.appendChild(img);
             };
@@ -475,5 +475,3 @@
     </script>
 </body>
 </html>
-
-
