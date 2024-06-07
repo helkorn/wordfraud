@@ -172,13 +172,14 @@
         }
         @keyframes pinkWave {
             0% { color: #FF69B4; }
-            50% { color: #FFB6C1; }
+            50% { color: gray; }
             100% { color: #FF69B4; }
         }
         .pink-wave {
-            animation: pinkWave 10s infinite;
-            font-size: 12px;
+            animation: pinkWave 5s infinite alternate;
+            font-size: 14px;
             color: gray;
+            text-decoration: none;
         }
     </style>
 </head>
@@ -249,13 +250,14 @@
                 seconds++;
                 let minutes = Math.floor(seconds / 60);
                 let displaySeconds = seconds % 60;
-                timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(displaySeconds).padStart(2, '0')}`;
+                document.getElementById('timer').textContent = `${String(minutes).padStart(2, '0')}:${String(displaySeconds).padStart(2, '0')}`;
             }, 1000);
         }
 
         // Function to stop the timer and start the blinking animation
         function stopTimer() {
             clearInterval(timerInterval);
+            const timerElement = document.getElementById('timer');
             timerElement.classList.add('blink');
             setTimeout(() => {
                 timerElement.classList.remove('blink');
@@ -418,7 +420,14 @@
             setTimeout(() => {
                 answerElement.innerHTML = `<div style="animation: fadein 1s; font-size: 18px; color: #32CD32;">UUSI PELI ROOSA-NAUHASTA <span class="blink">::</span></div>`;
             }, 4000); // Show the correct answer for longer duration before changing the message
-            imageContainer.src = `titpics/${word}.png`;
+            // Add code to display the image in the left box
+            const img = document.createElement('img');
+            img.src = `titpics/${word}.png`;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            imageBox.innerHTML = '';
+            imageBox.appendChild(img);
         }
 
         // Function to animate correct answer
