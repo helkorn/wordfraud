@@ -10,20 +10,20 @@
             color: white;
             display: grid;
             grid-template-areas: 
-                "top-left top-center top-right"
-                "middle-left middle-center middle-right"
-                "bottom-left bottom-center bottom-right";
-            grid-template-rows: 1fr 300px 1fr;
+                "Lohko1 Lohko2 Lohko3"
+                "Lohko4 Lohko5 Lohko6"
+                "Lohko7 Lohko8 Lohko9";
+            grid-template-rows: 1fr 1fr 1fr;
             grid-template-columns: 1fr 1fr 1fr;
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
         }
-        #top-left { grid-area: top-left; }
-        #top-center { grid-area: top-center; }
-        #top-right { grid-area: top-right; }
-        #middle-left {
-            grid-area: middle-left;
+        #Lohko1 { grid-area: Lohko1; }
+        #Lohko2 { grid-area: Lohko2; }
+        #Lohko3 { grid-area: Lohko3; }
+        #Lohko4 {
+            grid-area: Lohko4;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -32,31 +32,29 @@
             width: 300px;
             height: 300px;
             overflow: hidden;
-            margin-left: auto;
-            margin-right: auto;
-            margin-left: 20px; /* Move the box 20px to the right */
+            margin: 0 auto;
         }
         #image-box {
             position: absolute;
             width: 100%;
             height: 100%;
         }
-        #middle {
-            grid-area: middle-center;
+        #Lohko5 {
+            grid-area: Lohko5;
             display: flex;
             justify-content: center;
             align-items: center;
         }
-        #right {
-            grid-area: middle-right;
+        #Lohko6 {
+            grid-area: Lohko6;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: flex-start;
         }
-        #footer-left { grid-area: bottom-left; }
-        #footer-middle {
-            grid-area: bottom-center;
+        #Lohko7 { grid-area: Lohko7; }
+        #Lohko8 {
+            grid-area: Lohko8;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -64,8 +62,8 @@
             padding-top: 10px;
             height: 100%;
         }
-        #footer-right {
-            grid-area: bottom-right;
+        #Lohko9 {
+            grid-area: Lohko9;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -147,37 +145,36 @@
     </style>
 </head>
 <body>
-    <div id="top-left"></div>
-    <div id="top-center"></div>
-    <div id="top-right"></div>
-    <div id="middle-left">
+    <div id="Lohko1"></div>
+    <div id="Lohko2"></div>
+    <div id="Lohko3"></div>
+    <div id="Lohko4">
         <div id="image-box"></div>
     </div>
-    <div id="middle">
+    <div id="Lohko5">
         <div class="grid" id="puzzle"></div>
     </div>
-    <div id="right">
+    <div id="Lohko6">
         <img src="titpics/spessut/WomanBoobs.png" width="300">
         <div id="watermark" style="font-size: 12px; padding-top: 5px; color: #808080;">© Timin Photography GmbH</div>
     </div>
-    <div id="footer-left"></div>
-    <div id="footer-middle">
+    <div id="Lohko7"></div>
+    <div id="Lohko8">
         <div id="end-message" class="animated-text"></div>
         <div id="restart-message" class="animated-text"></div>
     </div>
-    <div id="bottom-right">
+    <div id="Lohko9">
         <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer;" id="pink-ribbon">
         <a href="https://roosanauha.syopasaatio.fi/" target="_blank" class="pink-wave">Roosa nauha Suomessa 2024</a>
     </div>
 
     <script>
         const gridElement = document.getElementById('puzzle');
-        const answerElement = document.getElementById('footer-middle');
+        const answerElement = document.getElementById('Lohko8');
         const imageBox = document.getElementById('image-box');
         const pinkRibbon = document.getElementById('pink-ribbon');
         const watermarkElement = document.getElementById('watermark');
         const images = ["titpics/Ajovalot.png", "titpics/image2.png", "titpics/image3.png"]; // Placeholder images
-        let helpShown = false;
         let wrongClicks = 0;
         let timerInterval;
 
@@ -333,27 +330,10 @@
             } else {
                 cell.classList.add('wrong');
                 wrongClicks++;
-                if (wrongClicks > 3 && !helpShown) {
-                    showHelpMessage(word);
-                }
                 setTimeout(() => {
                     cell.classList.remove('wrong');
                 }, 500);
             }
-        }
-
-        // Function to show help message
-        function showHelpMessage(word) {
-            helpShown = true;
-            const helpText = document.createElement('div');
-            helpText.style = "animation: fadein 1s; font-size: 14px; color: #808080; font-family: 'booboo', Arial, sans-serif;";
-            helpText.innerHTML = `ÄITI EN KEKSI, ANNA <span style="animation: blink 1s infinite alternate; color: #A9A9A9;">MAITOA</span>`;
-            answerElement.appendChild(helpText);
-
-            helpText.addEventListener('click', () => {
-                helpText.innerHTML = `VAUVANI, NE OVAT ISIN <span style="color: #A9A9A9;">${word.toUpperCase()}</span>`;
-                setTimeout(initGame, 3000);
-            });
         }
 
         // Function to show the answer and the corresponding image
@@ -438,3 +418,4 @@
     </script>
 </body>
 </html>
+
