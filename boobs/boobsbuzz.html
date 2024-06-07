@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boobsbuzz</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        #puzzle {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-gap: 5px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 300px;
+        }
+        .grid-item {
+            width: 100%;
+            padding-top: 100%; /* 1:1 Aspect Ratio */
+            position: relative;
+            background-color: black;
+            cursor: pointer;
+            transition: background-color 0.5s;
+            border-radius: 4px; /* Slightly rounded corners */
+        }
+        .grid-item span {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-transform: uppercase;
+            font-size: 20px;
+            transition: color 0.5s;
+        }
+        .grid-item.clicked {
+            background-color: #FF69B4; /* Lightened pink */
+        }
+        .grid-item.wrong {
+            background-color: rgba(255, 255, 255, 0.1); /* White with 10% transparency */
+        }
+    </style>
+</head>
+<body>
+    <div id="puzzle">
+        <!-- Puzzle items will be generated here -->
+    </div>
+
+    <script>
+        const gridElement = document.getElementById('puzzle');
+        let helpShown = false;
+        let wrongClicks = 0;
+
+        async function fetchWord() {
+            const response = await fetch('melonit.csv');
+            const text = await response.text();
+            const words = text.split('\n').map(word => word.trim()).filter(word => word.length > 0);
+            const bannedWords = ["Bonnie ja Clyde", "Hauskat laukut", "Ismo ja Seppo", "Michelin-manit", "Mikkelin Pimut", "Sanni ja Alma"];
+            const filteredWords = words.filter(word => !bannedWords.includes(word));
+            return filteredWords[Math.floor(Math.random() * filteredWords.length)];
+        }
+
+        async function createGrid() {
+            const word = (await fetchWord()).toUpperCase();
+
+            let grid = [];
+            for (let i = 0; i < 6; i++) {
+                grid[i] = [];
+                for (let j = 0; j < 6; j++) {
+                    grid[i][j] = getRandomLetter();
+                }
+            }
+
+            let startX = Math.floor(Math.random() * 6);
+            let startY = Math.floor(Math.random() * 6);
+
+            let positions = [{ x: startX, y: startY }];
+            grid[startY][startX] = word.charAt(0);
+            let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+
+            for (let i = 1; i < word.length; i++) {
+                let lastPos = positions[positions.length - 1];
+                let possibleDirections = directions.filter(dir => {
+                    let newX = lastPos.x + dir[0];
+                    let newY = lastPos.y + dir[1];
+                    return newX >= 0 && newX < 6 && newY >= 0 && newY < 6 && !positions.some(pos => pos.x === newX && pos.y === newY);
+                });
+
+                if (possibleDirections.length === 0) break;
+
+                let dir = possibleDirections[Math.floor(Math.random() * possibleDirections.length)];
+                let newX = lastPos.x + dir[0];
+                let newY = lastPos.y + dir[1];
+
+                grid[newY][newX] = word.charAt(i);
+                positions.push({ x: newX, y: newY });
+            }
+
+            let emptyCount = 0;
+            grid.forEach(row => row.forEach((cell, index) => {
+                if (!cell) {
+                    emptyCount++;
+                    if (emptyCount > 1) {
+                        grid[row][index] = getRandomLetter();
+                    }
+                }
+            }));
+
+            return { grid, word };
+        }
+
+        async function initGame() {
+            gridElement.innerHTML = '';
+            const { grid, word } = await createGrid();
+            let foundLetters = 0;
+
+            grid.forEach((row, rowIndex) => {
+                row.forEach((letter, colIndex) => {
+                    const cell = document.createElement('div');
+                    cell.classList.add('grid-item');
+                    cell.innerHTML = `<span>${letter}</span>`;
+                    cell.dataset.letter = letter;
+                    cell.dataset.row = rowIndex;
+                    cell.dataset.col = colIndex;
+                    cell.addEventListener('click', () => handleCellClick(cell, word));
+                    gridElement.appendChild(cell);
+                });
+            });
+
+            const firstLetterElement = [...gridElement.children].find(cell => cell.dataset.letter === word.charAt(0).toUpperCase());
+            firstLetterElement.classList.add('clicked');
+            firstLetterElement.dataset.found = true;
+            foundLetters++;
+        }
+
+        function handleCellClick(cell, word) {
+            const letter = cell.dataset.letter;
+
+            if (cell.classList.contains('clicked')) {
+                return;
+            }
+
+            const currentIndex = [...gridElement.children].filter(c => c.classList.contains('clicked')).length;
+            if (letter === word[currentIndex].toUpperCase()) {
+                cell.classList.add('clicked');
+                if (currentIndex + 1 === word.length) {
+                    showAnswer(word);
+                    animateCorrectAnswer();
+                }
+            } else {
+                cell.classList.add('wrong');
+                wrongClicks++;
+                if (wrongClicks > 3 && !helpShown) {
+                    showHelpMessage(word);
