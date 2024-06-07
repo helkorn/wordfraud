@@ -23,6 +23,7 @@
             margin-bottom: 20px;
             width: 100%;
             max-width: 300px;
+            position: relative;
         }
         .grid-item {
             width: 100%;
@@ -48,15 +49,36 @@
         .grid-item.wrong {
             background-color: rgba(255, 255, 255, 0.1); /* White with 10% transparency */
         }
+        @keyframes flash {
+            0%, 100% { background-color: #FF69B4; }
+            50% { background-color: transparent; }
+        }
+        .flash {
+            animation: flash 0.2s 3;
+        }
+        #found-word {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+        }
+        #found-word span {
+            font-size: 24px;
+            color: #FF69B4;
+            margin: 0 5px;
+        }
     </style>
 </head>
 <body>
     <div id="puzzle">
         <!-- Puzzle items will be generated here -->
     </div>
+    <div id="found-word"></div>
 
     <script>
         const gridElement = document.getElementById('puzzle');
+        const foundWordElement = document.getElementById('found-word');
         let helpShown = false;
         let wrongClicks = 0;
 
@@ -120,6 +142,7 @@
 
         async function initGame() {
             gridElement.innerHTML = '';
+            foundWordElement.innerHTML = '';
             const { grid, word } = await createGrid();
             let foundLetters = 0;
 
@@ -153,8 +176,8 @@
             if (letter === word[currentIndex].toUpperCase()) {
                 cell.classList.add('clicked');
                 if (currentIndex + 1 === word.length) {
-                    showAnswer(word);
-                    animateCorrectAnswer();
+                    animateFoundWord(word);
+                    setTimeout(() => showAnswer(word), 600); // Delay to allow animation
                 }
             } else {
                 cell.classList.add('wrong');
@@ -168,12 +191,27 @@
             }
         }
 
+        function animateFoundWord(word) {
+            const clickedCells = [...gridElement.children].filter(cell => cell.classList.contains('clicked'));
+            clickedCells.forEach(cell => {
+                cell.classList.add('flash');
+            });
+
+            setTimeout(() => {
+                clickedCells.forEach((cell, index) => {
+                    const letterSpan = document.createElement('span');
+                    letterSpan.textContent = cell.dataset.letter;
+                    foundWordElement.appendChild(letterSpan);
+                });
+            }, 600); // Match the duration of the flash animation
+        }
+
         function showHelpMessage(word) {
             helpShown = true;
             const helpText = document.createElement('div');
             helpText.style = "animation: fadein 1s; font-size: 14px; color: #808080; font-family: 'booboo', Arial, sans-serif; margin-top: 10px;";
             // helpText.innerHTML = `<b>HELP TEXT PLACEHOLDER</b>`;
-            document.getElementById('footer-middle-text').appendChild(helpText);
+            document.body.appendChild(helpText);
         }
 
         function showAnswer(word) {
@@ -182,13 +220,13 @@
 
             endMessage.innerHTML = `<b>LEMPIRINTASI OVAT: <span style="color: #A9A9A9;">${word}</span></b>`;
             endMessage.style.opacity = 1;
-            document.body.appendChild(endMessage); // Updated line
+            document.body.appendChild(endMessage);
 
             setTimeout(() => {
                 endMessage.style.opacity = 0;
                 restartMessage.innerHTML = "<b>PELAA UUDELLEEN KLIKKAAMALLA ROOSA-NAUHAA</b>";
                 restartMessage.style.opacity = 1;
-                document.body.appendChild(restartMessage); // Updated line
+                document.body.appendChild(restartMessage);
             }, 3500);
 
             setInterval(() => {
@@ -200,18 +238,6 @@
                     restartMessage.style.opacity = 0;
                 }
             }, 7000);
-        }
-
-        function animateCorrectAnswer() {
-            const clickedCells = [...gridElement.children].filter(cell => cell.classList.contains('clicked'));
-            clickedCells.forEach(cell => {
-                cell.style.animation = 'flash 0.5s alternate 3';
-            });
-            setTimeout(() => {
-                clickedCells.forEach(cell => {
-                    cell.style.animation = '';
-                });
-            }, 1500);
         }
 
         function getRandomLetter() {
