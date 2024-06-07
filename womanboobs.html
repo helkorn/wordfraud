@@ -29,6 +29,8 @@
             align-items: center;
             position: relative;
             overflow: hidden;
+            border-top: 1px solid silver;
+            border-bottom: 1px solid silver;
         }
         #image-box {
             position: relative;
@@ -64,7 +66,7 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            align-items: flex-start;
+            align-items: center;
             padding: 10px;
             position: relative;
         }
@@ -116,11 +118,10 @@
             font-size: 14px;
             animation: colorChange 5s infinite alternate;
             text-decoration: none;
-            margin-top: 10px;
-            margin-left: 10px;
+            color: rgba(255, 105, 180, 0.75); /* 75% pink */
         }
         @keyframes colorChange {
-            0% { color: rgba(255, 192, 203, 0.5); } /* Pink light */
+            0% { color: rgba(255, 192, 203, 0.75); } /* Pink light */
             100% { color: gray; }
         }
         @keyframes zoomIn {
@@ -166,9 +167,9 @@
     </div>
     <div id="Block9">
         <div style="display: flex; align-items: flex-start; margin-bottom: 10px;">
-            <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer; opacity: 0.3;" id="pink-ribbon">
-            <a href="https://roosanauha.syopasaatio.fi/" target="_blank" class="roosa-text">Roosa nauha Suomessa 2024</a>
+            <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer; opacity: 0.5;" id="pink-ribbon">
         </div>
+        <a href="https://roosanauha.syopasaatio.fi/" target="_blank" class="roosa-text">Roosa nauha Suomessa 2024</a>
     </div>
 
     <script>
@@ -214,6 +215,9 @@
                             img.style.animation = 'moveDown 5s forwards';
                         }
                         img.style.opacity = 1;
+                    };
+                    img.onerror = () => {
+                        console.error(`Failed to load image: ${img.src}`);
                     };
                     index++;
                 }
@@ -356,8 +360,16 @@
             // End game logic for Block5: Blink and fade out
             const pinkCells = [...gridElement.children].filter(cell => cell.classList.contains('clicked'));
             pinkCells.forEach(cell => {
-                cell.style.animation = 'blink 0.5s alternate 6, fadeOut 3s forwards';
+                cell.style.animation = 'blink 0.5s alternate 6';
             });
+
+            setTimeout(() => {
+                pinkCells.forEach(cell => {
+                    cell.style.transition = 'background-color 3s';
+                    cell.style.backgroundColor = 'black';
+                    cell.querySelector('span').style.color = '#fff'; // Keep letters visible
+                });
+            }, 3000);
 
             // End game logic for Block8: Show and alternate messages
             const endMessage = document.getElementById('end-message');
@@ -380,13 +392,22 @@
             // End game logic for Block4: Show corresponding image
             const img = document.createElement('img');
             img.src = `titpics/${word}.png`;
-            img.style.position = 'absolute';
-            img.style.width = '100%';
-            img.style.height = '100%';
-            img.style.objectFit = 'cover';
-            img.style.animation = 'zoomIn 5s forwards';
-            imageBox.innerHTML = '';
-            imageBox.appendChild(img);
+            img.onload = () => {
+                const coords = wordCoordinates[word];
+                if (coords) {
+                    img.style.transformOrigin = `${coords.x * 100}% ${coords.y * 100}%`;
+                }
+                img.style.position = 'absolute';
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                img.style.animation = 'zoomIn 5s forwards';
+                imageBox.innerHTML = '';
+                imageBox.appendChild(img);
+            };
+            img.onerror = () => {
+                console.error(`Failed to load image: ${img.src}`);
+            };
 
             setTimeout(() => {
                 clearInterval(messageInterval);
@@ -394,6 +415,11 @@
                 restartMessage.innerHTML = "";
                 startImageRotation();
             }, 5000);
+
+            // Reload the page after end game processing
+            setTimeout(() => {
+                window.location.href = 'https://timosalonen.github.io/wordfraud/womanboobs.html';
+            }, 7000); // Reload after all end game actions are done
         }
 
         // Add event listener to the Pink Ribbon image
