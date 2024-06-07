@@ -56,17 +56,40 @@
         .flash {
             animation: flash 0.2s 3;
         }
+        @keyframes moveUp {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(0, -50px); }
+        }
+        .move-up {
+            animation: moveUp 1s forwards;
+        }
         #found-word {
             position: absolute;
             top: -50px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
+            visibility: hidden;
         }
         #found-word span {
             font-size: 24px;
             color: #FF69B4;
             margin: 0 5px;
+        }
+        #message-container {
+            text-align: center;
+            margin-top: 40px;
+        }
+        #end-message, #restart-message {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        a {
+            color: #FF69B4;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -75,10 +98,16 @@
         <!-- Puzzle items will be generated here -->
     </div>
     <div id="found-word"></div>
+    <div id="message-container">
+        <div id="end-message"></div>
+        <div id="restart-message"></div>
+    </div>
 
     <script>
         const gridElement = document.getElementById('puzzle');
         const foundWordElement = document.getElementById('found-word');
+        const endMessageElement = document.getElementById('end-message');
+        const restartMessageElement = document.getElementById('restart-message');
         let helpShown = false;
         let wrongClicks = 0;
 
@@ -143,6 +172,8 @@
         async function initGame() {
             gridElement.innerHTML = '';
             foundWordElement.innerHTML = '';
+            endMessageElement.innerHTML = '';
+            restartMessageElement.innerHTML = '';
             const { grid, word } = await createGrid();
             let foundLetters = 0;
 
@@ -199,10 +230,12 @@
 
             setTimeout(() => {
                 clickedCells.forEach((cell, index) => {
+                    cell.classList.add('move-up');
                     const letterSpan = document.createElement('span');
                     letterSpan.textContent = cell.dataset.letter;
                     foundWordElement.appendChild(letterSpan);
                 });
+                foundWordElement.style.visibility = 'visible';
             }, 600); // Match the duration of the flash animation
         }
 
@@ -215,29 +248,25 @@
         }
 
         function showAnswer(word) {
-            const endMessage = document.createElement('div');
-            const restartMessage = document.createElement('div');
-
-            endMessage.innerHTML = `<b>LEMPIRINTASI OVAT: <span style="color: #A9A9A9;">${word}</span></b>`;
-            endMessage.style.opacity = 1;
-            document.body.appendChild(endMessage);
+            const formattedWord = word.charAt(0) + word.slice(1).toLowerCase() + '.';
+            endMessageElement.innerHTML = `<b>Sinulle sopivat rinnat ovat: <span style="color: #A9A9A9;">${formattedWord}</span></b>`;
+            endMessageElement.style.opacity = 1;
 
             setTimeout(() => {
-                endMessage.style.opacity = 0;
-                restartMessage.innerHTML = "<b>PELAA UUDELLEEN KLIKKAAMALLA ROOSA-NAUHAA</b>";
-                restartMessage.style.opacity = 1;
-                document.body.appendChild(restartMessage);
+                endMessageElement.style.opacity = 0;
+                restartMessageElement.innerHTML = `<a href="#" onclick="initGame()"><b>Koita uudelleen tästä linkistä!</b></a>`;
+                restartMessageElement.style.opacity = 1;
             }, 3500);
 
             setInterval(() => {
-                if (endMessage.style.opacity == 1) {
-                    endMessage.style.opacity = 0;
-                    restartMessage.style.opacity = 1;
+                if (endMessageElement.style.opacity == 1) {
+                    endMessageElement.style.opacity = 0;
+                    restartMessageElement.style.opacity = 1;
                 } else {
-                    endMessage.style.opacity = 1;
-                    restartMessage.style.opacity = 0;
+                    endMessageElement.style.opacity = 1;
+                    restartMessageElement.style.opacity = 0;
                 }
-            }, 7000);
+            }, 3500); // 3.5 seconds for each message
         }
 
         function getRandomLetter() {
