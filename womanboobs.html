@@ -34,6 +34,7 @@
             overflow: hidden;
             margin-left: auto;
             margin-right: auto;
+            margin-top: 10px;
         }
         #image-box {
             position: absolute;
@@ -53,6 +54,9 @@
             flex-direction: column;
             justify-content: center;
             align-items: flex-start;
+            position: relative;
+        }
+        #right img {
             border: 1px solid silver;
         }
         #footer-left { grid-area: bottom-left; }
@@ -101,7 +105,7 @@
             background-color: rgba(255, 182, 193, 0.7); /* LightPink with some transparency */
         }
         .grid-item.wrong {
-            background-color: #8B0000; /* DarkRed */
+            background-color: rgba(255, 255, 255, 0.5); /* White with some transparency */
             animation: shake 0.1s;
         }
         .grid-item span {
@@ -180,6 +184,10 @@
             25% { transform: translateX(-2px); }
             50% { transform: translateX(2px); }
             75% { transform: translateX(-2px); }
+        }
+        @keyframes flip {
+            0%, 100% { transform: rotateX(0); }
+            50% { transform: rotateX(180deg); }
         }
         .help-text {
             cursor: pointer;
@@ -299,6 +307,9 @@
                     setTimeout(() => {
                         img.style.opacity = 1;
                     }, 100); // Allow some time for the image to be added to the DOM
+                };
+                img.onerror = () => {
+                    console.error(`Failed to load image: titpics/${name}`);
                 };
             }, 5000);
         }
@@ -519,6 +530,20 @@
 
         setInterval(animateWatermark, 10000); // Double the interval for animation
 
+        // Flip the G character in the watermark
+        function flipG() {
+            const watermarkText = watermarkElement.textContent;
+            const newText = watermarkText.split('').map((char, index) => {
+                if (char === 'G') {
+                    return `<span class="flip">${char}</span>`;
+                }
+                return char;
+            }).join('');
+            watermarkElement.innerHTML = newText;
+        }
+
+        setInterval(flipG, 20000); // Flip the G character every 20 seconds
+
         // Handle help text click
         helpText.addEventListener('click', () => {
             typedText.innerHTML = '';
@@ -545,4 +570,5 @@
     </script>
 </body>
 </html>
+
 
