@@ -58,7 +58,7 @@
         }
         @keyframes moveUp {
             0% { transform: translate(0, 0); }
-            100% { transform: translate(0, -50px); }
+            100% { transform: translate(0, -200px); } /* Move up more */
         }
         .move-up {
             animation: moveUp 1s forwards;
@@ -78,14 +78,14 @@
         }
         #message-container {
             text-align: center;
-            margin-top: 40px;
+            margin-top: 20px;
         }
         #end-message, #restart-message {
             font-size: 18px;
             margin: 10px 0;
         }
         a {
-            color: #FF69B4;
+            color: white;
             text-decoration: none;
         }
         a:hover {
@@ -115,7 +115,7 @@
             const response = await fetch('../melonit.csv');
             const text = await response.text();
             const words = text.split('\n').map(word => word.trim()).filter(word => word.length > 0);
-            const bannedWords = ["Bonnie ja Clyde", "Hauskat laukut", "Ismo ja Seppo", "Michelin-manit", "Mikkelin Pimut", "Sanni ja Alma"];
+            const bannedWords = ["Bonnie ja Clyde", "Hauskat laukut", "Ismo ja Seppo", "Michelin-manit", "Mikkelin Pimut", "Sanni ja Alma", "Nuuskapussit"];
             const filteredWords = words.filter(word => !bannedWords.includes(word));
             return filteredWords[Math.floor(Math.random() * filteredWords.length)];
         }
@@ -233,6 +233,9 @@
                     cell.classList.add('move-up');
                     const letterSpan = document.createElement('span');
                     letterSpan.textContent = cell.dataset.letter;
+                    letterSpan.style.position = 'absolute';
+                    letterSpan.style.top = `${cell.getBoundingClientRect().top - gridElement.getBoundingClientRect().top - 50}px`;
+                    letterSpan.style.left = `${cell.getBoundingClientRect().left - gridElement.getBoundingClientRect().left}px`;
                     foundWordElement.appendChild(letterSpan);
                 });
                 foundWordElement.style.visibility = 'visible';
@@ -266,7 +269,7 @@
                     endMessageElement.style.opacity = 1;
                     restartMessageElement.style.opacity = 0;
                 }
-            }, 3500); // 3.5 seconds for each message
+            }, 1750); // 1.75 seconds for each message
         }
 
         function getRandomLetter() {
