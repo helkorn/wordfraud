@@ -182,13 +182,13 @@
 
             endMessage.innerHTML = `<b>LEMPIRINTASI OVAT: <span style="color: #A9A9A9;">${word}</span></b>`;
             endMessage.style.opacity = 1;
-            document.getElementById('footer-middle-text').appendChild(endMessage);
+            document.body.appendChild(endMessage); // Updated line
 
             setTimeout(() => {
                 endMessage.style.opacity = 0;
                 restartMessage.innerHTML = "<b>PELAA UUDELLEEN KLIKKAAMALLA ROOSA-NAUHAA</b>";
                 restartMessage.style.opacity = 1;
-                document.getElementById('footer-middle-text').appendChild(restartMessage);
+                document.body.appendChild(restartMessage); // Updated line
             }, 3500);
 
             setInterval(() => {
