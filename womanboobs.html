@@ -58,10 +58,15 @@
             grid-area: bottom-center;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
             padding-top: 10px;
             height: 100%;
+            position: relative;
+        }
+        #footer-middle-text {
+            position: absolute;
+            top: 10px;
         }
         #footer-right {
             grid-area: bottom-right;
@@ -140,6 +145,9 @@
             50% { color: white; }
             100% { color: gray; }
         }
+        .help-text {
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -158,8 +166,11 @@
     </div>
     <div id="footer-left"></div>
     <div id="footer-middle">
-        <div id="end-message" class="animated-text"></div>
-        <div id="restart-message" class="animated-text"></div>
+        <div id="footer-middle-text">
+            <div id="help-text" class="animated-text">LEMPINIMI RINNOILLE. <span class="help-text" style="animation: blink 1s infinite alternate; color: #808080;">APUA?</span></div>
+            <div id="end-message" class="animated-text"></div>
+            <div id="restart-message" class="animated-text"></div>
+        </div>
     </div>
     <div id="bottom-right">
         <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer;" id="pink-ribbon">
@@ -172,6 +183,9 @@
         const imageBox = document.getElementById('image-box');
         const pinkRibbon = document.getElementById('pink-ribbon');
         const watermarkElement = document.getElementById('watermark');
+        const helpText = document.getElementById('help-text');
+        const endMessage = document.getElementById('end-message');
+        const restartMessage = document.getElementById('restart-message');
         let helpShown = false;
         let wrongClicks = 0;
 
@@ -186,18 +200,23 @@
             const images = await fetchImages();
             let index = 0;
             setInterval(() => {
-                const img = document.createElement('img');
+                const img = new Image();
                 img.src = images[index % images.length];
                 img.onload = () => {
                     img.style.width = '300px';
+                    img.style.height = 'auto';
+                    if (img.naturalWidth < img.naturalHeight) {
+                        img.style.height = '300px';
+                        img.style.width = 'auto';
+                    }
                     img.style.opacity = 0;
                     imageBox.innerHTML = '';
                     imageBox.appendChild(img);
                     const randomEffect = Math.random();
                     if (randomEffect < 0.5) {
-                        img.style.animation = 'moveUp 5s forwards';
+                        img.style.animation = 'moveUp 10s forwards';
                     } else {
-                        img.style.animation = 'moveDown 5s forwards';
+                        img.style.animation = 'moveDown 10s forwards';
                     }
                     img.style.opacity = 1;
                 };
@@ -357,9 +376,6 @@
 
         // Function to show the answer and the corresponding image
         function showAnswer(word) {
-            const endMessage = document.getElementById('end-message');
-            const restartMessage = document.getElementById('restart-message');
-
             endMessage.innerHTML = `<b>LEMPIRINTASI OVAT: <span style="color: #A9A9A9;">${word}</span></b>`;
             endMessage.style.opacity = 1;
 
@@ -380,13 +396,19 @@
             }, 7000); // 3.5 seconds for each message
 
             // Display the image
-            const img = document.createElement('img');
+            const img = new Image();
             img.src = `titpics/${word}.png`;
-            img.style.width = '300px';
-            img.style.height = '100%';
-            img.style.objectFit = 'cover';
-            imageBox.innerHTML = '';
-            imageBox.appendChild(img);
+            img.onload = () => {
+                img.style.width = '300px';
+                img.style.height = 'auto';
+                if (img.naturalWidth < img.naturalHeight) {
+                    img.style.height = '300px';
+                    img.style.width = 'auto';
+                }
+                img.style.objectFit = 'cover';
+                imageBox.innerHTML = '';
+                imageBox.appendChild(img);
+            };
         }
 
         // Function to animate correct answer
@@ -431,9 +453,29 @@
 
         setInterval(animateWatermark, 10000); // Double the interval for animation
 
+        // Handle help text click
+        helpText.addEventListener('click', () => {
+            helpText.innerHTML = 'ETSI SEURAAVA KIRJAIN<span class="blink">..</span>';
+            const blinkDots = helpText.querySelector('.blink');
+            const interval = setInterval(() => {
+                blinkDots.style.opacity = blinkDots.style.opacity == 1 ? 0 : 1;
+            }, 500);
+
+            const onGreenClick = (event) => {
+                if (event.target.classList.contains('clicked')) {
+                    helpText.innerHTML = 'LEMPINIMI RINNOILLE. <span class="help-text" style="animation: blink 1s infinite alternate; color: #808080;">APUA?</span>';
+                    clearInterval(interval);
+                    document.removeEventListener('click', onGreenClick);
+                }
+            };
+
+            document.addEventListener('click', onGreenClick);
+        });
+
         // Start the game
         initGame();
         startImageRotation();
     </script>
 </body>
 </html>
+
