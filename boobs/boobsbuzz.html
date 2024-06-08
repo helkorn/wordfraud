@@ -284,29 +284,11 @@
                 restartMessageElement.style.opacity = 1;
             }, 3000); // 3 seconds delay before showing the titpics
 
-            setTimeout(() => showTitpics(formattedWord), 3000); // Show titpics after 3 seconds
+            setTimeout(() => redirectToTitpic(word), 3000); // Redirect to titpic.html after 3 seconds
         }
 
-        function showTitpics(word) {
-            gridElement.innerHTML = ''; // Clear the grid
-            foundWordElement.innerHTML = ''; // Clear the found word element
-            endMessageElement.innerHTML = ''; // Clear the end message element
-            restartMessageElement.innerHTML = ''; // Clear the restart message element
-            startMessageElement.style.display = 'none';
-
-            const img = document.createElement('img');
-            img.src = `https://timosalonen.github.io/wordfraud/titpics/${word}.png`;
-            img.alt = word;
-            img.style.maxWidth = '100%';
-
-            console.log('Appending image:', img.src); // Debugging log
-
-            document.body.appendChild(img);
-
-            setTimeout(() => {
-                document.body.removeChild(img); // Remove the image after 5 seconds
-                initGame(); // Restart the game
-            }, 5000); // 5 seconds delay before restarting the game
+        function redirectToTitpic(word) {
+            window.location.href = `titpic.html?word=${word}`;
         }
 
         function startTimer(word) {
