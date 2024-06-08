@@ -93,12 +93,14 @@
         }
         #start-message {
             font-size: 18px;
-            color: lightgray;
+            color: gray;
+            font-weight: bold;
             font-family: 'Timer', Arial, sans-serif;
         }
         #timer {
             font-size: 18px;
-            color: lightgray;
+            color: gray;
+            font-weight: bold;
             font-family: 'Timer', Arial, sans-serif;
             display: inline;
         }
@@ -106,6 +108,8 @@
             font-size: 18px;
             margin: 10px 0;
             display: inline-block;
+            color: gray;
+            font-weight: bold;
         }
         a {
             color: white; /* Changed from pink to white */
@@ -273,7 +277,7 @@
         function showAnswer(word) {
             const formattedWord = word;
             startMessageElement.style.display = 'none';
-            endMessageElement.innerHTML = `SINULLE OIKEAT RINNAT OVAT <span style="color: lightgrey;">${formattedWord}</span>`;
+            endMessageElement.innerHTML = `SINULLE OIKEAT RINNAT OVAT <span style="color: lightgrey; font-weight: bold;">${formattedWord}</span>`;
             endMessageElement.style.opacity = 1;
 
             setTimeout(() => {
@@ -336,4 +340,3 @@
     </script>
 </body>
 </html>
-
