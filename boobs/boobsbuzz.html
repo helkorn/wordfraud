@@ -5,10 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Boobsbuzz</title>
     <style>
-        @font-face {
-            font-family: 'Timer';
-            src: url('https://timosalonen.github.io/wordfraud/fonts/timer.ttf') format('truetype');
-        }
         body {
             background-color: black;
             color: white;
@@ -65,7 +61,7 @@
             50% { background-color: black; }
         }
         .flash-grid {
-            animation: flashGrid 0.5s 2;
+            animation: flashGrid 0.5s 1;
         }
         @keyframes moveUp {
             0% { transform: translate(0, 0); }
@@ -95,13 +91,11 @@
             font-size: 18px;
             color: gray;
             font-weight: bold;
-            font-family: 'Timer', Arial, sans-serif;
         }
         #timer {
             font-size: 18px;
             color: gray;
             font-weight: bold;
-            font-family: 'Timer', Arial, sans-serif;
             display: inline;
         }
         #end-message, #restart-message {
@@ -162,11 +156,8 @@
                 }
             }
 
-            let startX, startY;
-            do {
-                startX = Math.floor(Math.random() * 4) + 1; // Ensures it's not in the first or last column
-                startY = Math.floor(Math.random() * 4) + 1; // Ensures it's not in the first or last row
-            } while (startX + word.length >= 5 || startY + word.length >= 5);
+            let startX = Math.floor(Math.random() * 4) + 1; // Ensures it's not in the first or last column
+            let startY = Math.floor(Math.random() * 4) + 1; // Ensures it's not in the first or last row
 
             let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
             let positions = [{ x: startX, y: startY }];
@@ -307,13 +298,7 @@
             gridElement.classList.add('flash-grid');
             setTimeout(() => {
                 gridElement.classList.remove('flash-grid');
-                setTimeout(() => {
-                    gridElement.classList.add('flash-grid');
-                    setTimeout(() => {
-                        gridElement.classList.remove('flash-grid');
-                        initGame();
-                    }, 500);
-                }, 500);
+                initGame();
             }, 500);
         }
 
