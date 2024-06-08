@@ -238,7 +238,13 @@
             }
 
             const currentIndex = [...gridElement.children].filter(c => c.classList.contains('clicked')).length;
-            if (letter === word[currentIndex].toUpperCase()) {
+            const lastClicked = [...gridElement.children].filter(c => c.classList.contains('clicked')).pop();
+            const lastRow = parseInt(lastClicked.dataset.row);
+            const lastCol = parseInt(lastClicked.dataset.col);
+            const cellRow = parseInt(cell.dataset.row);
+            const cellCol = parseInt(cell.dataset.col);
+
+            if (letter === word[currentIndex].toUpperCase() && isAdjacent(lastRow, lastCol, cellRow, cellCol)) {
                 cell.classList.add('clicked');
                 if (currentIndex + 1 === word.length) {
                     animateFoundWord(word);
@@ -254,6 +260,10 @@
                     cell.classList.remove('wrong');
                 }, 500);
             }
+        }
+
+        function isAdjacent(row1, col1, row2, col2) {
+            return (Math.abs(row1 - row2) + Math.abs(col1 - col2)) === 1;
         }
 
         function animateFoundWord(word) {
@@ -343,4 +353,3 @@
     </script>
 </body>
 </html>
-
