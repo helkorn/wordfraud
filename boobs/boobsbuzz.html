@@ -287,6 +287,9 @@
             img.src = `https://timosalonen.github.io/wordfraud/titpics/${word}.png`;
             img.alt = word;
             img.style.maxWidth = '100%';
+
+            console.log('Appending image:', img.src); // Debugging log
+
             document.body.appendChild(img);
 
             setTimeout(() => {
@@ -340,4 +343,3 @@
     </script>
 </body>
 </html>
-
