@@ -92,6 +92,20 @@
         a:hover {
             text-decoration: underline;
         }
+        @keyframes fadein {
+            from { color: black; }
+            to { color: lightgrey; }
+        }
+        @keyframes fadeout {
+            from { color: lightgrey; }
+            to { color: black; }
+        }
+        .fadein {
+            animation: fadein 1s forwards;
+        }
+        .fadeout {
+            animation: fadeout 1s forwards;
+        }
     </style>
 </head>
 <body>
@@ -100,6 +114,7 @@
     </div>
     <div id="found-word"></div>
     <div id="message-container">
+        <div id="start-message" class="fadein">LEMPINIMI RINNOILLE?</div>
         <div id="end-message"></div>
         <div id="restart-message"></div>
     </div>
@@ -109,6 +124,7 @@
         const foundWordElement = document.getElementById('found-word');
         const endMessageElement = document.getElementById('end-message');
         const restartMessageElement = document.getElementById('restart-message');
+        const startMessageElement = document.getElementById('start-message');
         let helpShown = false;
         let wrongClicks = 0;
 
@@ -175,6 +191,11 @@
             foundWordElement.innerHTML = '';
             endMessageElement.innerHTML = '';
             restartMessageElement.innerHTML = '';
+            startMessageElement.classList.remove('fadein');
+            startMessageElement.classList.add('fadeout');
+            setTimeout(() => {
+                startMessageElement.style.display = 'none';
+            }, 1000);
             const { grid, word } = await createGrid();
             let foundLetters = 0;
 
@@ -250,16 +271,21 @@
 
         function showAnswer(word) {
             const formattedWord = word.charAt(0) + word.slice(1).toLowerCase() + '.';
-            endMessageElement.innerHTML = `<b>SINULLE OIKEAT rinnat ovat: <span style="color: #A9A9A9;">${formattedWord}</span></b>`;
+            endMessageElement.innerHTML = `<b>SINULLE OIKEAT RINNAT OVAT: <span style="color: lightgrey;">${formattedWord}</span></b>`;
             endMessageElement.style.opacity = 1;
+            endMessageElement.classList.add('fadein');
 
             setTimeout(() => {
-                endMessageElement.style.opacity = 0;
-                restartMessageElement.innerHTML = '';
-                restartMessageElement.style.opacity = 1;
+                endMessageElement.classList.remove('fadein');
+                endMessageElement.classList.add('fadeout');
+                setTimeout(() => {
+                    endMessageElement.style.display = 'none';
+                    restartMessageElement.innerHTML = '';
+                    restartMessageElement.style.opacity = 1;
+                }, 1000);
             }, 5000); // 5 seconds delay before restarting the game
 
-            setTimeout(initGame, 5000); // Restart the game after 5 seconds
+            setTimeout(initGame, 6000); // Restart the game after 6 seconds to include fade-out time
         }
 
         function getRandomLetter() {
