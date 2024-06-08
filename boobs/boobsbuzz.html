@@ -58,7 +58,7 @@
         }
         @keyframes moveUp {
             0% { transform: translate(0, 0); }
-            100% { transform: translate(0, -200px); } /* Move up more */
+            100% { transform: translate(0, -50px); }
         }
         .move-up {
             animation: moveUp 1s forwards;
@@ -78,14 +78,15 @@
         }
         #message-container {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 40px;
         }
         #end-message, #restart-message {
             font-size: 18px;
             margin: 10px 0;
+            display: inline-block;
         }
         a {
-            color: white;
+            color: white; /* Changed from pink to white */
             text-decoration: none;
         }
         a:hover {
@@ -131,19 +132,8 @@
                 }
             }
 
-            let startX, startY, validPosition = false;
-            while (!validPosition) {
-                startX = Math.floor(Math.random() * 4) + 1; // Ensure not starting on the left edge
-                startY = Math.floor(Math.random() * 4) + 1; // Ensure not starting on the top edge
-
-                validPosition = true;
-                for (let i = 0; i < word.length; i++) {
-                    if (startX + i >= 6 || startY + i >= 6) {
-                        validPosition = false;
-                        break;
-                    }
-                }
-            }
+            let startX = Math.floor(Math.random() * 6);
+            let startY = Math.floor(Math.random() * 6);
 
             let positions = [{ x: startX, y: startY }];
             grid[startY][startX] = word.charAt(0);
@@ -244,9 +234,6 @@
                     cell.classList.add('move-up');
                     const letterSpan = document.createElement('span');
                     letterSpan.textContent = cell.dataset.letter;
-                    letterSpan.style.position = 'absolute';
-                    letterSpan.style.top = `${cell.getBoundingClientRect().top - gridElement.getBoundingClientRect().top - 50}px`;
-                    letterSpan.style.left = `${cell.getBoundingClientRect().left - gridElement.getBoundingClientRect().left}px`;
                     foundWordElement.appendChild(letterSpan);
                 });
                 foundWordElement.style.visibility = 'visible';
@@ -270,7 +257,7 @@
                 endMessageElement.style.opacity = 0;
                 restartMessageElement.innerHTML = `<a href="#" onclick="initGame()"><b>Koita uudelleen tästä linkistä!</b></a>`;
                 restartMessageElement.style.opacity = 1;
-            }, 3500);
+            }, 1750); // 1.75 seconds for each message
 
             setInterval(() => {
                 if (endMessageElement.style.opacity == 1) {
