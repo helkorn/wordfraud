@@ -124,6 +124,7 @@
         <div id="end-message"></div>
         <div id="restart-message"></div>
     </div>
+
     <script>
         const gridElement = document.getElementById('puzzle');
         const foundWordElement = document.getElementById('found-word');
@@ -131,6 +132,7 @@
         const restartMessageElement = document.getElementById('restart-message');
         const startMessageElement = document.getElementById('start-message');
         const timerElement = document.getElementById('timer');
+        let helpShown = false;
         let wrongClicks = 0;
         let timerInterval;
         let lastClickedCell = null;
@@ -146,6 +148,7 @@
 
         async function createGrid() {
             const word = (await fetchWord());
+
             let grid = [];
             for (let i = 0; i < 6; i++) {
                 grid[i] = [];
@@ -154,33 +157,35 @@
                 }
             }
 
-            let startX, startY, direction;
-            const directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
-            let validStart = false;
+            let startX, startY;
+            do {
+                startX = Math.floor(Math.random() * 4) + 1; // Ensures it's not in the first or last column
+                startY = Math.floor(Math.random() * 4) + 1; // Ensures it's not in the first or last row
+            } while (startX === 0 || startX === 5 || startY === 0 || startY === 5); // Re-checks to ensure not at the edge
 
-            while (!validStart) {
-                startX = Math.floor(Math.random() * 4) + 1;
-                startY = Math.floor(Math.random() * 4) + 1;
-                direction = directions[Math.floor(Math.random() * directions.length)];
+            let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+            let positions = [{ x: startX, y: startY }];
+            grid[startY][startX] = word.charAt(0).toUpperCase();
 
-                validStart = true;
-                for (let i = 0; i < word.length; i++) {
-                    const newX = startX + direction[0] * i;
-                    const newY = startY + direction[1] * i;
-                    if (newX < 0 || newX >= 6 || newY < 0 || newY >= 6) {
-                        validStart = false;
-                        break;
-                    }
-                }
-            }
+            for (let i = 1; i < word.length; i++) {
+                let lastPos = positions[positions.length - 1];
+                let possibleDirections = directions.filter(dir => {
+                    let newX = lastPos.x + dir[0];
+                    let newY = lastPos.y + dir[1];
+                    return newX >= 0 && newX < 6 && newY >= 0 && newY < 6 && !positions.some(pos => pos.x === newX && pos.y === newY);
+                });
 
-            for (let i = 0; i < word.length; i++) {
-                const newX = startX + direction[0] * i;
-                const newY = startY + direction[1] * i;
+                if (possibleDirections.length === 0) break;
+
+                let dir = possibleDirections[Math.floor(Math.random() * possibleDirections.length)];
+                let newX = lastPos.x + dir[0];
+                let newY = lastPos.y + dir[1];
+
                 grid[newY][newX] = word.charAt(i).toUpperCase();
+                positions.push({ x: newX, y: newY });
             }
 
-            return { grid, word };
+            return { grid, word, positions };
         }
 
         async function initGame() {
@@ -189,7 +194,8 @@
             endMessageElement.innerHTML = '';
             restartMessageElement.innerHTML = '';
             startMessageElement.style.display = 'block';
-            const { grid, word } = await createGrid();
+            const { grid, word, positions } = await createGrid();
+            let foundLetters = 0;
 
             grid.forEach((row, rowIndex) => {
                 row.forEach((letter, colIndex) => {
@@ -199,7 +205,10 @@
                     cell.dataset.letter = letter;
                     cell.dataset.row = rowIndex;
                     cell.dataset.col = colIndex;
-                    cell.addEventListener('click', () => handleCellClick(cell, word.toUpperCase()));
+                    if (positions.some(pos => pos.x === colIndex && pos.y === rowIndex)) {
+                        cell.classList.add('hint');
+                    }
+                    cell.addEventListener('click', () => handleCellClick(cell, word.toUpperCase(), positions));
                     gridElement.appendChild(cell);
                 });
             });
@@ -207,12 +216,13 @@
             const firstLetterElement = [...gridElement.children].find(cell => cell.dataset.letter === word.charAt(0).toUpperCase());
             firstLetterElement.classList.add('clicked');
             firstLetterElement.dataset.found = true;
+            foundLetters++;
             lastClickedCell = firstLetterElement;
 
             startTimer(word);
         }
 
-        function handleCellClick(cell, word) {
+        function handleCellClick(cell, word, positions) {
             const letter = cell.dataset.letter;
             const currentIndex = [...gridElement.children].filter(c => c.classList.contains('clicked')).length;
 
@@ -220,15 +230,13 @@
                 return;
             }
 
-            const lastPos = {
-                x: parseInt(lastClickedCell.dataset.col),
-                y: parseInt(lastClickedCell.dataset.row)
-            };
+            const lastPos = positions[currentIndex - 1];
             const row = parseInt(cell.dataset.row);
             const col = parseInt(cell.dataset.col);
 
             if (isAdjacent(lastPos, { x: col, y: row }) && letter === word[currentIndex].toUpperCase()) {
                 cell.classList.add('clicked');
+                cell.classList.remove('hint');
                 lastClickedCell = cell;
                 if (currentIndex + 1 === word.length) {
                     animateFoundWord(word);
@@ -237,6 +245,9 @@
             } else {
                 cell.classList.add('wrong');
                 wrongClicks++;
+                if (wrongClicks > 3 && !helpShown) {
+                    showHelpMessage(word);
+                }
                 setTimeout(() => {
                     cell.classList.remove('wrong');
                 }, 500);
@@ -262,6 +273,13 @@
                 });
                 foundWordElement.style.visibility = 'visible';
             }, 600); // Match the duration of the flash animation
+        }
+
+        function showHelpMessage(word) {
+            helpShown = true;
+            const helpText = document.createElement('div');
+            helpText.style = "animation: fadein 1s; font-size: 14px; color: #808080; font-family: 'booboo', Arial, sans-serif; margin-top: 10px;";
+            document.body.appendChild(helpText);
         }
 
         function showAnswer(word) {
