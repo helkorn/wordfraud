@@ -50,7 +50,7 @@
             background-color: rgba(255, 255, 255, 0.1); /* White with 10% transparency */
         }
         .grid-item.hint {
-            color: #FFB6C1; /* Light pink */
+            background-color: rgba(255, 182, 193, 0.2); /* Light pink background */
         }
         @keyframes flash {
             0%, 100% { background-color: #FF69B4; }
@@ -172,7 +172,7 @@
                 let possibleDirections = directions.filter(dir => {
                     let newX = lastPos.x + dir[0];
                     let newY = lastPos.y + dir[1];
-                    return newX > 0 && newX < 5 && newY > 0 && newY < 5 && !positions.some(pos => pos.x === newX && pos.y === newY);
+                    return newX >= 0 && newX < 6 && newY >= 0 && newY < 6 && !positions.some(pos => pos.x === newX && pos.y === newY);
                 });
 
                 if (possibleDirections.length === 0) break;
