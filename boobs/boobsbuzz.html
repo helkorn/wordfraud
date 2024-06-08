@@ -250,24 +250,16 @@
 
         function showAnswer(word) {
             const formattedWord = word.charAt(0) + word.slice(1).toLowerCase() + '.';
-            endMessageElement.innerHTML = `<b>Sinulle sopivat rinnat ovat: <span style="color: #A9A9A9;">${formattedWord}</span></b>`;
+            endMessageElement.innerHTML = `<b>SINULLE OIKEAT rinnat ovat: <span style="color: #A9A9A9;">${formattedWord}</span></b>`;
             endMessageElement.style.opacity = 1;
 
             setTimeout(() => {
                 endMessageElement.style.opacity = 0;
-                restartMessageElement.innerHTML = `<a href="#" onclick="initGame()"><b>Koita uudelleen tästä linkistä!</b></a>`;
+                restartMessageElement.innerHTML = '';
                 restartMessageElement.style.opacity = 1;
-            }, 1750); // 1.75 seconds for each message
+            }, 5000); // 5 seconds delay before restarting the game
 
-            setInterval(() => {
-                if (endMessageElement.style.opacity == 1) {
-                    endMessageElement.style.opacity = 0;
-                    restartMessageElement.style.opacity = 1;
-                } else {
-                    endMessageElement.style.opacity = 1;
-                    restartMessageElement.style.opacity = 0;
-                }
-            }, 1750); // 1.75 seconds for each message
+            setTimeout(initGame, 5000); // Restart the game after 5 seconds
         }
 
         function getRandomLetter() {
@@ -293,4 +285,3 @@
     </script>
 </body>
 </html>
-
