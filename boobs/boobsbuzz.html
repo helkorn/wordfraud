@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Boobsbuzz</title>
     <style>
+        @font-face {
+            font-family: 'Timer';
+            src: url('fonts/timer.ttf') format('truetype');
+        }
         body {
             background-color: black;
             color: white;
@@ -56,6 +60,13 @@
         .flash {
             animation: flash 0.2s 3;
         }
+        @keyframes flashGrid {
+            0%, 100% { background-color: #FF69B4; }
+            50% { background-color: black; }
+        }
+        .flash-grid {
+            animation: flashGrid 0.5s 2;
+        }
         @keyframes moveUp {
             0% { transform: translate(0, 0); }
             100% { transform: translate(0, -50px); }
@@ -80,6 +91,17 @@
             text-align: center;
             margin-top: 40px;
         }
+        #start-message {
+            font-size: 18px;
+            color: darkgray;
+            font-family: 'Timer', Arial, sans-serif;
+        }
+        #timer {
+            font-size: 18px;
+            color: darkgray;
+            font-family: 'Timer', Arial, sans-serif;
+            display: inline;
+        }
         #end-message, #restart-message {
             font-size: 18px;
             margin: 10px 0;
@@ -92,20 +114,6 @@
         a:hover {
             text-decoration: underline;
         }
-        @keyframes fadein {
-            from { color: black; }
-            to { color: lightgrey; }
-        }
-        @keyframes fadeout {
-            from { color: lightgrey; }
-            to { color: black; }
-        }
-        .fadein {
-            animation: fadein 1s forwards;
-        }
-        .fadeout {
-            animation: fadeout 1s forwards;
-        }
     </style>
 </head>
 <body>
@@ -114,7 +122,7 @@
     </div>
     <div id="found-word"></div>
     <div id="message-container">
-        <div id="start-message" class="fadein">LEMPINIMI RINNOILLE?</div>
+        <div id="start-message">LEMPINIMI RINNOILLE? <span id="timer">00:30</span></div>
         <div id="end-message"></div>
         <div id="restart-message"></div>
     </div>
@@ -125,8 +133,10 @@
         const endMessageElement = document.getElementById('end-message');
         const restartMessageElement = document.getElementById('restart-message');
         const startMessageElement = document.getElementById('start-message');
+        const timerElement = document.getElementById('timer');
         let helpShown = false;
         let wrongClicks = 0;
+        let timerInterval;
 
         async function fetchWord() {
             const response = await fetch('../melonit.csv');
@@ -191,11 +201,7 @@
             foundWordElement.innerHTML = '';
             endMessageElement.innerHTML = '';
             restartMessageElement.innerHTML = '';
-            startMessageElement.classList.remove('fadein');
-            startMessageElement.classList.add('fadeout');
-            setTimeout(() => {
-                startMessageElement.style.display = 'none';
-            }, 1000);
+            startMessageElement.style.display = 'block';
             const { grid, word } = await createGrid();
             let foundLetters = 0;
 
@@ -216,6 +222,8 @@
             firstLetterElement.classList.add('clicked');
             firstLetterElement.dataset.found = true;
             foundLetters++;
+
+            startTimer(word);
         }
 
         function handleCellClick(cell, word) {
@@ -270,22 +278,45 @@
         }
 
         function showAnswer(word) {
-            const formattedWord = word.charAt(0) + word.slice(1).toLowerCase() + '.';
+            const formattedWord = word + '.';
             endMessageElement.innerHTML = `<b>SINULLE OIKEAT RINNAT OVAT: <span style="color: lightgrey;">${formattedWord}</span></b>`;
             endMessageElement.style.opacity = 1;
-            endMessageElement.classList.add('fadein');
 
             setTimeout(() => {
-                endMessageElement.classList.remove('fadein');
-                endMessageElement.classList.add('fadeout');
-                setTimeout(() => {
-                    endMessageElement.style.display = 'none';
-                    restartMessageElement.innerHTML = '';
-                    restartMessageElement.style.opacity = 1;
-                }, 1000);
+                endMessageElement.style.opacity = 0;
+                restartMessageElement.innerHTML = '';
+                restartMessageElement.style.opacity = 1;
             }, 5000); // 5 seconds delay before restarting the game
 
-            setTimeout(initGame, 6000); // Restart the game after 6 seconds to include fade-out time
+            setTimeout(initGame, 5000); // Restart the game after 5 seconds
+        }
+
+        function startTimer(word) {
+            let timeLeft = 30;
+            timerElement.textContent = `00:${timeLeft < 10 ? '0' + timeLeft : timeLeft}`;
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerElement.textContent = `00:${timeLeft < 10 ? '0' + timeLeft : timeLeft}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    flashGridAndRestart();
+                }
+            }, 1000);
+        }
+
+        function flashGridAndRestart() {
+            gridElement.classList.add('flash-grid');
+            setTimeout(() => {
+                gridElement.classList.remove('flash-grid');
+                setTimeout(() => {
+                    gridElement.classList.add('flash-grid');
+                    setTimeout(() => {
+                        gridElement.classList.remove('flash-grid');
+                        initGame();
+                    }, 500);
+                }, 500);
+            }, 500);
         }
 
         function getRandomLetter() {
