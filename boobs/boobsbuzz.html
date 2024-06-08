@@ -54,14 +54,14 @@
             50% { background-color: transparent; }
         }
         .flash {
-            animation: flash 0.2s 3;
+            animation: flash 0.2s 1; /* Only one flash */
         }
         @keyframes flashGrid {
             0%, 100% { background-color: #FF69B4; }
             50% { background-color: black; }
         }
         .flash-grid {
-            animation: flashGrid 0.5s 1;
+            animation: flashGrid 0.5s 1; /* Only one flash */
         }
         @keyframes moveUp {
             0% { transform: translate(0, 0); }
@@ -89,20 +89,26 @@
         }
         #start-message {
             font-size: 18px;
-            color: gray;
-            font-weight: bold;
+            color: lightgray;
+            font-family: Arial, sans-serif; /* Removed Timer font */
         }
         #timer {
             font-size: 18px;
-            color: gray;
-            font-weight: bold;
+            color: lightgray;
+            font-family: Arial, sans-serif; /* Removed Timer font */
             display: inline;
         }
         #end-message, #restart-message {
             font-size: 18px;
             margin: 10px 0;
             display: inline-block;
+        }
+        .gray-text {
             color: gray;
+            font-weight: normal;
+        }
+        .highlighted {
+            color: lightgray;
             font-weight: bold;
         }
         a {
@@ -120,7 +126,7 @@
     </div>
     <div id="found-word"></div>
     <div id="message-container">
-        <div id="start-message">ETSI LEMPINIMI RINNOILLE&nbsp;&nbsp;<span id="timer">00:30</span></div>
+        <div id="start-message"><span class="gray-text">ETSI...</span>&nbsp;&nbsp;<span id="timer">00:30</span></div>
         <div id="end-message"></div>
         <div id="restart-message"></div>
     </div>
@@ -156,19 +162,19 @@
                 }
             }
 
-            let startX = Math.floor(Math.random() * 4) + 1; // Ensures it's not in the first or last column
-            let startY = Math.floor(Math.random() * 4) + 1; // Ensures it's not in the first or last row
+            let startX = Math.floor(Math.random() * 6);
+            let startY = Math.floor(Math.random() * 6);
 
-            let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
             let positions = [{ x: startX, y: startY }];
             grid[startY][startX] = word.charAt(0);
+            let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
 
             for (let i = 1; i < word.length; i++) {
                 let lastPos = positions[positions.length - 1];
                 let possibleDirections = directions.filter(dir => {
                     let newX = lastPos.x + dir[0];
                     let newY = lastPos.y + dir[1];
-                    return newX >= 1 && newX < 5 && newY >= 1 && newY < 5 && !positions.some(pos => pos.x === newX && pos.y === newY);
+                    return newX >= 0 && newX < 6 && newY >= 0 && newY < 6 && !positions.some(pos => pos.x === newX && pos.y === newY);
                 });
 
                 if (possibleDirections.length === 0) break;
@@ -180,6 +186,16 @@
                 grid[newY][newX] = word.charAt(i);
                 positions.push({ x: newX, y: newY });
             }
+
+            let emptyCount = 0;
+            grid.forEach(row => row.forEach((cell, index) => {
+                if (!cell) {
+                    emptyCount++;
+                    if (emptyCount > 1) {
+                        grid[row][index] = getRandomLetter();
+                    }
+                }
+            }));
 
             return { grid, word };
         }
@@ -268,7 +284,7 @@
         function showAnswer(word) {
             const formattedWord = word;
             startMessageElement.style.display = 'none';
-            endMessageElement.innerHTML = `SINULLE OIKEAT RINNAT OVAT <span style="color: lightgrey; font-weight: bold;">${formattedWord}</span>`;
+            endMessageElement.innerHTML = `SINULLE <span class="highlighted">${formattedWord}</span>`;
             endMessageElement.style.opacity = 1;
 
             setTimeout(() => {
@@ -298,7 +314,9 @@
             gridElement.classList.add('flash-grid');
             setTimeout(() => {
                 gridElement.classList.remove('flash-grid');
-                initGame();
+                setTimeout(() => {
+                    initGame();
+                }, 500);
             }, 500);
         }
 
@@ -325,3 +343,4 @@
     </script>
 </body>
 </html>
+
