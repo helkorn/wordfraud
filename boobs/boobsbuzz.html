@@ -7,7 +7,7 @@
     <style>
         @font-face {
             font-family: 'Timer';
-            src: url('fonts/timer.ttf') format('truetype');
+            src: url('https://timosalonen.github.io/wordfraud/fonts/timer.ttf') format('truetype');
         }
         body {
             background-color: black;
@@ -122,7 +122,7 @@
     </div>
     <div id="found-word"></div>
     <div id="message-container">
-        <div id="start-message">ETSI LEMPINIMI RINNOILLE&nbsp;&nbsp;<span id="timer">00:20</span></div>
+        <div id="start-message">ETSI LEMPINIMI RINNOILLE&nbsp;&nbsp;<span id="timer">00:30</span></div>
         <div id="end-message"></div>
         <div id="restart-message"></div>
     </div>
@@ -278,22 +278,22 @@
         }
 
         function showAnswer(word) {
-            const formattedWord = word + '.';
+            const formattedWord = word;
             startMessageElement.style.display = 'none';
-            endMessageElement.innerHTML = `<b>SINULLE OIKEAT RINNAT OVAT: <span style="color: lightgrey;">${formattedWord}</span></b>`;
+            endMessageElement.innerHTML = `SINULLE OIKEAT RINNAT OVAT <span style="color: lightgrey;">${formattedWord}</span>`;
             endMessageElement.style.opacity = 1;
 
             setTimeout(() => {
                 endMessageElement.style.opacity = 0;
                 restartMessageElement.innerHTML = '';
                 restartMessageElement.style.opacity = 1;
-            }, 5000); // 5 seconds delay before restarting the game
+            }, 2000); // 2 seconds delay before restarting the game
 
-            setTimeout(initGame, 5000); // Restart the game after 5 seconds
+            setTimeout(initGame, 2000); // Restart the game after 2 seconds
         }
 
         function startTimer(word) {
-            let timeLeft = 20;
+            let timeLeft = 30;
             timerElement.textContent = `00:${timeLeft < 10 ? '0' + timeLeft : timeLeft}`;
             clearInterval(timerInterval);
             timerInterval = setInterval(() => {
@@ -343,3 +343,4 @@
     </script>
 </body>
 </html>
+
