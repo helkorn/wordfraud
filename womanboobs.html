@@ -8,93 +8,64 @@
         body {
             background-color: black;
             color: white;
-            display: grid;
-            grid-template-areas: 
-                "top-left top-center top-right"
-                "middle-left middle-center middle-right"
-                "bottom-left bottom-center bottom-right";
-            grid-template-rows: 1fr 300px 1fr;
-            grid-template-columns: 1fr 1fr 1fr;
-            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
         }
-        #top-left { grid-area: top-left; }
-        #top-center { grid-area: top-center; }
-        #top-right { grid-area: top-right; }
-        #middle-left {
-            grid-area: middle-left;
+        .container {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            position: relative;
-            border: 1px solid silver;
-            width: 300px;
-            height: 300px;
-            overflow: hidden;
-            margin-left: auto;
-            margin-right: auto;
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            box-sizing: border-box;
         }
         #image-box {
-            position: absolute;
             width: 100%;
-            height: 100%;
-        }
-        #middle {
-            grid-area: middle-center;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-        #right {
-            grid-area: middle-right;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: flex-start;
-        }
-        #footer-left { grid-area: bottom-left; }
-        #footer-middle {
-            grid-area: bottom-center;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-            padding-top: 10px;
-            height: 100%;
+            max-width: 300px;
+            margin-bottom: 10px;
             position: relative;
         }
-        #footer-middle-text {
-            position: absolute;
-            top: 10px;
+        #image-box img {
+            width: 100%;
+            height: auto;
         }
-        #footer-right {
-            grid-area: bottom-right;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: flex-start;
-            padding: 10px;
-            position: relative;
+        #watermark {
+            font-size: 12px;
+            color: #808080;
+            text-align: left;
+            width: 100%;
+            margin-bottom: 10px;
         }
-        .grid {
+        #puzzle {
             display: grid;
-            grid-template-columns: repeat(5, 40px);
-            grid-template-rows: repeat(5, 40px);
-            gap: 5px;
+            grid-template-columns: repeat(5, 1fr);
+            grid-gap: 5px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 200px;
         }
         .grid-item {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            width: 100%;
+            padding-top: 100%; /* 1:1 Aspect Ratio */
+            position: relative;
             background-color: black;
-            font-size: 20px;
             cursor: pointer;
             transition: background-color 0.5s;
             border-radius: 4px; /* Slightly rounded corners */
+        }
+        .grid-item span {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-transform: uppercase;
+            font-size: 20px;
+            transition: color 0.5s;
         }
         .grid-item.clicked {
             background-color: #FF1493; /* Pink without transparency */
@@ -102,25 +73,11 @@
         .grid-item.wrong {
             background-color: #FF1493; /* Pink without transparency */
         }
-        .grid-item span {
-            transition: color 0.5s;
-            text-transform: uppercase;
-        }
-        .blink {
-            animation: blink 1s infinite;
-            font-weight: bold;
-        }
-        @keyframes blink {
-            0%, 50% {
-                opacity: 1;
-            }
-            51%, 100% {
-                opacity: 0;
-            }
-        }
         .animated-text {
             color: #FF69B4; /* Brightened pink color */
             font-family: 'booboo', Arial, sans-serif;
+            margin-bottom: 20px;
+            text-align: center;
         }
         .pink-wave {
             font-size: 14px;
@@ -128,6 +85,8 @@
             text-decoration: none;
             transition: color 2s;
             opacity: 0.2;
+            margin-bottom: 20px;
+            text-align: center;
         }
         .pink-wave.animate {
             animation: colorChange 10s infinite alternate;
@@ -136,107 +95,257 @@
             0% { color: gray; }
             100% { color: #FF69B4; } /* Harmaan ja pinkin väli */
         }
-        @keyframes moveUp {
-            0% { transform: translateY(50%); }
-            25% { transform: translateY(0); }
-            75% { transform: translateY(0); }
-            100% { transform: translateY(50%); }
-        }
-        @keyframes moveDown {
-            0% { transform: translateY(-50%); }
-            25% { transform: translateY(0); }
-            75% { transform: translateY(0); }
-            100% { transform: translateY(-50%); }
-        }
-        @keyframes moveLeft {
-            0% { transform: translateX(50%); }
-            25% { transform: translateX(0); }
-            75% { transform: translateX(0); }
-            100% { transform: translateX(50%); }
-        }
-        @keyframes moveRight {
-            0% { transform: translateX(-50%); }
-            25% { transform: translateX(0); }
-            75% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        @keyframes zoomIn {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.2); }
-        }
-        @keyframes textChange {
-            0% { color: gray; }
-            50% { color: white; }
-            100% { color: gray; }
-        }
-        .help-text {
-            cursor: pointer;
-        }
-        #woman-boobs-text {
-            font-family: 'booboo', Arial, sans-serif;
-            font-size: 24px;
-            margin-bottom: 20px;
-            animation: fadeIn 3s forwards;
-        }
-        @keyframes fadeIn {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
-        }
-        .boobs-bounce {
-            animation: bounce 5s infinite;
-        }
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-30px); }
-            60% { transform: translateY(-15px); }
+        #footer-middle-text {
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <div id="top-left"></div>
-    <div id="top-center">
-        <div id="woman-boobs-text"></div>
-    </div>
-    <div id="top-right"></div>
-    <div id="middle-left">
-        <div id="image-box"></div>
-    </div>
-    <div id="middle">
-        <div class="grid" id="puzzle"></div>
-    </div>
-    <div id="right">
-        <img src="titpics/spessut/WomanBoobs.png" width="300">
-        <div id="watermark" style="font-size: 12px; padding-top: 5px; color: #808080;">© Timin Photography</div>
-    </div>
-    <div id="footer-left"></div>
-    <div id="footer-middle">
-        <div id="footer-middle-text">
-            <div id="help-text" class="animated-text"></div>
-            <div id="end-message" class="animated-text"></div>
-            <div id="restart-message" class="animated-text"></div>
+    <!-- Roosa nauha osio -->
+    <div class="container" id="roosa-nauha-section">
+        <div id="image-box">
+            <img src="titpics/spessut/WomanBoobs.png" alt="Woman Boobs Image">
+            <div id="watermark">© Timi Photography</div>
+        </div>
+        <div class="animated-text" id="woman-boobs-text">Tissit mainittu.</div>
+        <div id="roosa-nauha-image-box">
+            <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer;" id="pink-ribbon">
+        </div>
+        <div class="pink-wave animate" id="roosa-nauha">
+            <a href="https://roosanauha.syopasaatio.fi/" target="_blank">Roosa nauha Suomessa 2024</a>
         </div>
     </div>
-    <div id="bottom-right">
-        <img src="titpics/spessut/Pink_ribbon.svg" height="100" style="cursor: pointer; opacity: 0.05;" id="pink-ribbon">
-        <a href="https://roosanauha.syopasaatio.fi/" target="_blank" class="pink-wave" id="roosa-nauha">Roosa nauha Suomessa 2024</a>
+
+    <!-- Sanapeli osio -->
+    <div class="container" id="sanapeli-section">
+        <div id="puzzle">
+            <!-- Puzzle items will be generated here -->
+        </div>
+    </div>
+
+    <!-- Kuvaruletti osio -->
+    <div class="container" id="kuvaruletti-section">
+        <div id="kuvaruletti">
+            <!-- Kuvaruletti will be implemented here -->
+        </div>
     </div>
 
     <script>
-        const gridElement = document.getElementById('puzzle');
-        const answerElement = document.getElementById('footer-middle');
+        // Roosa nauha osio
         const imageBox = document.getElementById('image-box');
         const pinkRibbon = document.getElementById('pink-ribbon');
-        const watermarkElement = document.getElementById('watermark');
-        const helpText = document.getElementById('help-text');
-        const endMessage = document.getElementById('end-message');
-        const restartMessage = document.getElementById('restart-message');
-        const womanBoobsText = document.getElementById('woman-boobs-text');
         const roosaNauhaText = document.getElementById('roosa-nauha');
-        let helpShown = false;
-        let wrongClicks = 0;
 
         roosaNauhaText.classList.add('animate');
 
+        // Sanapeli osio
+        const gridElement = document.getElementById('puzzle');
+        let helpShown = false;
+        let wrongClicks = 0;
+
+        async function fetchWord() {
+            const response = await fetch('melonit.csv');
+            const text = await response.text();
+            const words = text.split('\n').map(word => word.trim()).filter(word => word.length > 0);
+            const bannedWords = ["Bonnie ja Clyde", "Hauskat laukut", "Ismo ja Seppo", "Michelin-manit", "Mikkelin Pimut", "Sanni ja Alma"];
+            const filteredWords = words.filter(word => !bannedWords.includes(word));
+            return filteredWords[Math.floor(Math.random() * filteredWords.length)];
+        }
+
+        async function createGrid() {
+            const word = (await fetchWord()).toUpperCase();
+
+            let grid = [];
+            for (let i = 0; i < 5; i++) {
+                grid[i] = [];
+                for (let j = 0; j < 5; j++) {
+                    grid[i][j] = getRandomLetter();
+                }
+            }
+
+            let startX = Math.floor(Math.random() * 5);
+            let startY = Math.floor(Math.random() * 5);
+
+            let positions = [{ x: startX, y: startY }];
+            grid[startY][startX] = word.charAt(0);
+            let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+
+            for (let i = 1; i < word.length; i++) {
+                let lastPos = positions[positions.length - 1];
+                let possibleDirections = directions.filter(dir => {
+                    let newX = lastPos.x + dir[0];
+                    let newY = lastPos.y + dir[1];
+                    return newX >= 0 && newX < 5 && newY >= 0 && newY < 5 && !positions.some(pos => pos.x === newX && pos.y === newY);
+                });
+
+                if (possibleDirections.length === 0) break;
+
+                let dir = possibleDirections[Math.floor(Math.random() * possibleDirections.length)];
+                let newX = lastPos.x + dir[0];
+                let newY = lastPos.y + dir[1];
+
+                grid[newY][newX] = word.charAt(i);
+                positions.push({ x: newX, y: newY });
+            }
+
+            let emptyCount = 0;
+            grid.forEach(row => row.forEach((cell, index) => {
+                if (!cell) {
+                    emptyCount++;
+                    if (emptyCount > 1) {
+                        grid[row][index] = getRandomLetter();
+                    }
+                }
+            }));
+
+            return { grid, word };
+        }
+
+        async function initGame() {
+            gridElement.innerHTML = '';
+            const { grid, word } = await createGrid();
+            let foundLetters = 0;
+
+            grid.forEach((row, rowIndex) => {
+                row.forEach((letter, colIndex) => {
+                    const cell = document.createElement('div');
+                    cell.classList.add('grid-item');
+                    cell.innerHTML = `<span>${letter}</span>`;
+                    cell.dataset.letter = letter;
+                    cell.dataset.row = rowIndex;
+                    cell.dataset.col = colIndex;
+                    cell.addEventListener('click', () => handleCellClick(cell, word));
+                    gridElement.appendChild(cell);
+                });
+            });
+
+            const firstLetterElement = [...gridElement.children].find(cell => cell.dataset.letter === word.charAt(0).toUpperCase());
+            firstLetterElement.classList.add('clicked');
+            firstLetterElement.dataset.found = true;
+            foundLetters++;
+        }
+
+        function handleCellClick(cell, word) {
+            const letter = cell.dataset.letter;
+
+            if (cell.classList.contains('clicked')) {
+                return;
+            }
+
+            const currentIndex = [...gridElement.children].filter(c => c.classList.contains('clicked')).length;
+            if (letter === word[currentIndex].toUpperCase()) {
+                cell.classList.add('clicked');
+                if (currentIndex + 1 === word.length) {
+                    showAnswer(word);
+                    animateCorrectAnswer();
+                }
+            } else {
+                cell.classList.add('wrong');
+                wrongClicks++;
+                if (wrongClicks > 3 && !helpShown) {
+                    showHelpMessage(word);
+                }
+                setTimeout(() => {
+                    cell.classList.remove('wrong');
+                }, 500);
+            }
+        }
+
+        function showHelpMessage(word) {
+            helpShown = true;
+            const helpText = document.createElement('div');
+            helpText.style = "animation: fadein 1s; font-size: 14px; color: #808080; font-family: 'booboo', Arial, sans-serif; margin-top: 10px;";
+            // helpText.innerHTML = `<b>HELP TEXT PLACEHOLDER</b>`;
+            document.getElementById('footer-middle-text').appendChild(helpText);
+        }
+
+        function showAnswer(word) {
+            const endMessage = document.createElement('div');
+            const restartMessage = document.createElement('div');
+
+            endMessage.innerHTML = `<b>LEMPIRINTASI OVAT: <span style="color: #A9A9A9;">${word}</span></b>`;
+            endMessage.style.opacity = 1;
+            document.getElementById('footer-middle-text').appendChild(endMessage);
+
+            setTimeout(() => {
+                endMessage.style.opacity = 0;
+                restartMessage.innerHTML = "<b>PELAA UUDELLEEN KLIKKAAMALLA ROOSA-NAUHAA</b>";
+                restartMessage.style.opacity = 1;
+                document.getElementById('footer-middle-text').appendChild(restartMessage);
+            }, 3500);
+
+            setInterval(() => {
+                if (endMessage.style.opacity == 1) {
+                    endMessage.style.opacity = 0;
+                    restartMessage.style.opacity = 1;
+                } else {
+                    endMessage.style.opacity = 1;
+                    restartMessage.style.opacity = 0;
+                }
+            }, 7000);
+
+            const img = new Image();
+            img.src = `titpics/${word}.png`;
+            img.onload = () => {
+                const isPortrait = img.naturalWidth < img.naturalHeight;
+                const isSquare = img.naturalWidth === img.naturalHeight;
+
+                if (isSquare) {
+                    img.style.width = '300px';
+                    img.style.height = '300px';
+                    img.style.animation = 'zoomIn 5s infinite alternate';
+                } else if (isPortrait) {
+                    img.style.width = '300px';
+                    img.style.height = 'auto';
+                    img.style.animation = 'moveUp 5s forwards';
+                } else if (isLandscape) {
+                    img.style.width = 'auto';
+                    img.style.height = '300px';
+                    img.style.animation = 'moveLeft 5s forwards';
+                }
+                img.style.opacity = 0;
+                imageBox.innerHTML = '';
+                imageBox.appendChild(img);
+                img.style.opacity = 1;
+            };
+        }
+
+        function animateCorrectAnswer() {
+            const clickedCells = [...gridElement.children].filter(cell => cell.classList.contains('clicked'));
+            clickedCells.forEach(cell => {
+                cell.style.animation = 'flash 0.5s alternate 3';
+            });
+            setTimeout(() => {
+                clickedCells.forEach(cell => {
+                    cell.style.animation = '';
+                });
+            }, 1500);
+        }
+
+        pinkRibbon.addEventListener('click', () => {
+            window.location.href = 'https://timosalonen.github.io/wordfraud/womanboobs.html';
+        });
+
+        function getRandomLetter() {
+            const letters = Object.keys(letterFrequency);
+            const totalWeight = letters.reduce((sum, letter) => sum + (11 - letterFrequency[letter]), 0);
+            let rand = Math.random() * totalWeight;
+            for (const letter of letters) {
+                rand -= (11 - letterFrequency[letter]);
+                if (rand <= 0) return letter;
+            }
+        }
+
+        const letterFrequency = {
+            'A': 1, 'B': 4, 'C': 8, 'D': 2, 'E': 1,
+            'F': 8, 'G': 4, 'H': 4, 'I': 1, 'J': 4,
+            'K': 2, 'L': 2, 'M': 2, 'N': 1, 'O': 2,
+            'P': 4, 'Q': 10, 'R': 1, 'S': 1, 'T': 1,
+            'U': 3, 'V': 4, 'W': 10, 'X': 10, 'Y': 4,
+            'Z': 10, 'Å': 4, 'Ä': 2, 'Ö': 7
+        };
+
+        // Kuvaruletti osio
         async function fetchImages() {
             const response = await fetch('melonit.csv');
             const text = await response.text();
@@ -244,7 +353,7 @@
             const bannedWords = ["Bonnie ja Clyde", "Hauskat laukut", "Ismo ja Seppo", "Michelin-manit", "Mikkelin Pimut", "Sanni ja Alma"];
             const filteredWords = words.filter(word => !bannedWords.includes(word));
             const imagePaths = filteredWords.map(word => `titpics/${word}.png`);
-            return imagePaths.sort(() => Math.random() - 0.5);  // Shuffle the array for random order
+            return imagePaths.sort(() => Math.random() - 0.5);
         }
 
         async function startImageRotation() {
@@ -273,319 +382,17 @@
                         img.style.animation = 'moveLeft 5s forwards';
                     }
                     img.style.opacity = 0;
-                    imageBox.innerHTML = '';
-                    imageBox.appendChild(img);
+                    const kuvaruletti = document.getElementById('kuvaruletti');
+                    kuvaruletti.innerHTML = '';
+                    kuvaruletti.appendChild(img);
                     img.style.opacity = 1;
                 };
                 index++;
             }, 5000);
         }
 
-        // Letter frequency based on Wordfeud points
-        const letterFrequency = {
-            'A': 1, 'B': 4, 'C': 8, 'D': 2, 'E': 1,
-            'F': 8, 'G': 4, 'H': 4, 'I': 1, 'J': 4,
-            'K': 2, 'L': 2, 'M': 2, 'N': 1, 'O': 2,
-            'P': 4, 'Q': 10, 'R': 1, 'S': 1, 'T': 1,
-            'U': 3, 'V': 4, 'W': 10, 'X': 10, 'Y': 4,
-            'Z': 10, 'Å': 4, 'Ä': 2, 'Ö': 7
-        };
-
-        // Function to generate random letter, including Å, Ä, and Ö
-        function getRandomLetter() {
-            const letters = Object.keys(letterFrequency);
-            const totalWeight = letters.reduce((sum, letter) => sum + (11 - letterFrequency[letter]), 0);
-            let rand = Math.random() * totalWeight;
-            for (const letter of letters) {
-                rand -= (11 - letterFrequency[letter]);
-                if (rand <= 0) return letter;
-            }
-        }
-
-        // Function to fetch a word from melonit.csv
-        async function fetchWord() {
-            const response = await fetch('melonit.csv');
-            const text = await response.text();
-            const words = text.split('\n').map(word => word.trim()).filter(word => word.length > 0);
-            const bannedWords = ["Bonnie ja Clyde", "Hauskat laukut", "Ismo ja Seppo", "Michelin-manit", "Mikkelin Pimut", "Sanni ja Alma"];
-            const filteredWords = words.filter(word => !bannedWords.includes(word));
-            return filteredWords[Math.floor(Math.random() * filteredWords.length)];
-        }
-
-        // Function to create the grid with random letters and one word
-        async function createGrid() {
-            const word = (await fetchWord()).toUpperCase();
-
-            let grid = [];
-            for (let i = 0; i < 5; i++) {
-                grid[i] = [];
-                for (let j = 0; j < 5; j++) {
-                    grid[i][j] = getRandomLetter();
-                }
-            }
-
-            // Place word in the grid starting at random position
-            let startX = Math.floor(Math.random() * 5);
-            let startY = Math.floor(Math.random() * 5);
-
-            let positions = [{ x: startX, y: startY }];
-            grid[startY][startX] = word.charAt(0);
-            let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]]; // Right, Down, Left, Up
-
-            for (let i = 1; i < word.length; i++) {
-                let lastPos = positions[positions.length - 1];
-                let possibleDirections = directions.filter(dir => {
-                    let newX = lastPos.x + dir[0];
-                    let newY = lastPos.y + dir[1];
-                    return newX >= 0 && newX < 5 && newY >= 0 && newY < 5 && !positions.some(pos => pos.x === newX && pos.y === newY);
-                });
-
-                if (possibleDirections.length === 0) break;
-
-                let dir = possibleDirections[Math.floor(Math.random() * possibleDirections.length)];
-                let newX = lastPos.x + dir[0];
-                let newY = lastPos.y + dir[1];
-
-                grid[newY][newX] = word.charAt(i);
-                positions.push({ x: newX, y: newY });
-            }
-
-            // Ensure no more than one empty cell
-            let emptyCount = 0;
-            grid.forEach(row => row.forEach((cell, index) => {
-                if (!cell) {
-                    emptyCount++;
-                    if (emptyCount > 1) {
-                        grid[row][index] = getRandomLetter();
-                    }
-                }
-            }));
-
-            return { grid, word };
-        }
-
-        // Function to initialize the game
-        async function initGame() {
-            gridElement.innerHTML = ''; // Clear the grid
-            answerElement.innerHTML = ''; // Clear any previous help text
-            const { grid, word } = await createGrid();
-            let foundLetters = 0;
-
-            // Render grid
-            grid.forEach((row, rowIndex) => {
-                row.forEach((letter, colIndex) => {
-                    const cell = document.createElement('div');
-                    cell.classList.add('grid-item');
-                    cell.innerHTML = `<span>${letter}</span>`;
-                    cell.dataset.letter = letter; // Store letter in data attribute for later use
-                    cell.dataset.row = rowIndex;
-                    cell.dataset.col = colIndex;
-                    cell.addEventListener('click', () => handleCellClick(cell, word));
-                    gridElement.appendChild(cell);
-                });
-            });
-
-            // Mark the first letter of the word as found
-            const firstLetterElement = [...gridElement.children].find(cell => cell.dataset.letter === word.charAt(0).toUpperCase());
-            firstLetterElement.classList.add('clicked');
-            firstLetterElement.dataset.found = true;
-            foundLetters++;
-        }
-
-        // Function to handle cell click
-        function handleCellClick(cell, word) {
-            const letter = cell.dataset.letter;
-
-            if (cell.classList.contains('clicked')) {
-                return;
-            }
-
-            const currentIndex = [...gridElement.children].filter(c => c.classList.contains('clicked')).length;
-            if (letter === word[currentIndex].toUpperCase()) {
-                cell.classList.add('clicked');
-                if (currentIndex + 1 === word.length) {
-                    showAnswer(word);
-                    animateCorrectAnswer();
-                }
-            } else {
-                cell.classList.add('wrong');
-                wrongClicks++;
-                if (wrongClicks > 3 && !helpShown) {
-                    showHelpMessage(word);
-                }
-                setTimeout(() => {
-                    cell.classList.remove('wrong');
-                }, 500);
-            }
-        }
-
-        // Function to show help message
-        function showHelpMessage(word) {
-            helpShown = true;
-            const helpText = document.createElement('div');
-            helpText.style = "animation: fadein 1s; font-size: 14px; color: #808080; font-family: 'booboo', Arial, sans-serif; margin-top: 10px;";
-            // helpText.innerHTML = `<b>HELP TEXT PLACEHOLDER</b>`;
-            answerElement.appendChild(helpText);
-        }
-
-        // Function to show the answer and the corresponding image
-        function showAnswer(word) {
-            endMessage.innerHTML = `<b>LEMPIRINTASI OVAT: <span style="color: #A9A9A9;">${word}</span></b>`;
-            endMessage.style.opacity = 1;
-
-            setTimeout(() => {
-                endMessage.style.opacity = 0;
-                restartMessage.innerHTML = "<b>PELAA UUDELLEEN KLIKKAAMALLA ROOSA-NAUHAA</b>";
-                restartMessage.style.opacity = 1;
-            }, 3500);
-
-            setInterval(() => {
-                if (endMessage.style.opacity == 1) {
-                    endMessage.style.opacity = 0;
-                    restartMessage.style.opacity = 1;
-                } else {
-                    endMessage.style.opacity = 1;
-                    restartMessage.style.opacity = 0;
-                }
-            }, 7000); // 3.5 seconds for each message
-
-            // Display the image
-            const img = new Image();
-            img.src = `titpics/${word}.png`;
-            img.onload = () => {
-                const isPortrait = img.naturalWidth < img.naturalHeight;
-                const isSquare = img.naturalWidth === img.naturalHeight;
-
-                if (isSquare) {
-                    img.style.width = '300px';
-                    img.style.height = '300px';
-                    img.style.animation = 'zoomIn 5s infinite alternate';
-                } else if (isPortrait) {
-                    img.style.width = '300px';
-                    img.style.height = 'auto';
-                    img.style.animation = 'moveUp 5s forwards';
-                } else if (isLandscape) {
-                    img.style.width = 'auto';
-                    img.style.height = '300px';
-                    img.style.animation = 'moveLeft 5s forwards';
-                }
-                img.style.opacity = 0;
-                imageBox.innerHTML = '';
-                imageBox.appendChild(img);
-                img.style.opacity = 1;
-            };
-        }
-
-        // Function to animate correct answer
-        function animateCorrectAnswer() {
-            const clickedCells = [...gridElement.children].filter(cell => cell.classList.contains('clicked'));
-            clickedCells.forEach(cell => {
-                cell.style.animation = 'flash 0.5s alternate 3';
-            });
-            setTimeout(() => {
-                clickedCells.forEach(cell => {
-                    cell.style.animation = '';
-                });
-            }, 1500);
-        }
-
-        // Add event listener to the Pink Ribbon image
-        pinkRibbon.addEventListener('click', () => {
-            window.location.href = 'https://timosalonen.github.io/wordfraud/womanboobs.html';
-        });
-
-        // Function to animate the watermark text
-        function animateWatermark() {
-            const text = watermarkElement.textContent;
-            const randomIndex = Math.floor(Math.random() * text.length);
-            const originalChar = text[randomIndex];
-            const isUpperCase = originalChar === originalChar.toUpperCase();
-
-            let interval;
-            let frame = 0;
-
-            const animateChar = () => {
-                watermarkElement.textContent = text.substring(0, randomIndex) + originalChar + text.substring(randomIndex + 1);
-                frame++;
-                if (frame >= 10) {
-                    clearInterval(interval);
-                    watermarkElement.textContent = text;
-                }
-            };
-
-            interval = setInterval(animateChar, 200);
-        }
-
-        setInterval(animateWatermark, 10000); // Double the interval for animation
-
-        // Handle help text click
-        helpText.addEventListener('click', () => {
-            helpText.innerHTML = 'ETSI SEURAAVA KIRJAIN<span class="blink">..</span>';
-            const blinkDots = helpText.querySelector('.blink');
-            const interval = setInterval(() => {
-                blinkDots.style.opacity = blinkDots.style.opacity == 1 ? 0 : 1;
-            }, 500);
-
-            const onGreenClick = (event) => {
-                if (event.target.classList.contains('clicked')) {
-                    helpText.innerHTML = 'LEMPINIMI RINNOILLE. <span class="help-text" style="animation: blink 1s infinite alternate; color: #808080;">APUA?</span>';
-                    clearInterval(interval);
-                    document.removeEventListener('click', onGreenClick);
-                }
-            };
-
-            document.addEventListener('click', onGreenClick);
-        });
-
-        // Start the game
         initGame();
         startImageRotation();
-
-        // Animation for WomanBoobs text
-        function animateBoobsText() {
-            const boobsText = document.getElementById('woman-boobs-text');
-            boobsText.innerHTML = '';
-            const bElement = boobsText.querySelector('b');
-            if (bElement) {
-                bElement.classList.add('boobs-bounce');
-                setInterval(() => {
-                    bElement.classList.add('boobs-bounce');
-                    setTimeout(() => {
-                        bElement.classList.remove('boobs-bounce');
-                    }, 1000);
-                }, 15000);
-            }
-        }
-
-        animateBoobsText();
-
-        // Image stopping rule based on image_map_data.csv coordinates
-        async function fetchImageMapData() {
-            const response = await fetch('image_map_data.csv');
-            const text = await response.text();
-            return text.split('\n').map(line => {
-                const [x, y] = line.split(',').map(Number);
-                return { x, y };
-            });
-        }
-
-        async function scrollToCoordinates() {
-            const coordinates = await fetchImageMapData();
-            const imageContainer = document.getElementById('image-container');
-            const image = document.getElementById('image');
-
-            window.addEventListener('scroll', () => {
-                const scrollY = window.scrollY;
-                coordinates.forEach(coord => {
-                    if (scrollY >= coord.y && scrollY < coord.y + window.innerHeight) {
-                        imageContainer.scrollTo(coord.x, coord.y);
-                    }
-                });
-            });
-        }
-
-        scrollToCoordinates();
     </script>
 </body>
 </html>
-
