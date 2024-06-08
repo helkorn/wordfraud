@@ -29,7 +29,7 @@
             width: 100%;
             padding-top: 100%; /* 1:1 Aspect Ratio */
             position: relative;
-            background-color: black;
+            background-color: #222; /* Lighter gray */
             cursor: pointer;
             transition: background-color 0.5s;
             border-radius: 4px; /* Slightly rounded corners */
@@ -42,6 +42,7 @@
             text-transform: uppercase;
             font-size: 20px;
             transition: color 0.5s;
+            color: #ccc; /* Lighter gray */
         }
         .grid-item.clicked {
             background-color: #FF69B4; /* Lightened pink */
@@ -72,6 +73,13 @@
         }
         .move-up {
             animation: moveUp 1s forwards;
+        }
+        @keyframes fade {
+            0%, 100% { color: #ccc; }
+            50% { color: transparent; }
+        }
+        .fade {
+            animation: fade 1s infinite;
         }
         #found-word {
             position: absolute;
@@ -111,6 +119,22 @@
         }
         a:hover {
             text-decoration: underline;
+        }
+        .image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 300px; /* Adjust this size as needed */
+            aspect-ratio: 1 / 1; /* Adjust the aspect ratio as needed */
+            margin: 20px 0; /* Space around the image */
+            overflow: hidden; /* Hide overflow */
+            border-radius: 8px; /* Rounded corners */
+        }
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Maintain aspect ratio and cover the container */
         }
     </style>
 </head>
@@ -220,6 +244,7 @@
             lastClickedCell = firstLetterElement;
 
             startTimer(word);
+            startDimming();
         }
 
         function handleCellClick(cell, word, positions) {
@@ -298,26 +323,27 @@
         }
 
         function showTitpics(word) {
-            gridElement.innerHTML = ''; // Clear the grid
-            foundWordElement.innerHTML = ''; // Clear the found word element
-            endMessageElement.innerHTML = ''; // Clear the end message element
-            restartMessageElement.innerHTML = ''; // Clear the restart message element
+            gridElement.innerHTML = ''; // Tyhjennä ruudukko
+            foundWordElement.innerHTML = ''; // Tyhjennä löydetyn sanan elementti
+            endMessageElement.innerHTML = ''; // Tyhjennä loppuviesti
+            restartMessageElement.innerHTML = ''; // Tyhjennä uudelleenkäynnistysviesti
             startMessageElement.style.display = 'none';
 
             const formattedWord = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            const imageContainer = document.createElement('div');
+            imageContainer.className = 'image-container';
+
             const img = document.createElement('img');
             img.src = `https://timosalonen.github.io/wordfraud/titpics/${formattedWord}.png`;
             img.alt = formattedWord;
-            img.style.maxWidth = '100%';
 
-            console.log('Appending image:', img.src); // Debugging log
-
-            document.body.appendChild(img);
+            imageContainer.appendChild(img);
+            document.body.appendChild(imageContainer);
 
             setTimeout(() => {
-                document.body.removeChild(img); // Remove the image after 5 seconds
-                initGame(); // Restart the game
-            }, 5000); // 5 seconds delay before restarting the game
+                document.body.removeChild(imageContainer); // Poista kuva 5 sekunnin kuluttua
+                initGame(); // Käynnistä peli uudelleen
+            }, 5000); // 5 sekuntia ennen pelin uudelleenkäynnistystä
         }
 
         function startTimer(word) {
@@ -340,6 +366,18 @@
                 gridElement.classList.remove('flash-grid');
                 initGame();
             }, 500);
+        }
+
+        function startDimming() {
+            const cells = [...gridElement.children].filter(cell => !cell.classList.contains('clicked'));
+            let index = 0;
+            setInterval(() => {
+                cells[index].classList.add('fade');
+                setTimeout(() => {
+                    cells[index].classList.remove('fade');
+                    index = (index + 1) % cells.length;
+                }, 1000);
+            }, 1000);
         }
 
         function getRandomLetter() {
@@ -365,4 +403,3 @@
     </script>
 </body>
 </html>
-
