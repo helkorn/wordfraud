@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WomanBoobs</title>
+    <title>MelonitBuzz</title>
     <style>
+        @font-face {
+            font-family: 'Timer';
+            src: url('fonts/timer.ttf') format('truetype');
+        }
         body {
             background-color: black;
             color: white;
@@ -56,6 +60,13 @@
         .flash {
             animation: flash 0.2s 3;
         }
+        @keyframes flashGrid {
+            0%, 100% { background-color: #FF69B4; }
+            50% { background-color: black; }
+        }
+        .flash-grid {
+            animation: flashGrid 0.5s 2;
+        }
         @keyframes moveUp {
             0% { transform: translate(0, 0); }
             100% { transform: translate(0, -50px); }
@@ -80,19 +91,21 @@
             text-align: center;
             margin-top: 40px;
         }
+        #start-message {
+            font-size: 18px;
+            color: darkgray;
+            font-family: 'Timer', Arial, sans-serif;
+        }
+        #timer {
+            font-size: 18px;
+            color: darkgray;
+            font-family: 'Timer', Arial, sans-serif;
+            display: inline;
+        }
         #end-message, #restart-message {
             font-size: 18px;
             margin: 10px 0;
             display: inline-block;
-        }
-        #status-message {
-            font-size: 16px;
-            color: gray;
-        }
-        @keyframes fadeInOut {
-            0% { opacity: 0; }
-            50% { opacity: 1; }
-            100% { opacity: 0; }
         }
         a {
             color: white; /* Changed from pink to white */
@@ -109,25 +122,22 @@
     </div>
     <div id="found-word"></div>
     <div id="message-container">
+        <div id="start-message">LEMPINIMI RINNOILLE? <span id="timer">00:30</span></div>
         <div id="end-message"></div>
         <div id="restart-message"></div>
     </div>
-    <div id="status-message">
-        ETSI RINNOILLE LEMPINIMI
-    </div>
-    <div id="timer" style="font-family: 'fonts/timer.ttf'; color: gray;"></div>
 
     <script>
         const gridElement = document.getElementById('puzzle');
         const foundWordElement = document.getElementById('found-word');
         const endMessageElement = document.getElementById('end-message');
         const restartMessageElement = document.getElementById('restart-message');
-        const statusMessageElement = document.getElementById('status-message');
+        const startMessageElement = document.getElementById('start-message');
         const timerElement = document.getElementById('timer');
         let helpShown = false;
         let wrongClicks = 0;
-        let timer;
-        
+        let timerInterval;
+
         async function fetchWord() {
             const response = await fetch('../melonit.csv');
             const text = await response.text();
@@ -187,12 +197,11 @@
         }
 
         async function initGame() {
-            clearInterval(timer);
             gridElement.innerHTML = '';
             foundWordElement.innerHTML = '';
             endMessageElement.innerHTML = '';
             restartMessageElement.innerHTML = '';
-            statusMessageElement.style.display = 'block';
+            startMessageElement.style.display = 'block';
             const { grid, word } = await createGrid();
             let foundLetters = 0;
 
@@ -213,8 +222,8 @@
             firstLetterElement.classList.add('clicked');
             firstLetterElement.dataset.found = true;
             foundLetters++;
-            
-            startTimer();
+
+            startTimer(word);
         }
 
         function handleCellClick(cell, word) {
@@ -269,33 +278,45 @@
         }
 
         function showAnswer(word) {
-            const formattedWord = word.charAt(0) + word.slice(1).toLowerCase() + '.';
-            statusMessageElement.style.display = 'none';
-            endMessageElement.innerHTML = `<b>SINULLE OIKEAT.. <span style="color: #A9A9A9;">${formattedWord}</span></b>`;
+            const formattedWord = word + '.';
+            endMessageElement.innerHTML = `<b>SINULLE OIKEAT RINNAT OVAT: <span style="color: lightgrey;">${formattedWord}</span></b>`;
             endMessageElement.style.opacity = 1;
-            endMessageElement.style.fontSize = '24px';
-            endMessageElement.style.color = 'white';
-            endMessageElement.style.textAlign = 'center';
-            setTimeout(initGame, 5000);
+
+            setTimeout(() => {
+                endMessageElement.style.opacity = 0;
+                restartMessageElement.innerHTML = '';
+                restartMessageElement.style.opacity = 1;
+            }, 5000); // 5 seconds delay before restarting the game
+
+            setTimeout(initGame, 5000); // Restart the game after 5 seconds
         }
 
-        function startTimer() {
+        function startTimer(word) {
             let timeLeft = 30;
-            timerElement.textContent = timeLeft;
-            timer = setInterval(() => {
+            timerElement.textContent = `00:${timeLeft < 10 ? '0' + timeLeft : timeLeft}`;
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
                 timeLeft--;
-                timerElement.textContent = timeLeft;
+                timerElement.textContent = `00:${timeLeft < 10 ? '0' + timeLeft : timeLeft}`;
                 if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    flashGrid();
-                    setTimeout(initGame, 1000);
+                    clearInterval(timerInterval);
+                    flashGridAndRestart();
                 }
             }, 1000);
         }
 
-        function flashGrid() {
-            gridElement.classList.add('flash');
-            setTimeout(() => gridElement.classList.remove('flash'), 400);
+        function flashGridAndRestart() {
+            gridElement.classList.add('flash-grid');
+            setTimeout(() => {
+                gridElement.classList.remove('flash-grid');
+                setTimeout(() => {
+                    gridElement.classList.add('flash-grid');
+                    setTimeout(() => {
+                        gridElement.classList.remove('flash-grid');
+                        initGame();
+                    }, 500);
+                }, 500);
+            }, 500);
         }
 
         function getRandomLetter() {
