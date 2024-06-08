@@ -29,7 +29,7 @@
             width: 100%;
             padding-top: 100%; /* 1:1 Aspect Ratio */
             position: relative;
-            background-color: #222; /* Changed to a lighter gray */
+            background-color: black;
             cursor: pointer;
             transition: background-color 0.5s;
             border-radius: 4px; /* Slightly rounded corners */
@@ -42,7 +42,6 @@
             text-transform: uppercase;
             font-size: 20px;
             transition: color 0.5s;
-            color: #ccc; /* Changed to a lighter gray */
         }
         .grid-item.clicked {
             background-color: #FF69B4; /* Lightened pink */
@@ -73,13 +72,6 @@
         }
         .move-up {
             animation: moveUp 1s forwards;
-        }
-        @keyframes fade {
-            0%, 100% { color: #ccc; }
-            50% { color: transparent; }
-        }
-        .fade {
-            animation: fade 1s infinite;
         }
         #found-word {
             position: absolute;
@@ -228,7 +220,6 @@
             lastClickedCell = firstLetterElement;
 
             startTimer(word);
-            startDimming();
         }
 
         function handleCellClick(cell, word, positions) {
@@ -351,18 +342,6 @@
             }, 500);
         }
 
-        function startDimming() {
-            const cells = [...gridElement.children].filter(cell => !cell.classList.contains('clicked'));
-            let index = 0;
-            setInterval(() => {
-                cells[index].classList.add('fade');
-                setTimeout(() => {
-                    cells[index].classList.remove('fade');
-                    index = (index + 1) % cells.length;
-                }, 1000);
-            }, 1000);
-        }
-
         function getRandomLetter() {
             const letters = Object.keys(letterFrequency);
             const totalWeight = letters.reduce((sum, letter) => sum + (11 - letterFrequency[letter]), 0);
@@ -386,3 +365,4 @@
     </script>
 </body>
 </html>
+
