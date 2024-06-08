@@ -93,12 +93,12 @@
         }
         #start-message {
             font-size: 18px;
-            color: darkgray;
+            color: lightgray;
             font-family: 'Timer', Arial, sans-serif;
         }
         #timer {
             font-size: 18px;
-            color: darkgray;
+            color: lightgray;
             font-family: 'Timer', Arial, sans-serif;
             display: inline;
         }
@@ -122,7 +122,7 @@
     </div>
     <div id="found-word"></div>
     <div id="message-container">
-        <div id="start-message">LEMPINIMI RINNOILLE? <span id="timer">00:30</span></div>
+        <div id="start-message">ETSI LEMPINIMI RINNOILLE&nbsp;&nbsp;<span id="timer">00:20</span></div>
         <div id="end-message"></div>
         <div id="restart-message"></div>
     </div>
@@ -279,6 +279,7 @@
 
         function showAnswer(word) {
             const formattedWord = word + '.';
+            startMessageElement.style.display = 'none';
             endMessageElement.innerHTML = `<b>SINULLE OIKEAT RINNAT OVAT: <span style="color: lightgrey;">${formattedWord}</span></b>`;
             endMessageElement.style.opacity = 1;
 
@@ -292,7 +293,7 @@
         }
 
         function startTimer(word) {
-            let timeLeft = 30;
+            let timeLeft = 20;
             timerElement.textContent = `00:${timeLeft < 10 ? '0' + timeLeft : timeLeft}`;
             clearInterval(timerInterval);
             timerInterval = setInterval(() => {
