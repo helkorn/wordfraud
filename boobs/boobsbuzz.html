@@ -143,7 +143,7 @@
         }
 
         async function createGrid() {
-            const word = (await fetchWord()).toUpperCase();
+            const word = (await fetchWord());
 
             let grid = [];
             for (let i = 0; i < 6; i++) {
@@ -158,7 +158,7 @@
 
             let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
             let positions = [{ x: startX, y: startY }];
-            grid[startY][startX] = word.charAt(0);
+            grid[startY][startX] = word.charAt(0).toUpperCase();
 
             for (let i = 1; i < word.length; i++) {
                 let lastPos = positions[positions.length - 1];
@@ -174,7 +174,7 @@
                 let newX = lastPos.x + dir[0];
                 let newY = lastPos.y + dir[1];
 
-                grid[newY][newX] = word.charAt(i);
+                grid[newY][newX] = word.charAt(i).toUpperCase();
                 positions.push({ x: newX, y: newY });
             }
 
@@ -198,7 +198,7 @@
                     cell.dataset.letter = letter;
                     cell.dataset.row = rowIndex;
                     cell.dataset.col = colIndex;
-                    cell.addEventListener('click', () => handleCellClick(cell, word));
+                    cell.addEventListener('click', () => handleCellClick(cell, word.toUpperCase()));
                     gridElement.appendChild(cell);
                 });
             });
@@ -284,7 +284,7 @@
             startMessageElement.style.display = 'none';
 
             const img = document.createElement('img');
-            img.src = `https://timosalonen.github.io/wordfraud/titpics/${word.toLowerCase()}.png`;
+            img.src = `https://timosalonen.github.io/wordfraud/titpics/${word}.png`;
             img.alt = word;
             img.style.maxWidth = '100%';
             document.body.appendChild(img);
@@ -340,3 +340,4 @@
     </script>
 </body>
 </html>
+
