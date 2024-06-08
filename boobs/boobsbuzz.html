@@ -49,6 +49,9 @@
         .grid-item.wrong {
             background-color: rgba(255, 255, 255, 0.1); /* White with 10% transparency */
         }
+        .grid-item.hint {
+            color: #FFB6C1; /* Light pink */
+        }
         @keyframes flash {
             0%, 100% { background-color: #FF69B4; }
             50% { background-color: transparent; }
@@ -202,6 +205,9 @@
                     cell.dataset.letter = letter;
                     cell.dataset.row = rowIndex;
                     cell.dataset.col = colIndex;
+                    if (positions.some(pos => pos.x === colIndex && pos.y === rowIndex)) {
+                        cell.classList.add('hint');
+                    }
                     cell.addEventListener('click', () => handleCellClick(cell, word.toUpperCase(), positions));
                     gridElement.appendChild(cell);
                 });
@@ -230,6 +236,7 @@
 
             if (isAdjacent(lastPos, { x: col, y: row }) && letter === word[currentIndex].toUpperCase()) {
                 cell.classList.add('clicked');
+                cell.classList.remove('hint');
                 lastClickedCell = cell;
                 if (currentIndex + 1 === word.length) {
                     animateFoundWord(word);
@@ -358,4 +365,3 @@
     </script>
 </body>
 </html>
-
