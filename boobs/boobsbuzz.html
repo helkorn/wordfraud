@@ -153,11 +153,8 @@
                 }
             }
 
-            let startX, startY;
-            do {
-                startX = Math.floor(Math.random() * 4) + 1; // Ensures it's not in the first or last column
-                startY = Math.floor(Math.random() * 4) + 1; // Ensures it's not in the first or last row
-            } while (startX + word.length >= 5 || startY + word.length >= 5);
+            let startX = Math.floor(Math.random() * 4) + 1; // Ensures it's not in the first or last column
+            let startY = Math.floor(Math.random() * 4) + 1; // Ensures it's not in the first or last row
 
             let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
             let positions = [{ x: startX, y: startY }];
@@ -260,8 +257,7 @@
         function showHelpMessage(word) {
             helpShown = true;
             const helpText = document.createElement('div');
-            helpText.style = "animation: fadein 1s; font-size: 14px; color: #808080; font-family: 'Arial', sans-serif; margin-top: 10px;";
-            // helpText.innerHTML = `<b>HELP TEXT PLACEHOLDER</b>`;
+            helpText.style = "animation: fadein 1s; font-size: 14px; color: #808080; font-family: 'booboo', Arial, sans-serif; margin-top: 10px;";
             document.body.appendChild(helpText);
         }
 
@@ -325,4 +321,3 @@
     </script>
 </body>
 </html>
-
