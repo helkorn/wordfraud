@@ -160,22 +160,28 @@
                 }
             }
 
-            let startX, startY;
-            do {
-                startX = Math.floor(Math.random() * 4) + 1; // Ensures it's not in the first or last column
-                startY = Math.floor(Math.random() * 4) + 1; // Ensures it's not in the first or last row
-            } while (startX === 0 || startX === 5 || startY === 0 || startY === 5); // Re-checks to ensure not at the edge
+            let startX = Math.floor(Math.random() * 5); // Ensures it's not in the last column
+            let startY = Math.floor(Math.random() * 5); // Ensures it's not in the last row
 
-            let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
             let positions = [{ x: startX, y: startY }];
             grid[startY][startX] = word.charAt(0).toUpperCase();
 
-            for (let i = 1; i < word.length; i++) {
+            // Determine direction for the second letter (right or down)
+            let direction = Math.random() < 0.5 ? [0, 1] : [1, 0];
+            let secondX = startX + direction[0];
+            let secondY = startY + direction[1];
+
+            grid[secondY][secondX] = word.charAt(1).toUpperCase();
+            positions.push({ x: secondX, y: secondY });
+
+            let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]]; // Right, Down, Left, Up
+
+            for (let i = 2; i < word.length; i++) {
                 let lastPos = positions[positions.length - 1];
                 let possibleDirections = directions.filter(dir => {
                     let newX = lastPos.x + dir[0];
                     let newY = lastPos.y + dir[1];
-                    return newX >= 0 && newX < 6 && newY >= 0 && newY < 6 && !positions.some(pos => pos.x === newX && pos.y === newY);
+                    return newX >= 0 && newX < 6 && newY >= 0 && newY < 6 && grid[newY][newX] === getRandomLetter();
                 });
 
                 if (possibleDirections.length === 0) break;
