@@ -132,6 +132,7 @@
         let helpShown = false;
         let wrongClicks = 0;
         let timerInterval;
+        let lastClickedCell = null;
 
         async function fetchWord() {
             const response = await fetch('../melonit.csv');
@@ -178,7 +179,7 @@
                 positions.push({ x: newX, y: newY });
             }
 
-            return { grid, word };
+            return { grid, word, positions };
         }
 
         async function initGame() {
@@ -187,7 +188,7 @@
             endMessageElement.innerHTML = '';
             restartMessageElement.innerHTML = '';
             startMessageElement.style.display = 'block';
-            const { grid, word } = await createGrid();
+            const { grid, word, positions } = await createGrid();
             let foundLetters = 0;
 
             grid.forEach((row, rowIndex) => {
@@ -198,7 +199,7 @@
                     cell.dataset.letter = letter;
                     cell.dataset.row = rowIndex;
                     cell.dataset.col = colIndex;
-                    cell.addEventListener('click', () => handleCellClick(cell, word.toUpperCase()));
+                    cell.addEventListener('click', () => handleCellClick(cell, word.toUpperCase(), positions));
                     gridElement.appendChild(cell);
                 });
             });
@@ -207,20 +208,26 @@
             firstLetterElement.classList.add('clicked');
             firstLetterElement.dataset.found = true;
             foundLetters++;
+            lastClickedCell = firstLetterElement;
 
             startTimer(word);
         }
 
-        function handleCellClick(cell, word) {
+        function handleCellClick(cell, word, positions) {
             const letter = cell.dataset.letter;
+            const currentIndex = [...gridElement.children].filter(c => c.classList.contains('clicked')).length;
 
             if (cell.classList.contains('clicked')) {
                 return;
             }
 
-            const currentIndex = [...gridElement.children].filter(c => c.classList.contains('clicked')).length;
-            if (letter === word[currentIndex].toUpperCase()) {
+            const lastPos = positions[currentIndex - 1];
+            const row = parseInt(cell.dataset.row);
+            const col = parseInt(cell.dataset.col);
+
+            if (isAdjacent(lastPos, { x: col, y: row }) && letter === word[currentIndex].toUpperCase()) {
                 cell.classList.add('clicked');
+                lastClickedCell = cell;
                 if (currentIndex + 1 === word.length) {
                     animateFoundWord(word);
                     setTimeout(() => showAnswer(word), 600); // Delay to allow animation
@@ -235,6 +242,10 @@
                     cell.classList.remove('wrong');
                 }, 500);
             }
+        }
+
+        function isAdjacent(pos1, pos2) {
+            return (Math.abs(pos1.x - pos2.x) + Math.abs(pos1.y - pos2.y)) === 1;
         }
 
         function animateFoundWord(word) {
