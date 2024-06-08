@@ -29,7 +29,7 @@
             width: 100%;
             padding-top: 100%; /* 1:1 Aspect Ratio */
             position: relative;
-            background-color: black;
+            background-color: #333; /* Darker grey */
             cursor: pointer;
             transition: background-color 0.5s;
             border-radius: 4px; /* Slightly rounded corners */
@@ -206,18 +206,20 @@
                     cell.dataset.row = rowIndex;
                     cell.dataset.col = colIndex;
                     if (positions.some(pos => pos.x === colIndex && pos.y === rowIndex)) {
-                        cell.classList.add('hint');
+                        if (positions[0].x === colIndex && positions[0].y === rowIndex) {
+                            cell.classList.add('clicked'); // Ensure first letter is pink
+                        } else {
+                            cell.classList.add('hint');
+                        }
                     }
                     cell.addEventListener('click', () => handleCellClick(cell, word.toUpperCase(), positions));
                     gridElement.appendChild(cell);
                 });
             });
 
-            const firstLetterElement = [...gridElement.children].find(cell => cell.dataset.letter === word.charAt(0).toUpperCase());
-            firstLetterElement.classList.add('clicked');
-            firstLetterElement.dataset.found = true;
+            lastClickedCell = [...gridElement.children].find(cell => cell.classList.contains('clicked'));
+            lastClickedCell.dataset.found = true;
             foundLetters++;
-            lastClickedCell = firstLetterElement;
 
             startTimer(word);
         }
@@ -365,3 +367,4 @@
     </script>
 </body>
 </html>
+
