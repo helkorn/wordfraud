@@ -297,9 +297,10 @@
             restartMessageElement.innerHTML = ''; // Clear the restart message element
             startMessageElement.style.display = 'none';
 
+            const formattedWord = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
             const img = document.createElement('img');
-            img.src = `https://timosalonen.github.io/wordfraud/titpics/${word}.png`;
-            img.alt = word;
+            img.src = `https://timosalonen.github.io/wordfraud/titpics/${formattedWord}.png`;
+            img.alt = formattedWord;
             img.style.maxWidth = '100%';
 
             console.log('Appending image:', img.src); // Debugging log
@@ -357,3 +358,4 @@
     </script>
 </body>
 </html>
+
