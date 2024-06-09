@@ -1,3 +1,37 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BoobsBuzz</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        #puzzle {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-gap: 5px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 300px;
+            position: relative;
+        }
+        .grid-item {
+            width: 100%;
+            padding-top: 100%; /* 1:1 Aspect Ratio */
+            position: relative;
+            background-color: black;
+            cursor: pointer;
+            transition: background-color 0.5s;
             border-radius: 4px; /* Slightly rounded corners */
         }
         .grid-item span {
@@ -61,7 +95,7 @@
             margin-top: 40px;
         }
         #link-container {
-            font-size: 24px; /* Kasvata fonttikokoa */
+            font-size: 16px; /* Pienennetty fonttikoko */
             color: gray;
             display: flex;
             justify-content: center;
@@ -70,10 +104,11 @@
         #hint-button, #change-game-button {
             margin: 0 10px;
             cursor: pointer;
+            color: white; /* Valkoinen teksti */
         }
         #timer {
             margin: 0 10px;
-            color: white; /* Aseta kellon väri valkoiseksi */
+            color: white; /* Valkoinen teksti */
         }
         #end-message, #restart-message {
             font-size: 18px;
@@ -116,7 +151,7 @@
         let wrongClicks = 0;
         let timerInterval;
         let wordPositions = [];
-        let hintCount = 0; // Lisätään laskuri vinkkien määrälle
+        let hintCount = 0; // Vihjeiden laskuri
 
         hintButton.addEventListener('click', giveHint);
 
@@ -175,9 +210,9 @@
             foundWordElement.innerHTML = '';
             endMessageElement.innerHTML = '';
             restartMessageElement.innerHTML = '';
-            hintCount = 0; // Nollataan vinkkien laskuri
-            hintButton.style.color = 'white'; // Palautetaan alkuperäinen väri
-            hintButton.style.cursor = 'pointer'; // Palautetaan kursori
+            hintCount = 0; // Nollaa vihjeiden laskuri
+            hintButton.style.color = 'white'; // Reset hint button color
+            hintButton.style.cursor = 'pointer'; // Reset hint button cursor
             const { grid, word, positions, startX, startY } = await createGrid();
             let foundLetters = 0;
 
@@ -222,8 +257,8 @@
                 if (currentIndex + 1 === word.length) {
                     animateFoundWord(word);
                     setTimeout(() => {
-                        initGame();
-                    }, 1600); // Viive animaation sallimiseksi (animaation kesto plus pieni lisäaika)
+                        setTimeout(() => initGame(), 1000); // 1 sekunnin tauko ennen uuden pelin aloittamista
+                    }, 600); // Viive animaation sallimiseksi
                 }
             } else {
                 cell.classList.add('wrong');
@@ -289,11 +324,9 @@
         }
 
         function giveHint() {
-            // Estä uuden vinkin antaminen, jos vinkkejä on jo pyydetty kolme kertaa
             if (hintCount >= 3) {
                 return;
             }
-
             // Etsi seuraava löytämätön kirjain
             const currentIndex = [...gridElement.children].filter(c => c.classList.contains('clicked')).length;
             const nextPos = wordPositions[currentIndex];
@@ -304,12 +337,11 @@
                 );
                 nextCell.classList.add('clicked');
                 nextCell.dataset.found = true;
-                hintCount++; // Kasvatetaan laskuria
+                hintCount++;
 
-                // Jos vinkkejä on pyydetty kolme kertaa, muutetaan "ANNA VINKKI" -teksti tumman harmaaksi
                 if (hintCount >= 3) {
-                    hintButton.style.color = 'darkgray';
-                    hintButton.style.cursor = 'default';
+                    hintButton.style.color = 'gray';
+                    hintButton.style.cursor = 'not-allowed';
                 }
             }
         }
@@ -323,4 +355,3 @@
     </script>
 </body>
 </html>
-
