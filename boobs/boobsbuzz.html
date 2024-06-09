@@ -27,12 +27,12 @@
         }
         .grid-item {
             width: 100%;
-            padding-top: 100%; /* 1:1 Aspect Ratio */
+            padding-top: 100%;
             position: relative;
             background-color: black;
             cursor: pointer;
             transition: background-color 0.5s;
-            border-radius: 4px; /* Slightly rounded corners */
+            border-radius: 4px;
         }
         .grid-item span {
             position: absolute;
@@ -44,10 +44,10 @@
             transition: color 0.5s;
         }
         .grid-item.clicked {
-            background-color: #FF69B4; /* Lightened pink */
+            background-color: #FF69B4;
         }
         .grid-item.wrong {
-            background-color: rgba(255, 255, 255, 0.3); /* Brighter white with 30% transparency */
+            background-color: rgba(255, 255, 255, 0.3);
         }
         @keyframes flash {
             0%, 100% { background-color: #FF69B4; }
@@ -88,7 +88,7 @@
             margin-top: 40px;
         }
         #link-container {
-            font-size: 16px; /* Pienennetty fonttikoko */
+            font-size: 16px;
             color: gray;
             display: flex;
             justify-content: center;
@@ -97,11 +97,11 @@
         #hint-button, #change-game-button {
             margin: 0 10px;
             cursor: pointer;
-            color: white; /* Valkoinen teksti */
+            color: white;
         }
         #timer {
             margin: 0 10px;
-            color: white; /* Valkoinen teksti */
+            color: white;
         }
         #end-message, #restart-message {
             font-size: 18px;
@@ -110,7 +110,7 @@
             color: gray;
         }
         a {
-            color: white; /* Changed from pink to white */
+            color: white;
             text-decoration: none;
         }
         a:hover {
@@ -118,23 +118,17 @@
         }
         #image-container {
             display: none;
-            justify-content: center;
-            align-items: center;
-            position: relative;
+            margin-top: 20px;
         }
-        #zoom-image {
-            width: 100%;
-            height: auto;
-            transition: transform 4s ease-in-out;
+        #image-container img {
+            width: 300px;
         }
     </style>
 </head>
 <body>
-    <div id="puzzle">
-        <!-- Puzzle items will be generated here -->
-    </div>
+    <div id="puzzle"></div>
     <div id="found-word"></div>
-    <div id="target-word-container"></div>
+    <div id="image-container"></div>
     <div id="message-container">
         <div id="link-container">
             <div id="hint-button">ANNA VINKKI</div>
@@ -143,9 +137,6 @@
         </div>
         <div id="end-message"></div>
         <div id="restart-message"></div>
-    </div>
-    <div id="image-container">
-        <img id="zoom-image" src="" alt="Zoom Image">
     </div>
 
     <script>
@@ -156,11 +147,10 @@
         const timerElement = document.getElementById('timer');
         const hintButton = document.getElementById('hint-button');
         const imageContainer = document.getElementById('image-container');
-        const zoomImage = document.getElementById('zoom-image');
         let wrongClicks = 0;
         let timerInterval;
         let wordPositions = [];
-        let hintCount = 0; // Vihjeiden laskuri
+        let hintCount = 0;
 
         hintButton.addEventListener('click', giveHint);
 
@@ -174,9 +164,9 @@
         }
 
         async function createGrid() {
-            const word = (await fetchWord());
-            wordPositions = []; // Reset word positions
-
+            const word = (await fetchWord()).toUpperCase();
+            wordPositions = [];
+            
             let grid = [];
             for (let i = 0; i < 6; i++) {
                 grid[i] = [];
@@ -190,7 +180,7 @@
 
             let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
             let positions = [{ x: startX, y: startY }];
-            grid[startY][startX] = word.charAt(0).toUpperCase();
+            grid[startY][startX] = word.charAt(0);
 
             for (let i = 1; i < word.length; i++) {
                 let lastPos = positions[positions.length - 1];
@@ -206,11 +196,11 @@
                 let newX = lastPos.x + dir[0];
                 let newY = lastPos.y + dir[1];
 
-                grid[newY][newX] = word.charAt(i).toUpperCase();
+                grid[newY][newX] = word.charAt(i);
                 positions.push({ x: newX, y: newY });
             }
 
-            wordPositions = positions; // Save word positions for hint
+            wordPositions = positions;
             return { grid, word, positions, startX, startY };
         }
 
@@ -219,9 +209,9 @@
             foundWordElement.innerHTML = '';
             endMessageElement.innerHTML = '';
             restartMessageElement.innerHTML = '';
-            hintCount = 0; // Nollaa vihjeiden laskuri
-            hintButton.style.color = 'white'; // Reset hint button color
-            hintButton.style.cursor = 'pointer'; // Reset hint button cursor
+            hintCount = 0;
+            hintButton.style.color = 'white';
+            hintButton.style.cursor = 'pointer';
             const { grid, word, positions, startX, startY } = await createGrid();
             let foundLetters = 0;
 
@@ -233,12 +223,11 @@
                     cell.dataset.letter = letter;
                     cell.dataset.row = rowIndex;
                     cell.dataset.col = colIndex;
-                    cell.addEventListener('click', () => handleCellClick(cell, word.toUpperCase(), positions));
+                    cell.addEventListener('click', () => handleCellClick(cell, word, positions));
                     gridElement.appendChild(cell);
                 });
             });
 
-            // Merkitään ensimmäinen kirjain valituksi ja tehdään siitä pinkki
             const firstCell = [...gridElement.children].find(cell => 
                 parseInt(cell.dataset.row) === startY && parseInt(cell.dataset.col) === startX
             );
@@ -261,22 +250,43 @@
             const row = parseInt(cell.dataset.row);
             const col = parseInt(cell.dataset.col);
 
-            if (isAdjacent(lastPos, { x: col, y: row }) && letter === word[currentIndex].toUpperCase()) {
+            if (isAdjacent(lastPos, { x: col, y: row }) && letter === word[currentIndex]) {
                 cell.classList.add('clicked');
                 if (currentIndex + 1 === word.length) {
-                    showImageAndZoom(word);
+                    animateFoundWord(word);
+                    setTimeout(() => {
+                        displayImage(word);
+                    }, 600);
                 }
             } else {
                 cell.classList.add('wrong');
                 wrongClicks++;
                 setTimeout(() => {
                     cell.classList.remove('wrong');
-                }, 300); // Lyhennä harmaan laatan välähdysaikaa
+                }, 300);
             }
         }
 
         function isAdjacent(pos1, pos2) {
             return (Math.abs(pos1.x - pos2.x) + Math.abs(pos1.y - pos2.y)) === 1;
+        }
+
+        function animateFoundWord(word) {
+            const clickedCells = [...gridElement.children].filter(cell => cell.classList.contains('clicked'));
+            clickedCells.forEach(cell => {
+                cell.classList.add('flash');
+            });
+
+            setTimeout(() => {
+                clickedCells.forEach((cell, index) => {
+                    cell.classList.add('move-up');
+                    cell.style.setProperty('--index', index);
+                    const letterSpan = document.createElement('span');
+                    letterSpan.textContent = cell.dataset.letter;
+                    foundWordElement.appendChild(letterSpan);
+                });
+                foundWordElement.style.visibility = 'visible';
+            }, 600);
         }
 
         function startTimer(word) {
@@ -305,7 +315,6 @@
             if (hintCount >= 3) {
                 return;
             }
-            // Etsi seuraava löytämätön kirjain
             const currentIndex = [...gridElement.children].filter(c => c.classList.contains('clicked')).length;
             const nextPos = wordPositions[currentIndex];
 
@@ -329,34 +338,29 @@
             return letters[Math.floor(Math.random() * letters.length)];
         }
 
-        async function showImageAndZoom(word) {
-            // Tyhjennä ruutu
-            document.body.innerHTML = '';
-
-            // Lataa kuvaa vastaavat tiedot
+        async function displayImage(word) {
             const response = await fetch('../titsmap.csv');
             const text = await response.text();
-            const lines = text.split('\n').map(line => line.split(','));
-            const imageInfo = lines.find(line => line[0].toLowerCase() === word.toLowerCase());
+            const rows = text.split('\n').map(row => row.trim()).filter(row => row.length > 0);
+            const wordMapping = rows.reduce((map, row) => {
+                const [key, value] = row.split(',');
+                map[key.trim()] = value.trim();
+                return map;
+            }, {});
 
-            if (imageInfo) {
-                const imageName = imageInfo[0];
-                const xCoord = parseFloat(imageInfo[1]);
-                const yCoord = parseFloat(imageInfo[2]);
+            const imageName = wordMapping[word] || word;
+            const imagePath = `../titpics/${imageName}.png`;
 
-                // Aseta kuva
-                zoomImage.src = `../titpics/${imageName}.png`;
-                imageContainer.style.display = 'flex';
+            const img = document.createElement('img');
+            img.src = imagePath;
+            imageContainer.innerHTML = '';
+            imageContainer.appendChild(img);
+            imageContainer.style.display = 'block';
 
-                // Zoomaa kuvaan
-                zoomImage.style.transform = `scale(2) translate(${xCoord}px, ${yCoord}px)`;
-
-                // Odota 4 sekuntia ja aloita peli uudelleen
-                setTimeout(() => {
-                    imageContainer.style.display = 'none';
-                    initGame();
-                }, 4000);
-            }
+            setTimeout(() => {
+                imageContainer.style.display = 'none';
+                initGame();
+            }, 3000);
         }
 
         initGame();
