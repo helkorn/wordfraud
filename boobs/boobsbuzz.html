@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fi">
 <head>
     <meta charset="UTF-8">
@@ -95,8 +95,8 @@
             margin-top: 40px;
         }
         #link-container {
-            font-size: 16px; /* Kasvatettu fonttikokoa */
-            color: white; /* Muutettu valkoiseksi */
+            font-size: 12px; /* Pienennä fonttikokoa */
+            color: gray;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -115,7 +115,7 @@
             color: gray;
         }
         a {
-            color: white; /* Valkoinen */
+            color: white; /* Changed from pink to white */
             text-decoration: none;
         }
         a:hover {
@@ -149,9 +149,7 @@
         let wrongClicks = 0;
         let timerInterval;
         let wordPositions = [];
-        let hintCount = 0;
-        let originalLetters = [];
-        let niinkovittuTimeout;
+        let hintCount = 0; // Lisätään laskuri vinkkien määrälle
 
         hintButton.addEventListener('click', giveHint);
 
@@ -167,15 +165,12 @@
         async function createGrid() {
             const word = (await fetchWord());
             wordPositions = []; // Reset word positions
-            originalLetters = []; // Reset original letters
 
             let grid = [];
             for (let i = 0; i < 6; i++) {
                 grid[i] = [];
                 for (let j = 0; j < 6; j++) {
-                    const letter = getRandomLetter();
-                    grid[i][j] = letter;
-                    originalLetters.push({ row: i, col: j, letter: letter }); // Save original letters
+                    grid[i][j] = getRandomLetter();
                 }
             }
 
@@ -213,9 +208,9 @@
             foundWordElement.innerHTML = '';
             endMessageElement.innerHTML = '';
             restartMessageElement.innerHTML = '';
-            hintCount = 0; // Reset hint count
-            hintButton.style.color = 'white'; // Reset hint button color
-            hintButton.style.pointerEvents = 'auto'; // Enable hint button
+            hintCount = 0; // Nollataan vinkkien laskuri
+            hintButton.style.color = 'white'; // Palautetaan alkuperäinen väri
+            hintButton.style.cursor = 'pointer'; // Palautetaan kursori
             const { grid, word, positions, startX, startY } = await createGrid();
             let foundLetters = 0;
 
@@ -327,64 +322,29 @@
         }
 
         function giveHint() {
-            hintCount++;
-            if (hintCount <= 3) {
-                // Etsi seuraava löytämätön kirjain
-                const currentIndex = [...gridElement.children].filter(c => c.classList.contains('clicked')).length;
-                const nextPos = wordPositions[currentIndex];
-
-                if (nextPos) {
-                    const nextCell = [...gridElement.children].find(cell => 
-                        parseInt(cell.dataset.row) === nextPos.y && parseInt(cell.dataset.col) === nextPos.x
-                    );
-                    nextCell.classList.add('clicked');
-                    nextCell.dataset.found = true;
-                }
-            } else {
-                hintButton.style.color = 'darkgray'; // Change hint button color to dark gray
-                hintButton.style.pointerEvents = 'none'; // Disable hint button
-                animateNiinkoVittu();
-            }
-        }
-
-        function animateNiinkoVittu() {
-            const message = "NIINKÖVITTU";
-            let messageIndex = 0;
-            const currentLetters = [];
-
-            if (niinkovittuTimeout) {
-                clearTimeout(niinkovittuTimeout);
+            // Estä uuden vinkin antaminen, jos vinkkejä on jo pyydetty kolme kertaa
+            if (hintCount >= 3) {
+                return;
             }
 
-            for (let row = 0; row < 6; row++) {
-                for (let col = 0; col < 6; col++) {
-                    const cell = gridElement.querySelector(`.grid-item[data-row="${row}"][data-col="${col}"]`);
-                    if (!cell.classList.contains('clicked') && messageIndex < message.length) {
-                        currentLetters.push({ row: row, col: col, letter: cell.textContent });
-                        animateCellToLetter(cell, message[messageIndex]);
-                        messageIndex++;
-                    }
+            // Etsi seuraava löytämätön kirjain
+            const currentIndex = [...gridElement.children].filter(c => c.classList.contains('clicked')).length;
+            const nextPos = wordPositions[currentIndex];
+
+            if (nextPos) {
+                const nextCell = [...gridElement.children].find(cell => 
+                    parseInt(cell.dataset.row) === nextPos.y && parseInt(cell.dataset.col) === nextPos.x
+                );
+                nextCell.classList.add('clicked');
+                nextCell.dataset.found = true;
+                hintCount++; // Kasvatetaan laskuria
+
+                // Jos vinkkejä on pyydetty kolme kertaa, muutetaan "ANNA VINKKI" -teksti tumman harmaaksi
+                if (hintCount >= 3) {
+                    hintButton.style.color = 'darkgray';
+                    hintButton.style.cursor = 'default';
                 }
             }
-
-            niinkovittuTimeout = setTimeout(() => {
-                currentLetters.forEach(({ row, col, letter }) => {
-                    const cell = gridElement.querySelector(`.grid-item[data-row="${row}"][data-col="${col}"]`);
-                    animateCellToLetter(cell, letter);
-                });
-            }, 4000); // Näkyy 4 sekunnin ajan
-        }
-
-        function animateCellToLetter(cell, letter) {
-            const span = cell.querySelector('span');
-            let interval = setInterval(() => {
-                span.textContent = getRandomLetter();
-            }, 50);
-
-            setTimeout(() => {
-                clearInterval(interval);
-                span.textContent = letter;
-            }, 500);
         }
 
         function getRandomLetter() {
@@ -396,4 +356,3 @@
     </script>
 </body>
 </html>
-
