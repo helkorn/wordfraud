@@ -184,7 +184,7 @@
                 positions.push({ x: newX, y: newY });
             }
 
-            return { grid, word, positions };
+            return { grid, word, positions, startX, startY };
         }
 
         async function initGame() {
@@ -195,7 +195,7 @@
             startMessageElement.style.display = 'block';
             targetWordContainer.innerHTML = '';
 
-            const { grid, word, positions } = await createGrid();
+            const { grid, word, positions, startX, startY } = await createGrid();
             let foundLetters = 0;
 
             targetWordContainer.textContent = `Haettava sana: ${word}`;
@@ -212,6 +212,15 @@
                     gridElement.appendChild(cell);
                 });
             });
+
+            // Mark the first letter as selected and make it pink
+            const firstCell = [...gridElement.children].find(cell => 
+                parseInt(cell.dataset.row) === startY && parseInt(cell.dataset.col) === startX
+            );
+            firstCell.classList.add('clicked');
+            firstCell.dataset.found = true;
+            foundLetters++;
+            lastClickedCell = firstCell;
 
             startTimer(word);
         }
@@ -358,4 +367,3 @@
     </script>
 </body>
 </html>
-
