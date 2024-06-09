@@ -302,15 +302,18 @@
             img.src = `https://timosalonen.github.io/wordfraud/titpics/${formattedWord}.png`;
             img.alt = formattedWord;
             img.style.maxWidth = '100%';
-
-            console.log('Appending image:', img.src); // Debugging log
+            img.id = 'titpic';
 
             document.body.appendChild(img);
 
             setTimeout(() => {
+                zoomImage(img);
+            }, 500);
+
+            setTimeout(() => {
                 document.body.removeChild(img); // Remove the image after 5 seconds
                 initGame(); // Restart the game
-            }, 5000); // 5 seconds delay before restarting the game
+            }, 5500); // 5.5 seconds delay before restarting the game
         }
 
         function startTimer(word) {
@@ -354,8 +357,20 @@
             'Z': 10, 'Å': 4, 'Ä': 2, 'Ö': 7
         };
 
+        function zoomImage(img) {
+            let scale = 1;
+            const zoomInterval = setInterval(() => {
+                scale += 0.01;
+                img.style.transform = `scale(${scale})`;
+                img.style.transition = 'transform 5s';
+            }, 50);
+
+            setTimeout(() => {
+                clearInterval(zoomInterval);
+            }, 5000);
+        }
+
         initGame();
     </script>
 </body>
 </html>
-
