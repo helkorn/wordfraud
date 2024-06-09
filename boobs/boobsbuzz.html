@@ -70,6 +70,13 @@
         .move-up {
             animation: moveUp 1s forwards;
         }
+        @keyframes drop {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(0); }
+        }
+        .grid-item.drop {
+            animation: drop 0.5s ease-in-out;
+        }
         #found-word {
             position: absolute;
             top: -50px;
@@ -109,23 +116,26 @@
         a:hover {
             text-decoration: underline;
         }
-        #image-container {
-            width: 600px;
-            height: 600px;
+        #image-box {
+            width: 400px;
+            height: 400px;
+            border: 2px solid silver;
             position: relative;
             overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: black;
-            margin-top: 20px;
+            margin: auto;
         }
-        #titpic {
-            max-width: 100%;
-            max-height: 100%;
-            opacity: 0;
-            transition: opacity 0.5s;
-            position: absolute;
+        #image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 6s ease-in-out;
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        .fade-out {
+            animation: fadeOut 1.5s forwards;
         }
     </style>
 </head>
@@ -139,9 +149,6 @@
         <div id="end-message"></div>
         <div id="restart-message"></div>
     </div>
-    <div id="image-container">
-        <img id="titpic" src="" alt="">
-    </div>
 
     <script>
         const gridElement = document.getElementById('puzzle');
@@ -150,8 +157,6 @@
         const restartMessageElement = document.getElementById('restart-message');
         const startMessageElement = document.getElementById('start-message');
         const timerElement = document.getElementById('timer');
-        const imageContainer = document.getElementById('image-container');
-        const titpicElement = document.getElementById('titpic');
         let helpShown = false;
         let wrongClicks = 0;
         let timerInterval;
@@ -179,9 +184,9 @@
 
             let startX, startY;
             do {
-                startX = Math.floor(Math.random() * 4) + 1; // Ensures it's not in the first or last column
-                startY = Math.floor(Math.random() * 4) + 1; // Ensures it's not in the first or last row
-            } while (startX === 0 || startX === 5 || startY === 0 || startY === 5); // Re-checks to ensure not at the edge
+                startX = Math.floor(Math.random() * 4) + 1;
+                startY = Math.floor(Math.random() * 4) + 1;
+            } while (startX === 0 || startX === 5 || startY === 0 || startY === 5);
 
             let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
             let positions = [{ x: startX, y: startY }];
@@ -221,6 +226,7 @@
                 row.forEach((letter, colIndex) => {
                     const cell = document.createElement('div');
                     cell.classList.add('grid-item');
+                    cell.classList.add('drop');
                     cell.innerHTML = `<span>${letter}</span>`;
                     cell.dataset.letter = letter;
                     cell.dataset.row = rowIndex;
@@ -230,13 +236,15 @@
                 });
             });
 
-            const firstLetterElement = [...gridElement.children].find(cell => cell.dataset.letter === word.charAt(0).toUpperCase());
-            firstLetterElement.classList.add('clicked');
-            firstLetterElement.dataset.found = true;
-            foundLetters++;
-            lastClickedCell = firstLetterElement;
+            setTimeout(() => {
+                const firstLetterElement = [...gridElement.children].find(cell => cell.dataset.letter === word.charAt(0).toUpperCase());
+                firstLetterElement.classList.add('clicked');
+                firstLetterElement.dataset.found = true;
+                foundLetters++;
+                lastClickedCell = firstLetterElement;
 
-            startTimer(word);
+                startTimer(word);
+            }, 500);
         }
 
         function handleCellClick(cell, word, positions) {
@@ -256,7 +264,7 @@
                 lastClickedCell = cell;
                 if (currentIndex + 1 === word.length) {
                     animateFoundWord(word);
-                    setTimeout(() => showAnswer(word), 600); // Delay to allow animation
+                    setTimeout(() => showAnswer(word), 600);
                 }
             } else {
                 cell.classList.add('wrong');
@@ -288,7 +296,7 @@
                     foundWordElement.appendChild(letterSpan);
                 });
                 foundWordElement.style.visibility = 'visible';
-            }, 600); // Match the duration of the flash animation
+            }, 600);
         }
 
         function showHelpMessage(word) {
@@ -308,40 +316,41 @@
                 endMessageElement.style.opacity = 0;
                 restartMessageElement.innerHTML = '';
                 restartMessageElement.style.opacity = 1;
-            }, 3000); // 3 seconds delay before showing the titpics
+            }, 3000);
 
-            setTimeout(() => showTitpics(formattedWord), 3000); // Show titpics after 3 seconds
+            setTimeout(() => showImage(formattedWord), 3000);
         }
 
-        function showTitpics(word) {
-            gridElement.innerHTML = ''; // Clear the grid
-            foundWordElement.innerHTML = ''; // Clear the found word element
-            endMessageElement.innerHTML = ''; // Clear the end message element
-            restartMessageElement.innerHTML = ''; // Clear the restart message element
+        function showImage(word) {
+            gridElement.innerHTML = '';
+            foundWordElement.innerHTML = '';
+            endMessageElement.innerHTML = '';
+            restartMessageElement.innerHTML = '';
             startMessageElement.style.display = 'none';
 
-            const formattedWord = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-            titpicElement.src = `https://timosalonen.github.io/wordfraud/titpics/${formattedWord}.png`;
-            titpicElement.alt = formattedWord;
+            const imageBox = document.createElement('div');
+            imageBox.id = 'image-box';
+
+            const img = document.createElement('img');
+            img.src = `https://timosalonen.github.io/wordfraud/titpics/${word}.png`;
+            img.alt = word;
+            imageBox.appendChild(img);
+
+            document.body.appendChild(imageBox);
 
             setTimeout(() => {
-                titpicElement.style.opacity = 1;
-                zoomImage(titpicElement);
-            }, 250);
+                img.style.transform = 'scale(1.2)';
+            }, 100);
 
             setTimeout(() => {
-                fadeOutImage();
-            }, 7250); // 7 seconds delay before fading out the image
+                img.classList.add('fade-out');
+                imageBox.classList.add('fade-out');
+            }, 6100);
 
             setTimeout(() => {
-                titpicElement.style.opacity = 0; // Fade out the image quickly
-                initGame(); // Restart the game
-            }, 7500); // 7.5 seconds delay before restarting the game
-        }
-
-        function fadeOutImage() {
-            titpicElement.style.transition = 'opacity 0.5s';
-            titpicElement.style.opacity = 0;
+                document.body.removeChild(imageBox);
+                initGame();
+            }, 7600);
         }
 
         function startTimer(word) {
@@ -384,19 +393,6 @@
             'U': 3, 'V': 4, 'W': 10, 'X': 10, 'Y': 4,
             'Z': 10, 'Å': 4, 'Ä': 2, 'Ö': 7
         };
-
-        function zoomImage(img) {
-            let scale = 1;
-            const zoomInterval = setInterval(() => {
-                scale += 0.01;
-                img.style.transform = `scale(${scale})`;
-                img.style.transition = 'transform 7s';
-            }, 50);
-
-            setTimeout(() => {
-                clearInterval(zoomInterval);
-            }, 7000);
-        }
 
         initGame();
     </script>
