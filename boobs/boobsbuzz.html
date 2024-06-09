@@ -31,8 +31,9 @@
             position: relative;
             background-color: black;
             cursor: pointer;
-            transition: background-color 0.5s;
+            transition: background-color 0.5s, transform 1s;
             border-radius: 4px; /* Slightly rounded corners */
+            animation: drop 2s ease-in-out forwards;
         }
         .grid-item span {
             position: absolute;
@@ -69,6 +70,10 @@
         }
         .move-up {
             animation: moveUp 1s forwards;
+        }
+        @keyframes drop {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(0); }
         }
         #found-word {
             position: absolute;
@@ -203,17 +208,18 @@
                     cell.dataset.row = rowIndex;
                     cell.dataset.col = colIndex;
                     cell.addEventListener('click', () => handleCellClick(cell, word.toUpperCase(), positions));
-                    gridElement.appendChild(cell);
+                    setTimeout(() => gridElement.appendChild(cell), rowIndex * 100 + colIndex * 100);
                 });
             });
 
-            const firstLetterElement = [...gridElement.children].find(cell => cell.dataset.letter === word.charAt(0).toUpperCase());
-            firstLetterElement.classList.add('clicked');
-            firstLetterElement.dataset.found = true;
-            foundLetters++;
-            lastClickedCell = firstLetterElement;
-
-            startTimer(word);
+            setTimeout(() => {
+                const firstLetterElement = [...gridElement.children].find(cell => cell.dataset.letter === word.charAt(0).toUpperCase());
+                firstLetterElement.classList.add('clicked');
+                firstLetterElement.dataset.found = true;
+                foundLetters++;
+                lastClickedCell = firstLetterElement;
+                startTimer(word);
+            }, 2000); // Ensure the first letter is highlighted after 2 seconds
         }
 
         function handleCellClick(cell, word, positions) {
@@ -285,9 +291,9 @@
                 endMessageElement.style.opacity = 0;
                 restartMessageElement.innerHTML = '';
                 restartMessageElement.style.opacity = 1;
-            }, 3000); // 3 seconds delay before showing the titpics
+            }, 1500); // 1.5 seconds delay before showing the titpics
 
-            setTimeout(() => showTitpics(formattedWord), 3000); // Show titpics after 3 seconds
+            setTimeout(() => showTitpics(formattedWord), 1500); // Show titpics after 1.5 seconds
         }
 
         function showTitpics(word) {
@@ -301,11 +307,18 @@
             const img = document.createElement('img');
             img.src = `https://timosalonen.github.io/wordfraud/titpics/${formattedWord}.png`;
             img.alt = formattedWord;
-            img.style.maxWidth = '100%';
+            img.style.width = '400px';
+            img.style.height = '400px';
+            img.style.transition = 'transform 5s';
+            img.style.transform = 'scale(1)';
 
             console.log('Appending image:', img.src); // Debugging log
 
             document.body.appendChild(img);
+
+            setTimeout(() => {
+                img.style.transform = 'scale(2)';
+            }, 10); // Trigger the zoom effect
 
             setTimeout(() => {
                 document.body.removeChild(img); // Remove the image after 5 seconds
@@ -358,5 +371,3 @@
     </script>
 </body>
 </html>
-
-
