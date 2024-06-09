@@ -3,342 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MelonitBuzz</title>
+    <title>Melonit</title>
     <style>
-        @font-face {
-            font-family: 'Timer';
-            src: url('fonts/timer.ttf') format('truetype');
-        }
         body {
-            background-color: black;
-            color: white;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            margin: 0;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+            color: #fff;
             font-family: Arial, sans-serif;
         }
-        #puzzle {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            grid-gap: 5px;
-            margin-bottom: 20px;
-            width: 100%;
-            max-width: 300px;
-            position: relative;
-        }
-        .grid-item {
-            width: 100%;
-            padding-top: 100%; /* 1:1 Aspect Ratio */
-            position: relative;
-            background-color: black;
-            cursor: pointer;
-            transition: background-color 0.5s;
-            border-radius: 4px; /* Slightly rounded corners */
-        }
-        .grid-item span {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-transform: uppercase;
-            font-size: 20px;
-            transition: color 0.5s;
-        }
-        .grid-item.clicked {
-            background-color: #FF69B4; /* Lightened pink */
-        }
-        .grid-item.wrong {
-            background-color: rgba(255, 255, 255, 0.1); /* White with 10% transparency */
-        }
-        @keyframes flash {
-            0%, 100% { background-color: #FF69B4; }
-            50% { background-color: transparent; }
-        }
-        .flash {
-            animation: flash 0.2s 3;
-        }
-        @keyframes flashGrid {
-            0%, 100% { background-color: #FF69B4; }
-            50% { background-color: black; }
-        }
-        .flash-grid {
-            animation: flashGrid 0.5s 2;
-        }
-        @keyframes moveUp {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(0, -50px); }
-        }
-        .move-up {
-            animation: moveUp 1s forwards;
-        }
-        #found-word {
-            position: absolute;
-            top: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            visibility: hidden;
-        }
-        #found-word span {
-            font-size: 24px;
-            color: #FF69B4;
-            margin: 0 5px;
-        }
-        #message-container {
+        #game-container {
             text-align: center;
-            margin-top: 40px;
         }
-        #start-message {
-            font-size: 18px;
-            color: darkgray;
-            font-family: 'Timer', Arial, sans-serif;
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(6, 50px);
+            grid-gap: 10px;
+            margin-bottom: 20px;
+        }
+        .cell {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: black;
+            color: white;
+            font-size: 24px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .pink {
+            background-color: pink !important;
+        }
+        .wrong {
+            background-color: gray !important;
+        }
+        #message {
+            color: gray;
         }
         #timer {
-            font-size: 18px;
-            color: darkgray;
-            font-family: 'Timer', Arial, sans-serif;
-            display: inline;
-        }
-        #end-message, #restart-message {
-            font-size: 18px;
-            margin: 10px 0;
-            display: inline-block;
-        }
-        a {
-            color: white; /* Changed from pink to white */
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
+            font-size: 24px;
+            color: gray;
         }
     </style>
 </head>
 <body>
-    <div id="puzzle">
-        <!-- Puzzle items will be generated here -->
-    </div>
-    <div id="found-word"></div>
-    <div id="message-container">
-        <div id="start-message">LEMPINIMI RINNOILLE? <span id="timer">00:30</span></div>
-        <div id="end-message"></div>
-        <div id="restart-message"></div>
+    <div id="game-container">
+        <div id="grid"></div>
+        <div id="message">ETSI LEMPINIMI RINNOILLE</div>
+        <div id="timer">00:30</div>
     </div>
 
     <script>
-        const gridElement = document.getElementById('puzzle');
-        const foundWordElement = document.getElementById('found-word');
-        const endMessageElement = document.getElementById('end-message');
-        const restartMessageElement = document.getElementById('restart-message');
-        const startMessageElement = document.getElementById('start-message');
+        const grid = document.getElementById('grid');
+        const message = document.getElementById('message');
         const timerElement = document.getElementById('timer');
-        let helpShown = false;
-        let wrongClicks = 0;
-        let timerInterval;
+        const words = ['TISSIT', 'PULLAT', 'MELONIT', 'KUPIT', 'PUOLUKAT', 'LUUMUT']; // Example words, replace with CSV data
+        const randomWord = words[Math.floor(Math.random() * words.length)];
+        let timeLeft = 30;
+        let wordIndex = 0;
+        let interval;
 
-        async function fetchWord() {
-            const response = await fetch('../melonit.csv');
-            const text = await response.text();
-            const words = text.split('\n').map(word => word.trim()).filter(word => word.length > 0);
-            const bannedWords = ["Bonnie ja Clyde", "Hauskat laukut", "Ismo ja Seppo", "Michelin-manit", "Mikkelin Pimut", "Sanni ja Alma", "Nuuskapussit"];
-            const filteredWords = words.filter(word => !bannedWords.includes(word));
-            return filteredWords[Math.floor(Math.random() * filteredWords.length)];
+        function startGame() {
+            createGrid();
+            placeWord(randomWord);
+            interval = setInterval(updateTimer, 1000);
+            setTimeout(() => colorNextLetter(), 2000);
         }
 
-        async function createGrid() {
-            const word = (await fetchWord()).toUpperCase();
-
-            let grid = [];
-            for (let i = 0; i < 6; i++) {
-                grid[i] = [];
-                for (let j = 0; j < 6; j++) {
-                    grid[i][j] = getRandomLetter();
-                }
+        function createGrid() {
+            grid.innerHTML = '';
+            for (let i = 0; i < 36; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.textContent = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+                cell.addEventListener('click', () => handleCellClick(cell, i));
+                grid.appendChild(cell);
             }
-
-            let startX = Math.floor(Math.random() * 6);
-            let startY = Math.floor(Math.random() * 6);
-
-            let positions = [{ x: startX, y: startY }];
-            grid[startY][startX] = word.charAt(0);
-            let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
-
-            for (let i = 1; i < word.length; i++) {
-                let lastPos = positions[positions.length - 1];
-                let possibleDirections = directions.filter(dir => {
-                    let newX = lastPos.x + dir[0];
-                    let newY = lastPos.y + dir[1];
-                    return newX >= 0 && newX < 6 && newY >= 0 && newY < 6 && !positions.some(pos => pos.x === newX && pos.y === newY);
-                });
-
-                if (possibleDirections.length === 0) break;
-
-                let dir = possibleDirections[Math.floor(Math.random() * possibleDirections.length)];
-                let newX = lastPos.x + dir[0];
-                let newY = lastPos.y + dir[1];
-
-                grid[newY][newX] = word.charAt(i);
-                positions.push({ x: newX, y: newY });
-            }
-
-            let emptyCount = 0;
-            grid.forEach(row => row.forEach((cell, index) => {
-                if (!cell) {
-                    emptyCount++;
-                    if (emptyCount > 1) {
-                        grid[row][index] = getRandomLetter();
-                    }
-                }
-            }));
-
-            return { grid, word };
         }
 
-        async function initGame() {
-            gridElement.innerHTML = '';
-            foundWordElement.innerHTML = '';
-            endMessageElement.innerHTML = '';
-            restartMessageElement.innerHTML = '';
-            startMessageElement.style.display = 'block';
-            const { grid, word } = await createGrid();
-            let foundLetters = 0;
-
-            grid.forEach((row, rowIndex) => {
-                row.forEach((letter, colIndex) => {
-                    const cell = document.createElement('div');
-                    cell.classList.add('grid-item');
-                    cell.innerHTML = `<span>${letter}</span>`;
-                    cell.dataset.letter = letter;
-                    cell.dataset.row = rowIndex;
-                    cell.dataset.col = colIndex;
-                    cell.addEventListener('click', () => handleCellClick(cell, word));
-                    gridElement.appendChild(cell);
-                });
-            });
-
-            const firstLetterElement = [...gridElement.children].find(cell => cell.dataset.letter === word.charAt(0).toUpperCase());
-            firstLetterElement.classList.add('clicked');
-            firstLetterElement.dataset.found = true;
-            foundLetters++;
-
-            startTimer(word);
+        function placeWord(word) {
+            const startIndex = Math.floor(Math.random() * 28) + 1; // Ensures it doesn't touch the edges
+            for (let i = 0; i < word.length; i++) {
+                const cell = grid.children[startIndex + i];
+                cell.textContent = word[i];
+                cell.dataset.letter = word[i];
+                cell.dataset.index = i;
+            }
         }
 
-        function handleCellClick(cell, word) {
-            const letter = cell.dataset.letter;
-
-            if (cell.classList.contains('clicked')) {
-                return;
-            }
-
-            const currentIndex = [...gridElement.children].filter(c => c.classList.contains('clicked')).length;
-            if (letter === word[currentIndex].toUpperCase()) {
-                cell.classList.add('clicked');
-                if (currentIndex + 1 === word.length) {
-                    animateFoundWord(word);
-                    setTimeout(() => showAnswer(word), 600); // Delay to allow animation
+        function handleCellClick(cell, index) {
+            if (cell.dataset.index == wordIndex) {
+                cell.classList.add('pink');
+                wordIndex++;
+                if (wordIndex === randomWord.length) {
+                    clearInterval(interval);
+                    setTimeout(showResult, 1000);
                 }
             } else {
                 cell.classList.add('wrong');
-                wrongClicks++;
-                if (wrongClicks > 3 && !helpShown) {
-                    showHelpMessage(word);
-                }
-                setTimeout(() => {
-                    cell.classList.remove('wrong');
-                }, 500);
+                setTimeout(() => cell.classList.remove('wrong'), 500);
             }
         }
 
-        function animateFoundWord(word) {
-            const clickedCells = [...gridElement.children].filter(cell => cell.classList.contains('clicked'));
-            clickedCells.forEach(cell => {
-                cell.classList.add('flash');
-            });
-
-            setTimeout(() => {
-                clickedCells.forEach((cell, index) => {
-                    cell.classList.add('move-up');
-                    const letterSpan = document.createElement('span');
-                    letterSpan.textContent = cell.dataset.letter;
-                    foundWordElement.appendChild(letterSpan);
-                });
-                foundWordElement.style.visibility = 'visible';
-            }, 600); // Match the duration of the flash animation
-        }
-
-        function showHelpMessage(word) {
-            helpShown = true;
-            const helpText = document.createElement('div');
-            helpText.style = "animation: fadein 1s; font-size: 14px; color: #808080; font-family: 'booboo', Arial, sans-serif; margin-top: 10px;";
-            // helpText.innerHTML = `<b>HELP TEXT PLACEHOLDER</b>`;
-            document.body.appendChild(helpText);
-        }
-
-        function showAnswer(word) {
-            const formattedWord = word + '.';
-            endMessageElement.innerHTML = `<b>SINULLE OIKEAT RINNAT OVAT: <span style="color: lightgrey;">${formattedWord}</span></b>`;
-            endMessageElement.style.opacity = 1;
-
-            setTimeout(() => {
-                endMessageElement.style.opacity = 0;
-                restartMessageElement.innerHTML = '';
-                restartMessageElement.style.opacity = 1;
-            }, 5000); // 5 seconds delay before restarting the game
-
-            setTimeout(initGame, 5000); // Restart the game after 5 seconds
-        }
-
-        function startTimer(word) {
-            let timeLeft = 30;
-            timerElement.textContent = `00:${timeLeft < 10 ? '0' + timeLeft : timeLeft}`;
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                timerElement.textContent = `00:${timeLeft < 10 ? '0' + timeLeft : timeLeft}`;
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    flashGridAndRestart();
+        function colorNextLetter() {
+            if (wordIndex < randomWord.length) {
+                const cell = Array.from(grid.children).find(c => c.dataset.index == wordIndex);
+                if (cell) {
+                    cell.classList.add('pink');
+                    wordIndex++;
                 }
-            }, 1000);
-        }
-
-        function flashGridAndRestart() {
-            gridElement.classList.add('flash-grid');
-            setTimeout(() => {
-                gridElement.classList.remove('flash-grid');
-                setTimeout(() => {
-                    gridElement.classList.add('flash-grid');
-                    setTimeout(() => {
-                        gridElement.classList.remove('flash-grid');
-                        initGame();
-                    }, 500);
-                }, 500);
-            }, 500);
-        }
-
-        function getRandomLetter() {
-            const letters = Object.keys(letterFrequency);
-            const totalWeight = letters.reduce((sum, letter) => sum + (11 - letterFrequency[letter]), 0);
-            let rand = Math.random() * totalWeight;
-            for (const letter of letters) {
-                rand -= (11 - letterFrequency[letter]);
-                if (rand <= 0) return letter;
+                setTimeout(colorNextLetter, 5000);
             }
         }
 
-        const letterFrequency = {
-            'A': 1, 'B': 4, 'C': 8, 'D': 2, 'E': 1,
-            'F': 8, 'G': 4, 'H': 4, 'I': 1, 'J': 4,
-            'K': 2, 'L': 2, 'M': 2, 'N': 1, 'O': 2,
-            'P': 4, 'Q': 10, 'R': 1, 'S': 1, 'T': 1,
-            'U': 3, 'V': 4, 'W': 10, 'X': 10, 'Y': 4,
-            'Z': 10, 'Å': 4, 'Ä': 2, 'Ö': 7
-        };
+        function updateTimer() {
+            timeLeft--;
+            timerElement.textContent = `00:${timeLeft < 10 ? '0' : ''}${timeLeft}`;
+            if (timeLeft <= 0) {
+                clearInterval(interval);
+                grid.style.animation = 'flash 1s';
+                setTimeout(() => {
+                    grid.style.animation = '';
+                    resetGame();
+                }, 1000);
+            }
+        }
 
-        initGame();
+        function showResult() {
+            message.textContent = `SINULLE OIKEAT RINNAT OVAT ${randomWord}`;
+            setTimeout(showImage, 3000);
+        }
+
+        function showImage() {
+            document.body.innerHTML = `<div style="display: flex; justify-content: center; align-items: center; height: 100vh;"><div style="width: 400px; height: 400px; border: 2px solid silver; overflow: hidden;"><img id="result-image" src="titpics/${randomWord}.png" style="width: 100%; height: 100%; object-fit: cover;"></div></div>`;
+            const image = document.getElementById('result-image');
+            image.style.transition = 'transform 4s';
+            image.style.transform = 'scale(2)';
+            setTimeout(resetGame, 4000);
+        }
+
+        function resetGame() {
+            location.reload();
+        }
+
+        startGame();
     </script>
 </body>
 </html>
+
