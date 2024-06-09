@@ -95,8 +95,8 @@
             margin-top: 40px;
         }
         #link-container {
-            font-size: 14px; /* Pienennä fonttikokoa */
-            color: #FFB6C1; /* Valkoinen väri, joka taittuu hieman pinkkiin */
+            font-size: 16px; /* Kasvatettu fonttikokoa */
+            color: white; /* Muutettu valkoiseksi */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -115,7 +115,7 @@
             color: gray;
         }
         a {
-            color: #FFB6C1; /* Valkoinen väri, joka taittuu hieman pinkkiin */
+            color: white; /* Valkoinen */
             text-decoration: none;
         }
         a:hover {
@@ -150,6 +150,7 @@
         let timerInterval;
         let wordPositions = [];
         let hintCount = 0;
+        let niinkovittuTimeout;
 
         hintButton.addEventListener('click', giveHint);
 
@@ -334,18 +335,50 @@
                     nextCell.dataset.found = true;
                 }
             } else {
-                const message = "NIINKÖ VITTU?";
-                let messageIndex = 0;
-                for (let row = 0; row < 6; row++) {
-                    for (let col = 0; col < 6; col++) {
-                        const cell = gridElement.querySelector(`.grid-item[data-row="${row}"][data-col="${col}"]`);
-                        if (!cell.classList.contains('clicked') && messageIndex < message.length) {
-                            cell.innerHTML = `<span>${message[messageIndex]}</span>`;
-                            messageIndex++;
-                        }
+                showNiinkoVittu();
+            }
+        }
+
+        function showNiinkoVittu() {
+            const message = "NIINKÖVITTU";
+            let messageIndex = 0;
+
+            if (niinkovittuTimeout) {
+                clearTimeout(niinkovittuTimeout);
+            }
+
+            for (let row = 0; row < 6; row++) {
+                for (let col = 0; col < 6; col++) {
+                    const cell = gridElement.querySelector(`.grid-item[data-row="${row}"][data-col="${col}"]`);
+                    if (!cell.classList.contains('clicked') && messageIndex < message.length) {
+                        animateCellToLetter(cell, message[messageIndex]);
+                        messageIndex++;
                     }
                 }
             }
+
+            niinkovittuTimeout = setTimeout(() => {
+                for (let row = 0; row < 6; row++) {
+                    for (let col = 0; col < 6; col++) {
+                        const cell = gridElement.querySelector(`.grid-item[data-row="${row}"][data-col="${col}"]`);
+                        if (!cell.classList.contains('clicked')) {
+                            animateCellToLetter(cell, getRandomLetter());
+                        }
+                    }
+                }
+            }, 2000);
+        }
+
+        function animateCellToLetter(cell, letter) {
+            const span = cell.querySelector('span');
+            let interval = setInterval(() => {
+                span.textContent = getRandomLetter();
+            }, 50);
+
+            setTimeout(() => {
+                clearInterval(interval);
+                span.textContent = letter;
+            }, 500);
         }
 
         function getRandomLetter() {
