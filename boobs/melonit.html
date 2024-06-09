@@ -18,7 +18,7 @@
         }
         #puzzle {
             display: grid;
-            grid-template-columns: repeat(15, 1fr);
+            grid-template-columns: repeat(12, 1fr);
             grid-gap: 2px;
             margin-bottom: 20px;
             width: 100%;
@@ -49,19 +49,6 @@
         .grid-item.found {
             background-color: #FF69B4; /* Pink */
         }
-        #found-word {
-            position: absolute;
-            top: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            visibility: hidden;
-        }
-        #found-word span {
-            font-size: 24px;
-            color: #FF69B4;
-            margin: 0 5px;
-        }
         #message-container {
             text-align: center;
             margin-top: 40px;
@@ -90,7 +77,6 @@
     <div id="puzzle">
         <!-- Puzzle items will be generated here -->
     </div>
-    <div id="found-word"></div>
     <div id="message-container">
         <div id="link-container">
             <div id="change-game-button"><a href="boobsbuzz.html">VAIHDA PELIÄ</a></div>
@@ -99,15 +85,13 @@
 
     <script>
         const gridElement = document.getElementById('puzzle');
-        const foundWordElement = document.getElementById('found-word');
-        const changeGameButton = document.getElementById('change-game-button');
         let wordPositions = [];
 
         async function fetchWords() {
             const response = await fetch('../melonit.csv');
             const text = await response.text();
             const words = text.split('\n').map(word => word.trim()).filter(word => word.length > 0);
-            return words;
+            return words.slice(0, 2); // Haetaan kaksi ensimmäistä sanaa
         }
 
         function getRandomLetter() {
@@ -115,50 +99,49 @@
             return letters[Math.floor(Math.random() * letters.length)];
         }
 
-        function placeWord(grid, word) {
-            const directions = [
-                { x: 1, y: 0 },  // right
-                { x: 0, y: 1 }   // down
-            ];
+        function placeWord(grid, word, direction) {
+            const maxStart = 12 - word.length;
+            const startX = direction === 'horizontal' ? Math.floor(Math.random() * maxStart) : Math.floor(Math.random() * 12);
+            const startY = direction === 'horizontal' ? Math.floor(Math.random() * 12) : Math.floor(Math.random() * maxStart);
 
-            let placed = false;
-            while (!placed) {
-                const direction = directions[Math.floor(Math.random() * directions.length)];
-                const startX = Math.floor(Math.random() * (15 - (direction.x ? word.length : 0)));
-                const startY = Math.floor(Math.random() * (15 - (direction.y ? word.length : 0)));
-
-                let canPlace = true;
-                for (let i = 0; i < word.length; i++) {
-                    const x = startX + i * direction.x;
-                    const y = startY + i * direction.y;
-                    if (grid[y][x] !== '' && grid[y][x] !== word[i].toUpperCase()) {
-                        canPlace = false;
-                        break;
-                    }
-                }
-
-                if (canPlace) {
-                    for (let i = 0; i < word.length; i++) {
-                        const x = startX + i * direction.x;
-                        const y = startY + i * direction.y;
-                        grid[y][x] = word[i].toUpperCase();
-                        wordPositions.push({ x, y, letter: word[i].toUpperCase() });
-                    }
-                    placed = true;
+            let canPlace = true;
+            for (let i = 0; i < word.length; i++) {
+                const x = startX + (direction === 'horizontal' ? i : 0);
+                const y = startY + (direction === 'horizontal' ? 0 : i);
+                if (grid[y][x] !== '' && grid[y][x] !== word[i].toUpperCase()) {
+                    canPlace = false;
+                    break;
                 }
             }
+
+            if (canPlace) {
+                for (let i = 0; i < word.length; i++) {
+                    const x = startX + (direction === 'horizontal' ? i : 0);
+                    const y = startY + (direction === 'horizontal' ? 0 : i);
+                    grid[y][x] = word[i].toUpperCase();
+                    wordPositions.push({ x, y, letter: word[i].toUpperCase(), word });
+                }
+            }
+
+            return canPlace;
         }
 
         async function createGrid() {
             const words = await fetchWords();
             wordPositions = [];
-            let grid = Array.from({ length: 15 }, () => Array(15).fill(''));
+            let grid = Array.from({ length: 12 }, () => Array(12).fill(''));
 
-            words.forEach(word => placeWord(grid, word));
+            for (let word of words) {
+                let placed = false;
+                while (!placed) {
+                    const direction = Math.random() > 0.5 ? 'horizontal' : 'vertical';
+                    placed = placeWord(grid, word, direction);
+                }
+            }
 
-            // Fill the remaining empty cells with random letters
-            for (let y = 0; y < 15; y++) {
-                for (let x = 0; x < 15; x++) {
+            // Täytä jäljelle jääneet tyhjät ruudut satunnaisilla kirjaimilla
+            for (let y = 0; y < 12; y++) {
+                for (let x = 0; x < 12; x++) {
                     if (grid[y][x] === '') {
                         grid[y][x] = getRandomLetter();
                     }
@@ -167,21 +150,20 @@
             return grid;
         }
 
-        async function initGame() {
+        function initGame() {
             gridElement.innerHTML = '';
-            foundWordElement.innerHTML = '';
-            const grid = await createGrid();
-
-            grid.forEach((row, rowIndex) => {
-                row.forEach((letter, colIndex) => {
-                    const cell = document.createElement('div');
-                    cell.classList.add('grid-item');
-                    cell.innerHTML = `<span>${letter}</span>`;
-                    cell.dataset.letter = letter;
-                    cell.dataset.row = rowIndex;
-                    cell.dataset.col = colIndex;
-                    cell.addEventListener('click', () => handleCellClick(cell));
-                    gridElement.appendChild(cell);
+            createGrid().then(grid => {
+                grid.forEach((row, rowIndex) => {
+                    row.forEach((letter, colIndex) => {
+                        const cell = document.createElement('div');
+                        cell.classList.add('grid-item');
+                        cell.innerHTML = `<span>${letter}</span>`;
+                        cell.dataset.letter = letter;
+                        cell.dataset.row = rowIndex;
+                        cell.dataset.col = colIndex;
+                        cell.addEventListener('click', () => handleCellClick(cell));
+                        gridElement.appendChild(cell);
+                    });
                 });
             });
         }
@@ -192,15 +174,17 @@
             if (pos && !cell.classList.contains('clicked')) {
                 cell.classList.add('clicked');
                 const clickedCells = [...gridElement.children].filter(c => c.classList.contains('clicked'));
-                const wordFound = wordPositions.every(p => clickedCells.some(c => c.dataset.row == p.y && c.dataset.col == p.x));
+                const wordFound = wordPositions.filter(p => p.word === pos.word).every(p => 
+                    clickedCells.some(c => c.dataset.row == p.y && c.dataset.col == p.x)
+                );
 
                 if (wordFound) {
-                    clickedCells.forEach(c => c.classList.add('found'));
-                    setTimeout(() => initGame(), 1000); // Start new game after 1 second
+                    const wordCells = wordPositions.filter(p => p.word === pos.word);
+                    wordCells.forEach(p => {
+                        const wordCell = [...gridElement.children].find(c => c.dataset.row == p.y && c.dataset.col == p.x);
+                        wordCell.classList.add('found');
+                    });
                 }
-            } else {
-                cell.classList.add('wrong');
-                setTimeout(() => cell.classList.remove('wrong'), 300);
             }
         }
 
