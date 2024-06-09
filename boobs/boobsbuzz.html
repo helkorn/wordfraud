@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BoobsBuzz</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        #puzzle {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-gap: 5px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 300px;
+            position: relative;
+        }
+        .grid-item {
+            width: 100%;
+            padding-top: 100%; /* 1:1 Aspect Ratio */
+            position: relative;
+            background-color: black;
+            cursor: pointer;
+            transition: background-color 0.5s;
+            border-radius: 4px; /* Slightly rounded corners */
+        }
+        .grid-item span {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-transform: uppercase;
+            font-size: 20px;
+            transition: color 0.5s;
+        }
+        .grid-item.clicked {
+            background-color: #FF69B4; /* Lightened pink */
+        }
+        .grid-item.wrong {
+            background-color: rgba(255, 255, 255, 0.3); /* Brighter white with 30% transparency */
+        }
+        @keyframes flash {
+            0%, 100% { background-color: #FF69B4; }
+            50% { background-color: transparent; }
+        }
+        .flash {
+            animation: flash 0.2s 3;
+        }
+        @keyframes flashGrid {
+            0%, 100% { background-color: #FF69B4; }
+            50% { background-color: black; }
+        }
+        .flash-grid {
+            animation: flashGrid 0.5s 1;
+        }
+        @keyframes moveUp {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(0, -50px); }
+        }
+        .move-up {
+            animation: moveUp 1s forwards;
+        }
+        @keyframes spreadOut {
+            0% { transform: translate(0, -50px); }
+            100% { transform: translate(calc(var(--index) * 30px - 50%), -100px); }
+        }
+        .spread-out {
+            animation: spreadOut 1s forwards;
+        }
+        #found-word {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            visibility: hidden;
+        }
+        #found-word span {
+            font-size: 24px;
+            color: #FF69B4;
+            margin: 0 5px;
+        }
+        #message-container {
+            text-align: center;
+            margin-top: 40px;
+        }
+        #link-container {
+            font-size: 14px; /* Pienennä fonttikokoa */
+            color: #FFB6C1; /* Valkoinen väri, joka taittuu hieman pinkkiin */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #hint-button, #change-game-button {
+            margin: 0 10px;
+            cursor: pointer;
+        }
+        #timer {
+            margin: 0 10px;
+        }
+        #end-message, #restart-message {
+            font-size: 18px;
+            margin: 10px 0;
+            display: inline-block;
+            color: gray;
+        }
+        a {
+            color: #FFB6C1; /* Valkoinen väri, joka taittuu hieman pinkkiin */
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div id="puzzle">
+        <!-- Puzzle items will be generated here -->
+    </div>
+    <div id="found-word"></div>
+    <div id="target-word-container"></div>
+    <div id="message-container">
+        <div id="link-container">
+            <div id="hint-button">ANNA VINKKI</div>
+            <div id="change-game-button"><a href="melonit.html">VAIHDA PELIÄ</a></div>
+            <div id="timer">00:30</div>
+        </div>
+        <div id="end-message"></div>
+        <div id="restart-message"></div>
+    </div>
+
+    <script>
+        const gridElement = document.getElementById('puzzle');
+        const foundWordElement = document.getElementById('found-word');
+        const endMessageElement = document.getElementById('end-message');
+        const restartMessageElement = document.getElementById('restart-message');
+        const timerElement = document.getElementById('timer');
+        const hintButton = document.getElementById('hint-button');
+        let wrongClicks = 0;
+        let timerInterval;
+        let wordPositions = [];
+        let hintCount = 0;
+
+        hintButton.addEventListener('click', giveHint);
+
+        async function fetchWord() {
+            const response = await fetch('../melonit.csv');
+            const text = await response.text();
+            const words = text.split('\n').map(word => word.trim()).filter(word => word.length > 0);
+            const bannedWords = ["Bonnie ja Clyde", "Hauskat laukut", "Ismo ja Seppo", "Michelin-manit", "Mikkelin Pimut", "Sanni ja Alma", "Nuuskapussit"];
+            const filteredWords = words.filter(word => !bannedWords.includes(word));
+            return filteredWords[Math.floor(Math.random() * filteredWords.length)];
+        }
+
+        async function createGrid() {
+            const word = (await fetchWord());
+            wordPositions = []; // Reset word positions
+
+            let grid = [];
+            for (let i = 0; i < 6; i++) {
+                grid[i] = [];
+                for (let j = 0; j < 6; j++) {
+                    grid[i][j] = getRandomLetter();
+                }
+            }
+
+            let startX = Math.floor(Math.random() * 6);
+            let startY = Math.floor(Math.random() * 6);
+
+            let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+            let positions = [{ x: startX, y: startY }];
+            grid[startY][startX] = word.charAt(0).toUpperCase();
+
+            for (let i = 1; i < word.length; i++) {
+                let lastPos = positions[positions.length - 1];
+                let possibleDirections = directions.filter(dir => {
+                    let newX = lastPos.x + dir[0];
+                    let newY = lastPos.y + dir[1];
+                    return newX >= 0 && newX < 6 && newY >= 0 && newY < 6 && !positions.some(pos => pos.x === newX && pos.y === newY);
+                });
+
+                if (possibleDirections.length === 0) break;
+
+                let dir = possibleDirections[Math.floor(Math.random() * possibleDirections.length)];
+                let newX = lastPos.x + dir[0];
+                let newY = lastPos.y + dir[1];
+
+                grid[newY][newX] = word.charAt(i).toUpperCase();
+                positions.push({ x: newX, y: newY });
+            }
+
+            wordPositions = positions; // Save word positions for hint
+            return { grid, word, positions, startX, startY };
+        }
+
+        async function initGame() {
+            gridElement.innerHTML = '';
+            foundWordElement.innerHTML = '';
+            endMessageElement.innerHTML = '';
+            restartMessageElement.innerHTML = '';
+            hintCount = 0; // Reset hint count
+            const { grid, word, positions, startX, startY } = await createGrid();
+            let foundLetters = 0;
+
+            grid.forEach((row, rowIndex) => {
+                row.forEach((letter, colIndex) => {
+                    const cell = document.createElement('div');
+                    cell.classList.add('grid-item');
+                    cell.innerHTML = `<span>${letter}</span>`;
+                    cell.dataset.letter = letter;
+                    cell.dataset.row = rowIndex;
+                    cell.dataset.col = colIndex;
+                    cell.addEventListener('click', () => handleCellClick(cell, word.toUpperCase(), positions));
+                    gridElement.appendChild(cell);
+                });
+            });
+
+            // Merkitään ensimmäinen kirjain valituksi ja tehdään siitä pinkki
+            const firstCell = [...gridElement.children].find(cell => 
+                parseInt(cell.dataset.row) === startY && parseInt(cell.dataset.col) === startX
+            );
+            firstCell.classList.add('clicked');
+            firstCell.dataset.found = true;
+            foundLetters++;
+
+            startTimer(word);
+        }
+
+        function handleCellClick(cell, word, positions) {
+            const letter = cell.dataset.letter;
+            const currentIndex = [...gridElement.children].filter(c => c.classList.contains('clicked')).length;
+
+            if (cell.classList.contains('clicked')) {
+                return;
+            }
+
+            const lastPos = positions[currentIndex - 1];
+            const row = parseInt(cell.dataset.row);
+            const col = parseInt(cell.dataset.col);
+
+            if (isAdjacent(lastPos, { x: col, y: row }) && letter === word[currentIndex].toUpperCase()) {
+                cell.classList.add('clicked');
+                if (currentIndex + 1 === word.length) {
+                    animateFoundWord(word);
+                    setTimeout(() => {
+                        setTimeout(() => initGame(), 1000); // 1 sekunnin tauko ennen uuden pelin aloittamista
+                    }, 600); // Viive animaation sallimiseksi
+                }
+            } else {
+                cell.classList.add('wrong');
+                wrongClicks++;
+                setTimeout(() => {
+                    cell.classList.remove('wrong');
+                }, 300); // Lyhennä harmaan laatan välähdysaikaa
+            }
+        }
+
+        function isAdjacent(pos1, pos2) {
+            return (Math.abs(pos1.x - pos2.x) + Math.abs(pos1.y - pos2.y)) === 1;
+        }
+
+        function animateFoundWord(word) {
+            const clickedCells = [...gridElement.children].filter(cell => cell.classList.contains('clicked'));
+            clickedCells.forEach(cell => {
+                cell.classList.add('flash');
+            });
+
+            setTimeout(() => {
+                clickedCells.forEach((cell, index) => {
+                    cell.classList.add('move-up');
+                    cell.style.setProperty('--index', index);
+                    const letterSpan = document.createElement('span');
+                    letterSpan.textContent = cell.dataset.letter;
+                    foundWordElement.appendChild(letterSpan);
+                });
+                foundWordElement.style.visibility = 'visible';
+                spreadOutWord(word);
+            }, 600); // Vastaavuus flash-animaation kestoon
+        }
+
+        function spreadOutWord(word) {
+            const clickedCells = [...gridElement.children].filter(cell => cell.classList.contains('clicked'));
+            clickedCells.forEach((cell, index) => {
+                setTimeout(() => {
+                    cell.classList.add('spread-out');
+                }, index * 100); // Viive jokaiselle kirjaimelle
+            });
+        }
+
+        function startTimer(word) {
+            let timeLeft = 30;
+            timerElement.textContent = `00:${timeLeft < 10 ? '0' + timeLeft : timeLeft}`;
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerElement.textContent = `00:${timeLeft < 10 ? '0' + timeLeft : timeLeft}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    flashGridAndRestart();
+                }
+            }, 1000);
+        }
+
+        function flashGridAndRestart() {
+            gridElement.classList.add('flash-grid');
+            setTimeout(() => {
+                gridElement.classList.remove('flash-grid');
+                initGame();
+            }, 500);
+        }
+
+        function giveHint() {
+            hintCount++;
+            if (hintCount <= 3) {
+                // Etsi seuraava löytämätön kirjain
+                const currentIndex = [...gridElement.children].filter(c => c.classList.contains('clicked')).length;
+                const nextPos = wordPositions[currentIndex];
+
+                if (nextPos) {
+                    const nextCell = [...gridElement.children].find(cell => 
+                        parseInt(cell.dataset.row) === nextPos.y && parseInt(cell.dataset.col) === nextPos.x
+                    );
+                    nextCell.classList.add('clicked');
+                    nextCell.dataset.found = true;
+                }
+            } else {
+                const message = "NIINKÖ VITTU?";
+                let messageIndex = 0;
+                for (let row = 0; row < 6; row++) {
+                    for (let col = 0; col < 6; col++) {
+                        const cell = gridElement.querySelector(`.grid-item[data-row="${row}"][data-col="${col}"]`);
+                        if (!cell.classList.contains('clicked') && messageIndex < message.length) {
+                            cell.innerHTML = `<span>${message[messageIndex]}</span>`;
+                            messageIndex++;
+                        }
+                    }
+                }
+            }
+        }
+
+        function getRandomLetter() {
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖ';
+            return letters[Math.floor(Math.random() * letters.length)];
+        }
+
+        initGame();
+    </script>
+</body>
+</html>
