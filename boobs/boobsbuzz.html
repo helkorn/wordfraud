@@ -94,22 +94,25 @@
             text-align: center;
             margin-top: 40px;
         }
+        #link-container {
+            font-size: 18px;
+            color: gray;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #hint-button, #change-game-button {
+            margin: 0 10px;
+            cursor: pointer;
+        }
+        #timer {
+            margin: 0 10px;
+        }
         #end-message, #restart-message {
             font-size: 18px;
             margin: 10px 0;
             display: inline-block;
             color: gray;
-        }
-        #hint-button, #change-game-button {
-            font-size: 18px;
-            color: gray;
-            cursor: pointer;
-            margin: 0 10px;
-        }
-        #timer {
-            font-size: 18px;
-            color: gray;
-            display: inline;
         }
         a {
             color: white; /* Changed from pink to white */
@@ -127,9 +130,11 @@
     <div id="found-word"></div>
     <div id="target-word-container"></div>
     <div id="message-container">
-        <div id="hint-button">ANNA VINKKI</div>
-        <div id="change-game-button"><a href="melonit.html">VAIHDA PELIÄ</a></div>
-        <div id="timer">00:30</div>
+        <div id="link-container">
+            <div id="hint-button">ANNA VINKKI</div>
+            <div id="change-game-button"><a href="melonit.html">VAIHDA PELIÄ</a></div>
+            <div id="timer">00:30</div>
+        </div>
         <div id="end-message"></div>
         <div id="restart-message"></div>
     </div>
@@ -140,13 +145,9 @@
         const endMessageElement = document.getElementById('end-message');
         const restartMessageElement = document.getElementById('restart-message');
         const timerElement = document.getElementById('timer');
-        const targetWordContainer = document.getElementById('target-word-container');
         const hintButton = document.getElementById('hint-button');
-        const changeGameButton = document.getElementById('change-game-button');
-        let helpShown = false;
         let wrongClicks = 0;
         let timerInterval;
-        let lastClickedCell = null;
         let wordPositions = [];
 
         hintButton.addEventListener('click', giveHint);
@@ -206,12 +207,8 @@
             foundWordElement.innerHTML = '';
             endMessageElement.innerHTML = '';
             restartMessageElement.innerHTML = '';
-            targetWordContainer.innerHTML = '';
-
             const { grid, word, positions, startX, startY } = await createGrid();
             let foundLetters = 0;
-
-            targetWordContainer.textContent = `Haettava sana: ${word}`;
 
             grid.forEach((row, rowIndex) => {
                 row.forEach((letter, colIndex) => {
@@ -233,7 +230,6 @@
             firstCell.classList.add('clicked');
             firstCell.dataset.found = true;
             foundLetters++;
-            lastClickedCell = firstCell;
 
             startTimer(word);
         }
@@ -252,20 +248,18 @@
 
             if (isAdjacent(lastPos, { x: col, y: row }) && letter === word[currentIndex].toUpperCase()) {
                 cell.classList.add('clicked');
-                lastClickedCell = cell;
                 if (currentIndex + 1 === word.length) {
                     animateFoundWord(word);
-                    setTimeout(() => initGame(), 600); // Viive animaation sallimiseksi
+                    setTimeout(() => {
+                        setTimeout(() => initGame(), 1000); // 1 sekunnin tauko ennen uuden pelin aloittamista
+                    }, 600); // Viive animaation sallimiseksi
                 }
             } else {
                 cell.classList.add('wrong');
                 wrongClicks++;
-                if (wrongClicks > 3 && !helpShown) {
-                    showHelpMessage(word);
-                }
                 setTimeout(() => {
                     cell.classList.remove('wrong');
-                }, 500);
+                }, 300); // Lyhennä harmaan laatan välähdysaikaa
             }
         }
 
@@ -301,13 +295,6 @@
             });
         }
 
-        function showHelpMessage(word) {
-            helpShown = true;
-            const helpText = document.createElement('div');
-            helpText.style = "animation: fadein 1s; font-size: 14px; color: #808080; font-family: 'booboo', Arial, sans-serif; margin-top: 10px;";
-            document.body.appendChild(helpText);
-        }
-
         function startTimer(word) {
             let timeLeft = 30;
             timerElement.textContent = `00:${timeLeft < 10 ? '0' + timeLeft : timeLeft}`;
@@ -341,31 +328,15 @@
                 );
                 nextCell.classList.add('clicked');
                 nextCell.dataset.found = true;
-                lastClickedCell = nextCell;
             }
         }
 
         function getRandomLetter() {
-            const letters = Object.keys(letterFrequency);
-            const totalWeight = letters.reduce((sum, letter) => sum + (11 - letterFrequency[letter]), 0);
-            let rand = Math.random() * totalWeight;
-            for (const letter of letters) {
-                rand -= (11 - letterFrequency[letter]);
-                if (rand <= 0) return letter;
-            }
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖ';
+            return letters[Math.floor(Math.random() * letters.length)];
         }
-
-        const letterFrequency = {
-            'A': 1, 'B': 4, 'C': 8, 'D': 2, 'E': 1,
-            'F': 8, 'G': 4, 'H': 4, 'I': 1, 'J': 4,
-            'K': 2, 'L': 2, 'M': 2, 'N': 1, 'O': 2,
-            'P': 4, 'Q': 10, 'R': 1, 'S': 1, 'T': 1,
-            'U': 3, 'V': 4, 'W': 10, 'X': 10, 'Y': 4,
-            'Z': 10, 'Å': 4, 'Ä': 2, 'Ö': 7
-        };
 
         initGame();
     </script>
 </body>
 </html>
-
