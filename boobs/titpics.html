@@ -128,7 +128,7 @@
 
     <script>
         const images = [
-            // List of image file names and coordinates from titpic-map.csv
+            // List of image file names and coordinates from titmap.csv
             // Example: { src: 'image1.jpg', x: 100, y: 100 },
         ];
         
@@ -152,24 +152,14 @@
 
         setInterval(loadNextImage, 5000); // Change image every 5 seconds
 
-        // Typing effect
+        // Display text without typing effect
         const text = `Eräältä pohjoisen korpimetsän radiokanavalta kuului tissikuvaajan kutsu. Ammattikuvaaja ikuisti radioaseman naiset työnsä äärellä päällään T-paita ja siinä omien rintojensa lempinimi. 
 
 Jollekin hauska, toiselle arkipäivää, mutta kaikki niitä rakastavat: Rinnat, daisarit ja tuutit, eli suomeksi: Tissit!
 
 Roosa nauha on maailmanlaajuinen kampanja rintasyöpätietoisuuden puolesta. Tässä voit tilata paidan omien rintojesi lempinimellä, ja tuet kamppailua rintasyöpää vastaan.`;
-        let index = 0;
-
-        function typeText() {
-            const typingTextElement = document.getElementById('typing-text');
-            typingTextElement.innerHTML += text[index];
-            index++;
-            if (index < text.length) {
-                setTimeout(typeText, 50); // Adjust typing speed here
-            }
-        }
-
-        typeText();
+        document.getElementById('typing-text').innerText = text;
     </script>
 </body>
 </html>
+
