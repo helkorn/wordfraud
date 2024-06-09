@@ -2,139 +2,365 @@
 <html lang="fi">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Melonit</title>
     <style>
         body {
-            background-color: #333;
-            color: #ccc;
+            background-color: black;
+            color: white;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
         }
-        .grid {
+        #puzzle {
             display: grid;
-            grid-template-columns: repeat(6, 50px);
+            grid-template-columns: repeat(6, 1fr);
             grid-gap: 5px;
             margin-bottom: 20px;
+            width: 100%;
+            max-width: 300px;
+            position: relative;
         }
-        .grid div {
-            width: 50px;
-            height: 50px;
+        .grid-item {
+            width: 100%;
+            padding-top: 100%; /* 1:1 Aspect Ratio */
+            position: relative;
             background-color: black;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             cursor: pointer;
-            border-radius: 4px;
-            font-size: 1.5em;
+            transition: background-color 0.5s;
+            border-radius: 4px; /* Slightly rounded corners */
         }
-        .grid div.pink {
-            background-color: pink;
+        .grid-item span {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-transform: uppercase;
+            font-size: 20px;
+            transition: color 0.5s;
         }
-        .grid div.wrong {
-            background-color: #555;
+        .grid-item.clicked {
+            background-color: #FF69B4; /* Lightened pink */
         }
-        .instruction {
-            font-size: 1.2em;
-            color: grey;
+        .grid-item.wrong {
+            background-color: rgba(255, 255, 255, 0.1); /* White with 10% transparency */
         }
-        .end-text {
-            display: none;
-            font-size: 1.5em;
-            color: grey;
+        @keyframes flash {
+            0%, 100% { background-color: #FF69B4; }
+            50% { background-color: transparent; }
+        }
+        .flash {
+            animation: flash 0.2s 3;
+        }
+        @keyframes flashGrid {
+            0%, 100% { background-color: #FF69B4; }
+            50% { background-color: black; }
+        }
+        .flash-grid {
+            animation: flashGrid 0.5s 1;
+        }
+        @keyframes moveUp {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(0, -50px); }
+        }
+        .move-up {
+            animation: moveUp 1s forwards;
+        }
+        #found-word {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            visibility: hidden;
+        }
+        #found-word span {
+            font-size: 24px;
+            color: #FF69B4;
+            margin: 0 5px;
+        }
+        #message-container {
+            text-align: center;
+            margin-top: 40px;
+        }
+        #start-message {
+            font-size: 18px;
+            color: gray;
+        }
+        #timer {
+            font-size: 18px;
+            color: gray;
+            display: inline;
+        }
+        #end-message, #restart-message {
+            font-size: 18px;
+            margin: 10px 0;
+            display: inline-block;
+            color: gray;
+        }
+        a {
+            color: white; /* Changed from pink to white */
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <div class="grid">
-        <!-- 6x6 grid letters will be generated here -->
+    <div id="puzzle">
+        <!-- Puzzle items will be generated here -->
     </div>
-    <div class="instruction">ETSI LEMPINIMI RINNOILLE</div>
-    <div class="end-text"></div>
+    <div id="found-word"></div>
+    <div id="target-word-container"></div>
+    <div id="message-container">
+        <div id="start-message">ETSI LEMPINIMI RINNOILLE&nbsp;&nbsp;<span id="timer">00:30</span></div>
+        <div id="end-message"></div>
+        <div id="restart-message"></div>
+    </div>
+
     <script>
-        const words = [
-            "ajovalot", "avokadot", "bazookat", "bon-bonit", "burritot", "daisarit",
-            "etuessu", "etuvalot", "hinkit", "kannut", "kellukkeet", "ketunnokat",
-            "manboobs", "meijerit", "melonit", "nuuskapussit", "roiskeläpät", "tissit", "tonkat"
-        ];
+        const gridElement = document.getElementById('puzzle');
+        const foundWordElement = document.getElementById('found-word');
+        const endMessageElement = document.getElementById('end-message');
+        const restartMessageElement = document.getElementById('restart-message');
+        const startMessageElement = document.getElementById('start-message');
+        const timerElement = document.getElementById('timer');
+        const targetWordContainer = document.getElementById('target-word-container');
+        let helpShown = false;
+        let wrongClicks = 0;
+        let timerInterval;
+        let lastClickedCell = null;
 
-        let grid = document.querySelector('.grid');
-        let instruction = document.querySelector('.instruction');
-        let endText = document.querySelector('.end-text');
-        let selectedWord = words[Math.floor(Math.random() * words.length)];
-        let letters = [];
-        let correctPath = [];
-
-        function createGrid() {
-            for (let i = 0; i < 36; i++) {
-                let div = document.createElement('div');
-                div.textContent = String.fromCharCode(65 + Math.floor(Math.random() * 26));
-                grid.appendChild(div);
-                letters.push(div);
-            }
-            placeWord();
+        async function fetchWord() {
+            const response = await fetch('../melonit.csv');
+            const text = await response.text();
+            const words = text.split('\n').map(word => word.trim()).filter(word => word.length > 0);
+            const bannedWords = ["Bonnie ja Clyde", "Hauskat laukut", "Ismo ja Seppo", "Michelin-manit", "Mikkelin Pimut", "Sanni ja Alma", "Nuuskapussit"];
+            const filteredWords = words.filter(word => !bannedWords.includes(word));
+            return filteredWords[Math.floor(Math.random() * filteredWords.length)];
         }
 
-        function placeWord() {
-            // Choose a random starting point and direction, ensuring it doesn't start at the edges
-            // This is a simple version, actual implementation should ensure the path doesn't exceed grid limits
-            let startPos = Math.floor(Math.random() * 24) + 6; // avoids the first and last row/column
-            let direction = Math.floor(Math.random() * 4); // 0: right, 1: down, 2: left, 3: up
-            let x = startPos % 6;
-            let y = Math.floor(startPos / 6);
-            for (let char of selectedWord) {
-                if (x < 0 || x >= 6 || y < 0 || y >= 6) {
-                    placeWord();
-                    return;
+        async function createGrid() {
+            const word = (await fetchWord());
+
+            let grid = [];
+            for (let i = 0; i < 6; i++) {
+                grid[i] = [];
+                for (let j = 0; j < 6; j++) {
+                    grid[i][j] = getRandomLetter();
                 }
-                let index = y * 6 + x;
-                correctPath.push(index);
-                letters[index].textContent = char;
-                if (direction === 0) x++;
-                else if (direction === 1) y++;
-                else if (direction === 2) x--;
-                else if (direction === 3) y--;
             }
-            highlightNextLetter();
+
+            let startX = Math.floor(Math.random() * 6);
+            let startY = Math.floor(Math.random() * 6);
+
+            let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+            let positions = [{ x: startX, y: startY }];
+            grid[startY][startX] = word.charAt(0).toUpperCase();
+
+            for (let i = 1; i < word.length; i++) {
+                let lastPos = positions[positions.length - 1];
+                let possibleDirections = directions.filter(dir => {
+                    let newX = lastPos.x + dir[0];
+                    let newY = lastPos.y + dir[1];
+                    return newX >= 0 && newX < 6 && newY >= 0 && newY < 6 && !positions.some(pos => pos.x === newX && pos.y === newY);
+                });
+
+                if (possibleDirections.length === 0) break;
+
+                let dir = possibleDirections[Math.floor(Math.random() * possibleDirections.length)];
+                let newX = lastPos.x + dir[0];
+                let newY = lastPos.y + dir[1];
+
+                grid[newY][newX] = word.charAt(i).toUpperCase();
+                positions.push({ x: newX, y: newY });
+            }
+
+            return { grid, word, positions, startX, startY };
         }
 
-        function highlightNextLetter() {
-            if (correctPath.length > 0) {
-                letters[correctPath.shift()].classList.add('pink');
-                setTimeout(highlightNextLetter, 10000);
-            }
+        async function initGame() {
+            gridElement.innerHTML = '';
+            foundWordElement.innerHTML = '';
+            endMessageElement.innerHTML = '';
+            restartMessageElement.innerHTML = '';
+            startMessageElement.style.display = 'block';
+            targetWordContainer.innerHTML = '';
+
+            const { grid, word, positions, startX, startY } = await createGrid();
+            let foundLetters = 0;
+
+            targetWordContainer.textContent = `Haettava sana: ${word}`;
+
+            grid.forEach((row, rowIndex) => {
+                row.forEach((letter, colIndex) => {
+                    const cell = document.createElement('div');
+                    cell.classList.add('grid-item');
+                    cell.innerHTML = `<span>${letter}</span>`;
+                    cell.dataset.letter = letter;
+                    cell.dataset.row = rowIndex;
+                    cell.dataset.col = colIndex;
+                    cell.addEventListener('click', () => handleCellClick(cell, word.toUpperCase(), positions));
+                    gridElement.appendChild(cell);
+                });
+            });
+
+            // Mark the first letter as selected and make it pink
+            const firstCell = [...gridElement.children].find(cell => 
+                parseInt(cell.dataset.row) === startY && parseInt(cell.dataset.col) === startX
+            );
+            firstCell.classList.add('clicked');
+            firstCell.dataset.found = true;
+            foundLetters++;
+            lastClickedCell = firstCell;
+
+            startTimer(word);
         }
 
-        function handleClick(e) {
-            if (e.target.classList.contains('pink')) {
-                e.target.classList.remove('pink');
-                e.target.classList.add('correct');
-                if (correctPath.length === 0) {
-                    endGame();
+        function handleCellClick(cell, word, positions) {
+            const letter = cell.dataset.letter;
+            const currentIndex = [...gridElement.children].filter(c => c.classList.contains('clicked')).length;
+
+            if (cell.classList.contains('clicked')) {
+                return;
+            }
+
+            const lastPos = positions[currentIndex - 1];
+            const row = parseInt(cell.dataset.row);
+            const col = parseInt(cell.dataset.col);
+
+            if (isAdjacent(lastPos, { x: col, y: row }) && letter === word[currentIndex].toUpperCase()) {
+                cell.classList.add('clicked');
+                lastClickedCell = cell;
+                if (currentIndex + 1 === word.length) {
+                    animateFoundWord(word);
+                    setTimeout(() => showAnswer(word), 600); // Delay to allow animation
                 }
             } else {
-                e.target.classList.add('wrong');
-                setTimeout(() => e.target.classList.remove('wrong'), 500);
+                cell.classList.add('wrong');
+                wrongClicks++;
+                if (wrongClicks > 3 && !helpShown) {
+                    showHelpMessage(word);
+                }
+                setTimeout(() => {
+                    cell.classList.remove('wrong');
+                }, 500);
             }
         }
 
-        function endGame() {
-            instruction.style.display = 'none';
-            endText.textContent = `SINULLE OIKEAT RINNAT OVAT ${selectedWord.toUpperCase()}`;
-            endText.style.display = 'block';
-            setTimeout(() => {
-                document.body.innerHTML = '<div style="color: grey; font-size: 2em;">END GAME</div>';
-                setTimeout(() => location.reload(), 2000);
-            }, 3000);
+        function isAdjacent(pos1, pos2) {
+            return (Math.abs(pos1.x - pos2.x) + Math.abs(pos1.y - pos2.y)) === 1;
         }
 
-        grid.addEventListener('click', handleClick);
-        createGrid();
+        function animateFoundWord(word) {
+            const clickedCells = [...gridElement.children].filter(cell => cell.classList.contains('clicked'));
+            clickedCells.forEach(cell => {
+                cell.classList.add('flash');
+            });
+
+            setTimeout(() => {
+                clickedCells.forEach((cell, index) => {
+                    cell.classList.add('move-up');
+                    const letterSpan = document.createElement('span');
+                    letterSpan.textContent = cell.dataset.letter;
+                    foundWordElement.appendChild(letterSpan);
+                });
+                foundWordElement.style.visibility = 'visible';
+            }, 600); // Match the duration of the flash animation
+        }
+
+        function showHelpMessage(word) {
+            helpShown = true;
+            const helpText = document.createElement('div');
+            helpText.style = "animation: fadein 1s; font-size: 14px; color: #808080; font-family: 'booboo', Arial, sans-serif; margin-top: 10px;";
+            document.body.appendChild(helpText);
+        }
+
+        function showAnswer(word) {
+            const formattedWord = word;
+            startMessageElement.style.display = 'none';
+            endMessageElement.innerHTML = `SINULLE OIKEAT RINNAT OVAT <span style="color: lightgrey;">${formattedWord}</span>`;
+            endMessageElement.style.opacity = 1;
+
+            setTimeout(() => {
+                endMessageElement.style.opacity = 0;
+                restartMessageElement.innerHTML = '';
+                restartMessageElement.style.opacity = 1;
+            }, 3000); // 3 seconds delay before showing the titpics
+
+            setTimeout(() => showTitpics(formattedWord), 3000); // Show titpics after 3 seconds
+        }
+
+        function showTitpics(word) {
+            gridElement.innerHTML = ''; // Clear the grid
+            foundWordElement.innerHTML = ''; // Clear the found word element
+            endMessageElement.innerHTML = ''; // Clear the end message element
+            restartMessageElement.innerHTML = ''; // Clear the restart message element
+            startMessageElement.style.display = 'none';
+
+            const formattedWord = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            const img = document.createElement('img');
+            img.src = `https://timosalonen.github.io/wordfraud/titpics/${formattedWord}.png`;
+            img.alt = formattedWord;
+            img.style.maxWidth = '100%';
+
+            console.log('Appending image:', img.src); // Debugging log
+
+            document.body.appendChild(img);
+
+            setTimeout(() => {
+                document.body.removeChild(img); // Remove the image after 5 seconds
+                initGame(); // Restart the game
+            }, 5000); // 5 seconds delay before restarting the game
+        }
+
+        function startTimer(word) {
+            let timeLeft = 30;
+            timerElement.textContent = `00:${timeLeft < 10 ? '0' + timeLeft : timeLeft}`;
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerElement.textContent = `00:${timeLeft < 10 ? '0' + timeLeft : timeLeft}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    flashGridAndRestart();
+                }
+            }, 1000);
+        }
+
+        function flashGridAndRestart() {
+            gridElement.classList.add('flash-grid');
+            setTimeout(() => {
+                gridElement.classList.remove('flash-grid');
+                initGame();
+            }, 500);
+        }
+
+        function getRandomLetter() {
+            const letters = Object.keys(letterFrequency);
+            const totalWeight = letters.reduce((sum, letter) => sum + (11 - letterFrequency[letter]), 0);
+            let rand = Math.random() * totalWeight;
+            for (const letter of letters) {
+                rand -= (11 - letterFrequency[letter]);
+                if (rand <= 0) return letter;
+            }
+        }
+
+        const letterFrequency = {
+            'A': 1, 'B': 4, 'C': 8, 'D': 2, 'E': 1,
+            'F': 8, 'G': 4, 'H': 4, 'I': 1, 'J': 4,
+            'K': 2, 'L': 2, 'M': 2, 'N': 1, 'O': 2,
+            'P': 4, 'Q': 10, 'R': 1, 'S': 1, 'T': 1,
+            'U': 3, 'V': 4, 'W': 10, 'X': 10, 'Y': 4,
+            'Z': 10, 'Å': 4, 'Ä': 2, 'Ö': 7
+        };
+
+        initGame();
     </script>
 </body>
 </html>
