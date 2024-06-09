@@ -70,13 +70,6 @@
         .move-up {
             animation: moveUp 1s forwards;
         }
-        @keyframes spreadOut {
-            0% { transform: translate(0, -50px); }
-            100% { transform: translate(calc(var(--index) * 30px - 50%), -100px); }
-        }
-        .spread-out {
-            animation: spreadOut 1s forwards;
-        }
         #found-word {
             position: absolute;
             top: -50px;
@@ -134,7 +127,7 @@
     <div id="message-container">
         <div id="link-container">
             <div id="hint-button">ANNA VINKKI</div>
-            <div id="change-game-button"><a href="melonit.html">VAIHDA PELIÄ</a></div>
+            <div id="change-game-button"><a href="../wordporn.html">VAIHDA PELIÄ</a></div>
             <div id="timer">00:30</div>
         </div>
         <div id="end-message"></div>
@@ -288,17 +281,7 @@
                     foundWordElement.appendChild(letterSpan);
                 });
                 foundWordElement.style.visibility = 'visible';
-                spreadOutWord(word);
             }, 600); // Vastaavuus flash-animaation kestoon
-        }
-
-        function spreadOutWord(word) {
-            const clickedCells = [...gridElement.children].filter(cell => cell.classList.contains('clicked'));
-            clickedCells.forEach((cell, index) => {
-                setTimeout(() => {
-                    cell.classList.add('spread-out');
-                }, index * 100); // Viive jokaiselle kirjaimelle
-            });
         }
 
         function startTimer(word) {
@@ -355,3 +338,4 @@
     </script>
 </body>
 </html>
+
