@@ -155,10 +155,10 @@
             }
 
             let startX, startY;
-            const notEdgeCells = [8, 9, 10, 11, 14, 15, 16, 17, 20, 21, 22, 23, 26, 27, 28, 29];
-            let startCell = notEdgeCells[Math.floor(Math.random() * notEdgeCells.length)];
-            startX = (startCell - 1) % 6;
-            startY = Math.floor((startCell - 1) / 6);
+            do {
+                startX = Math.floor(Math.random() * 4) + 1; // Ensures it's not in the first or last column
+                startY = Math.floor(Math.random() * 4) + 1; // Ensures it's not in the first or last row
+            } while (startX === 0 || startX === 5 || startY === 0 || startY === 5); // Re-checks to ensure not at the edge
 
             let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
             let positions = [{ x: startX, y: startY }];
@@ -169,7 +169,7 @@
                 let possibleDirections = directions.filter(dir => {
                     let newX = lastPos.x + dir[0];
                     let newY = lastPos.y + dir[1];
-                    return newX >= 0 && newX < 6 && newY >= 0 && newY < 6 && !positions.some(pos => pos.x === newX && pos.y === newY);
+                    return newX > 0 && newX < 5 && newY > 0 && newY < 5 && !positions.some(pos => pos.x === newX && pos.y === newY);
                 });
 
                 if (possibleDirections.length === 0) break;
@@ -207,15 +207,12 @@
                 });
             });
 
-            const firstLetterElement = [...gridElement.children].find(cell => cell.dataset.letter === word.charAt(0).toUpperCase());
-            firstLetterElement.classList.add('clicked');
-            firstLetterElement.dataset.found = true;
-            foundLetters++;
-            lastClickedCell = firstLetterElement;
-
+            // Change here: find and mark the second letter instead of the first
             const secondLetterElement = [...gridElement.children].find(cell => cell.dataset.letter === word.charAt(1).toUpperCase());
             secondLetterElement.classList.add('clicked');
-            secondLetterElement.style.backgroundColor = 'pink';
+            secondLetterElement.dataset.found = true;
+            foundLetters++;
+            lastClickedCell = secondLetterElement;
 
             startTimer(word);
         }
