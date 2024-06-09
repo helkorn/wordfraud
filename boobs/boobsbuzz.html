@@ -198,13 +198,13 @@
             top: 0;
             bottom: 0;
             width: 200px;
-            background-color: #333;
+            background-color: #222;
         }
         .left-border {
-            left: 0;
+            left: calc(50% - 250px - 200px); /* Starts 250px away from the container */
         }
         .right-border {
-            right: 0;
+            right: calc(50% - 250px - 200px); /* Starts 250px away from the container */
         }
     </style>
 </head>
@@ -238,7 +238,12 @@
             const response = await fetch('../melonit.csv');
             const text = await response.text();
             const words = text.split('\n').map(word => word.trim()).filter(word => word.length > 0);
-            return words[Math.floor(Math.random() * words.length)];
+
+            // Estolistalla olevat sanat
+            const forbiddenWords = ["Bonnie ja Clyde", "Hauskat laukut", "Michelin-manit", "Mikkelin Pimut"];
+
+            const filteredWords = words.filter(word => !forbiddenWords.includes(word));
+            return filteredWords[Math.floor(Math.random() * filteredWords.length)];
         }
 
         async function createGrid() {
