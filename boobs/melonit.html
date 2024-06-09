@@ -18,11 +18,11 @@
         }
         #puzzle {
             display: grid;
-            grid-template-columns: repeat(12, 1fr);
+            grid-template-columns: repeat(8, 1fr);
             grid-gap: 2px;
             margin-bottom: 20px;
             width: 100%;
-            max-width: 600px;
+            max-width: 400px;
             position: relative;
         }
         .grid-item {
@@ -88,10 +88,10 @@
         let wordPositions = [];
 
         async function fetchWords() {
-            const response = await fetch('../melonit.csv');
+            const response = await fetch('melonit.csv');
             const text = await response.text();
-            const words = text.split('\n').map(word => word.trim()).filter(word => word.length > 0);
-            return words.slice(0, 2); // Haetaan kaksi ensimmäistä sanaa
+            const allWords = text.split('\n').map(word => word.trim()).filter(word => word.length > 0 && word.length <= 8);
+            return allWords.slice(0, 2); // Haetaan kaksi ensimmäistä sanaa
         }
 
         function getRandomLetter() {
@@ -100,9 +100,9 @@
         }
 
         function placeWord(grid, word, direction) {
-            const maxStart = 12 - word.length;
-            const startX = direction === 'horizontal' ? Math.floor(Math.random() * maxStart) : Math.floor(Math.random() * 12);
-            const startY = direction === 'horizontal' ? Math.floor(Math.random() * 12) : Math.floor(Math.random() * maxStart);
+            const maxStart = 8 - word.length;
+            const startX = direction === 'horizontal' ? Math.floor(Math.random() * maxStart) : Math.floor(Math.random() * 8);
+            const startY = direction === 'horizontal' ? Math.floor(Math.random() * 8) : Math.floor(Math.random() * maxStart);
 
             let canPlace = true;
             for (let i = 0; i < word.length; i++) {
@@ -129,7 +129,7 @@
         async function createGrid() {
             const words = await fetchWords();
             wordPositions = [];
-            let grid = Array.from({ length: 12 }, () => Array(12).fill(''));
+            let grid = Array.from({ length: 8 }, () => Array(8).fill(''));
 
             for (let word of words) {
                 let placed = false;
@@ -140,8 +140,8 @@
             }
 
             // Täytä jäljelle jääneet tyhjät ruudut satunnaisilla kirjaimilla
-            for (let y = 0; y < 12; y++) {
-                for (let x = 0; x < 12; x++) {
+            for (let y = 0; y < 8; y++) {
+                for (let x = 0; x < 8; x++) {
                     if (grid[y][x] === '') {
                         grid[y][x] = getRandomLetter();
                     }
@@ -170,9 +170,9 @@
 
         function handleCellClick(cell) {
             const letter = cell.dataset.letter;
+            cell.classList.add('clicked');
             const pos = wordPositions.find(p => p.x == cell.dataset.col && p.y == cell.dataset.row);
-            if (pos && !cell.classList.contains('clicked')) {
-                cell.classList.add('clicked');
+            if (pos) {
                 const clickedCells = [...gridElement.children].filter(c => c.classList.contains('clicked'));
                 const wordFound = wordPositions.filter(p => p.word === pos.word).every(p => 
                     clickedCells.some(c => c.dataset.row == p.y && c.dataset.col == p.x)
@@ -192,3 +192,4 @@
     </script>
 </body>
 </html>
+
