@@ -75,7 +75,7 @@
             100% { transform: translate(calc(var(--index) * 30px - 50%), -100px); }
         }
         .spread-out {
-            animation: spreadOut 1s forwards;
+            animation: spreadOut 3s forwards; /* Animaatioaikaa pidennetty 3 sekuntiin */
         }
         #found-word {
             position: absolute;
@@ -123,12 +123,19 @@
         a:hover {
             text-decoration: underline;
         }
+        #end-image {
+            display: none;
+            width: 300px;
+            border: 2px solid silver;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     <div id="puzzle">
         <!-- Puzzle items will be generated here -->
     </div>
+    <img id="end-image" src="" alt="End game image">
     <div id="found-word"></div>
     <div id="target-word-container"></div>
     <div id="message-container">
@@ -148,6 +155,7 @@
         const restartMessageElement = document.getElementById('restart-message');
         const timerElement = document.getElementById('timer');
         const hintButton = document.getElementById('hint-button');
+        const endImageElement = document.getElementById('end-image');
         let wrongClicks = 0;
         let timerInterval;
         let wordPositions = [];
@@ -210,6 +218,7 @@
             foundWordElement.innerHTML = '';
             endMessageElement.innerHTML = '';
             restartMessageElement.innerHTML = '';
+            endImageElement.style.display = 'none'; // Piilota kuva pelin alussa
             hintCount = 0; // Nollaa vihjeiden laskuri
             hintButton.style.color = 'white'; // Reset hint button color
             hintButton.style.cursor = 'pointer'; // Reset hint button cursor
@@ -256,9 +265,10 @@
                 cell.classList.add('clicked');
                 if (currentIndex + 1 === word.length) {
                     animateFoundWord(word);
+                    showEndImage(word);
                     setTimeout(() => {
-                        setTimeout(() => initGame(), 1000); // 1 sekunnin tauko ennen uuden pelin aloittamista
-                    }, 600); // Viive animaation sallimiseksi
+                        setTimeout(() => initGame(), 3000); // 3 sekunnin tauko ennen uuden pelin aloittamista
+                    }, 6000); // Viive animaation sallimiseksi (3 sekuntia animaatio + 3 sekuntia kuvan katseluaikaa)
                 }
             } else {
                 cell.classList.add('wrong');
@@ -299,6 +309,13 @@
                     cell.classList.add('spread-out');
                 }, index * 100); // Viive jokaiselle kirjaimelle
             });
+        }
+
+        function showEndImage(word) {
+            const formattedWord = word.charAt(0) + word.slice(1).toLowerCase();
+            const imagePath = `../titpics/${formattedWord}.png`;
+            endImageElement.src = imagePath;
+            endImageElement.style.display = 'block';
         }
 
         function startTimer(word) {
