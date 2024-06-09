@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BoobsBuzz</title>
+    <title>Melonit</title>
     <style>
         body {
             background-color: black;
@@ -56,47 +56,13 @@
         .flash {
             animation: flash 0.2s 3;
         }
-        @keyframes flashGrid {
-            0%, 100% { background-color: #FF69B4; }
-            50% { background-color: black; }
-        }
-        .flash-grid {
-            animation: flashGrid 0.5s 1;
-        }
-        @keyframes moveUp {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(0, -50px); }
-        }
-        .move-up {
-            animation: moveUp 1s forwards;
-        }
-        @keyframes spreadOut {
-            0% { transform: translate(0, -50px); }
-            100% { transform: translate(calc(var(--index) * 30px - 50%), -100px); }
-        }
-        .spread-out {
-            animation: spreadOut 1s forwards;
-        }
-        #found-word {
-            position: absolute;
-            top: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            visibility: hidden;
-        }
-        #found-word span {
-            font-size: 24px;
-            color: #FF69B4;
-            margin: 0 5px;
-        }
         #message-container {
             text-align: center;
             margin-top: 40px;
         }
         #link-container {
-            font-size: 14px; /* Pienennä fonttikokoa */
-            color: #FFB6C1; /* Valkoinen väri, joka taittuu hieman pinkkiin */
+            font-size: 20px; /* Kasvata fonttikokoa */
+            color: white; /* Muuta väri valkoiseksi */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -115,7 +81,7 @@
             color: gray;
         }
         a {
-            color: #FFB6C1; /* Valkoinen väri, joka taittuu hieman pinkkiin */
+            color: white; /* Muuta väri valkoiseksi */
             text-decoration: none;
         }
         a:hover {
@@ -124,11 +90,7 @@
     </style>
 </head>
 <body>
-    <div id="puzzle">
-        <!-- Puzzle items will be generated here -->
-    </div>
-    <div id="found-word"></div>
-    <div id="target-word-container"></div>
+    <div id="puzzle"></div>
     <div id="message-container">
         <div id="link-container">
             <div id="hint-button">ANNA VINKKI</div>
@@ -141,12 +103,10 @@
 
     <script>
         const gridElement = document.getElementById('puzzle');
-        const foundWordElement = document.getElementById('found-word');
         const endMessageElement = document.getElementById('end-message');
         const restartMessageElement = document.getElementById('restart-message');
         const timerElement = document.getElementById('timer');
         const hintButton = document.getElementById('hint-button');
-        let wrongClicks = 0;
         let timerInterval;
         let wordPositions = [];
         let hintCount = 0;
@@ -157,9 +117,7 @@
             const response = await fetch('../melonit.csv');
             const text = await response.text();
             const words = text.split('\n').map(word => word.trim()).filter(word => word.length > 0 && word.length <= 8);
-            const bannedWords = ["Bonnie ja Clyde", "Hauskat laukut", "Ismo ja Seppo", "Michelin-manit", "Mikkelin Pimut", "Sanni ja Alma", "Nuuskapussit"];
-            const filteredWords = words.filter(word => !bannedWords.includes(word));
-            return filteredWords[Math.floor(Math.random() * filteredWords.length)];
+            return words[Math.floor(Math.random() * words.length)];
         }
 
         async function createGrid() {
@@ -174,38 +132,25 @@
                 }
             }
 
-            let startX = Math.floor(Math.random() * 8);
-            let startY = Math.floor(Math.random() * 8);
+            let direction = Math.random() < 0.5 ? 'horizontal' : 'vertical';
+            let startX = Math.floor(Math.random() * (direction === 'horizontal' ? 9 - word.length : 8));
+            let startY = Math.floor(Math.random() * (direction === 'vertical' ? 9 - word.length : 8));
 
-            let directions = [[0, 1], [1, 0]];
-            let positions = [{ x: startX, y: startY }];
-            grid[startY][startX] = word.charAt(0);
-
-            for (let i = 1; i < word.length; i++) {
-                let lastPos = positions[positions.length - 1];
-                let possibleDirections = directions.filter(dir => {
-                    let newX = lastPos.x + dir[0];
-                    let newY = lastPos.y + dir[1];
-                    return newX >= 0 && newX < 8 && newY >= 0 && newY < 8 && !positions.some(pos => pos.x === newX && pos.y === newY);
-                });
-
-                if (possibleDirections.length === 0) break;
-
-                let dir = possibleDirections[Math.floor(Math.random() * possibleDirections.length)];
-                let newX = lastPos.x + dir[0];
-                let newY = lastPos.y + dir[1];
-
-                grid[newY][newX] = word.charAt(i);
-                positions.push({ x: newX, y: newY });
+            for (let i = 0; i < word.length; i++) {
+                if (direction === 'horizontal') {
+                    grid[startY][startX + i] = word.charAt(i);
+                    wordPositions.push({ x: startX + i, y: startY });
+                } else {
+                    grid[startY + i][startX] = word.charAt(i);
+                    wordPositions.push({ x: startX, y: startY + i });
+                }
             }
 
-            wordPositions = positions; // Save word positions for hint
-            return { grid, word, positions, startX, startY };
+            return { grid, word, wordPositions, startX, startY };
         }
 
         async function initGame() {
             gridElement.innerHTML = '';
-            foundWordElement.innerHTML = '';
             endMessageElement.innerHTML = '';
             restartMessageElement.innerHTML = '';
             hintCount = 0; // Reset hint count
@@ -251,14 +196,13 @@
             if (isAdjacent(lastPos, { x: col, y: row }) && letter === word[currentIndex]) {
                 cell.classList.add('clicked');
                 if (currentIndex + 1 === word.length) {
-                    animateFoundWord(word);
+                    showFoundWord(word);
                     setTimeout(() => {
                         setTimeout(() => initGame(), 1000); // 1 sekunnin tauko ennen uuden pelin aloittamista
                     }, 600); // Viive animaation sallimiseksi
                 }
             } else {
                 cell.classList.add('wrong');
-                wrongClicks++;
                 setTimeout(() => {
                     cell.classList.remove('wrong');
                 }, 300); // Lyhennä harmaan laatan välähdysaikaa
@@ -269,32 +213,15 @@
             return (Math.abs(pos1.x - pos2.x) + Math.abs(pos1.y - pos2.y)) === 1;
         }
 
-        function animateFoundWord(word) {
+        function showFoundWord(word) {
             const clickedCells = [...gridElement.children].filter(cell => cell.classList.contains('clicked'));
             clickedCells.forEach(cell => {
                 cell.classList.add('flash');
             });
 
             setTimeout(() => {
-                clickedCells.forEach((cell, index) => {
-                    cell.classList.add('move-up');
-                    cell.style.setProperty('--index', index);
-                    const letterSpan = document.createElement('span');
-                    letterSpan.textContent = cell.dataset.letter;
-                    foundWordElement.appendChild(letterSpan);
-                });
-                foundWordElement.style.visibility = 'visible';
-                spreadOutWord(word);
+                alert(`Löysit sanan: ${word}`);
             }, 600); // Vastaavuus flash-animaation kestoon
-        }
-
-        function spreadOutWord(word) {
-            const clickedCells = [...gridElement.children].filter(cell => cell.classList.contains('clicked'));
-            clickedCells.forEach((cell, index) => {
-                setTimeout(() => {
-                    cell.classList.add('spread-out');
-                }, index * 100); // Viive jokaiselle kirjaimelle
-            });
         }
 
         function startTimer(word) {
@@ -350,5 +277,3 @@
     </script>
 </body>
 </html>
-
-
