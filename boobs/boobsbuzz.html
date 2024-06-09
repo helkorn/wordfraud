@@ -116,32 +116,19 @@
         a:hover {
             text-decoration: underline;
         }
-        /* Uusi tyyli kuvan zoomaukselle ja himmennykselle */
-        @keyframes zoomIn {
-            from {
-                transform: scale(1);
-            }
-            to {
-                transform: scale(1.5);
-            }
+        /* Animation for NIINKÖVITTU? */
+        @keyframes animateText {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-20px); }
         }
-        @keyframes fadeOut {
-            from {
-                opacity: 1;
-            }
-            to {
-                opacity: 0;
-            }
-        }
-        .zoom-in {
-            animation: zoomIn 4s forwards;
-        }
-        .fade-out {
-            animation: fadeOut 2s forwards;
+        .animate-text {
+            display: inline-block;
+            animation: animateText 0.3s ease-in-out;
         }
     </style>
 </head>
 <body>
+    <img src="Womanboobs.png" alt="Woman Boobs" width="300px">
     <div id="puzzle">
         <!-- Puzzle items will be generated here -->
     </div>
@@ -155,11 +142,7 @@
         </div>
         <div id="end-message"></div>
         <div id="restart-message"></div>
-    </div>
-
-    <!-- Uusi elementti kuvan näyttämistä varten -->
-    <div id="image-container" style="display:none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: black; align-items: center; justify-content: center; z-index: 10;">
-        <img id="end-image" src="" alt="End Image" style="max-width: 100%; max-height: 100%; transition: transform 4s;">
+        <div>Tissinimipeli on auki!</div>
     </div>
 
     <script>
@@ -169,9 +152,6 @@
         const restartMessageElement = document.getElementById('restart-message');
         const timerElement = document.getElementById('timer');
         const hintButton = document.getElementById('hint-button');
-        const imageContainer = document.getElementById('image-container');
-        const endImage = document.getElementById('end-image');
-
         let wrongClicks = 0;
         let timerInterval;
         let wordPositions = [];
@@ -297,37 +277,6 @@
             return (Math.abs(pos1.x - pos2.x) + Math.abs(pos1.y - pos2.y)) === 1;
         }
 
-        async function showEndImage(word) {
-            // Hakee kuvan nimen csv-tiedostosta
-            const response = await fetch('../titsmap.csv');
-            const csvText = await response.text();
-            const rows = csvText.split('\n').map(row => row.trim().split(','));
-
-            const wordRow = rows.find(row => row[0].toLowerCase() === word.toLowerCase());
-            if (wordRow) {
-                const imageName = wordRow[1];
-                const coordinates = wordRow.slice(2).map(Number);
-                endImage.src = `../titpics/${imageName}.png`;
-                
-                // Näytetään kuva ja aloitetaan animaatiot
-                imageContainer.style.display = 'flex';
-                endImage.style.transformOrigin = `${coordinates[0]}% ${coordinates[1]}%`;
-                endImage.classList.add('zoom-in');
-                
-                // 4 sekunnin zoomauksen jälkeen kuva himmenee ja aloitetaan uusi peli
-                setTimeout(() => {
-                    endImage.classList.add('fade-out');
-                    setTimeout(() => {
-                        imageContainer.style.display = 'none';
-                        endImage.classList.remove('zoom-in', 'fade-out');
-                        initGame();
-                    }, 2000); // 2 sekuntia himmennykselle
-                }, 4000); // 4 sekuntia zoomaukselle
-            } else {
-                console.error('Kuvaa ei löydy sanalle:', word);
-            }
-        }
-
         function animateFoundWord(word) {
             const clickedCells = [...gridElement.children].filter(cell => cell.classList.contains('clicked'));
             clickedCells.forEach(cell => {
@@ -343,10 +292,7 @@
                     foundWordElement.appendChild(letterSpan);
                 });
                 foundWordElement.style.visibility = 'visible';
-
-                // Animoidun sanan jälkeen näytetään kuva
-                showEndImage(word);
-            }, 600); // Viive animaation sallimiseksi
+            }, 600); // Vastaavuus flash-animaation kestoon
         }
 
         function startTimer(word) {
@@ -373,6 +319,7 @@
 
         function giveHint() {
             if (hintCount >= 3) {
+                animateHintText();
                 return;
             }
             // Etsi seuraava löytämätön kirjain
@@ -392,6 +339,21 @@
                     hintButton.style.cursor = 'not-allowed';
                 }
             }
+        }
+
+        function animateHintText() {
+            const grid = document.getElementById('puzzle');
+            const hintWord = "NIINKÖVITTU?".split('');
+            hintWord.forEach((letter, index) => {
+                const span = document.createElement('span');
+                span.className = 'animate-text';
+                span.style.animationDelay = `${index * 0.1}s`;
+                span.innerText = letter;
+                grid.appendChild(span);
+                setTimeout(() => {
+                    grid.removeChild(span);
+                }, 1000);
+            });
         }
 
         function getRandomLetter() {
