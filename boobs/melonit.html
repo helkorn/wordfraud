@@ -43,6 +43,9 @@
             font-size: 14px;
             transition: color 0.5s;
         }
+        .grid-item.bold span {
+            font-weight: bold;
+        }
         .grid-item.clicked {
             background-color: rgba(255, 105, 180, 0.3); /* Lightened pink with transparency */
         }
@@ -161,6 +164,9 @@
                         cell.dataset.letter = letter;
                         cell.dataset.row = rowIndex;
                         cell.dataset.col = colIndex;
+                        if (wordPositions.some(pos => pos.x == colIndex && pos.y == rowIndex)) {
+                            cell.classList.add('bold');
+                        }
                         cell.addEventListener('click', () => handleCellClick(cell));
                         gridElement.appendChild(cell);
                     });
@@ -170,9 +176,9 @@
 
         function handleCellClick(cell) {
             const letter = cell.dataset.letter;
-            cell.classList.add('clicked');
             const pos = wordPositions.find(p => p.x == cell.dataset.col && p.y == cell.dataset.row);
             if (pos) {
+                cell.classList.add('clicked');
                 const clickedCells = [...gridElement.children].filter(c => c.classList.contains('clicked'));
                 const wordFound = wordPositions.filter(p => p.word === pos.word).every(p => 
                     clickedCells.some(c => c.dataset.row == p.y && c.dataset.col == p.x)
