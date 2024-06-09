@@ -27,12 +27,12 @@
         }
         .grid-item {
             width: 100%;
-            padding-top: 100%;
+            padding-top: 100%; /* 1:1 Aspect Ratio */
             position: relative;
             background-color: black;
             cursor: pointer;
             transition: background-color 0.5s;
-            border-radius: 4px;
+            border-radius: 4px; /* Slightly rounded corners */
         }
         .grid-item span {
             position: absolute;
@@ -44,10 +44,10 @@
             transition: color 0.5s;
         }
         .grid-item.clicked {
-            background-color: #FF69B4;
+            background-color: #FF69B4; /* Lightened pink */
         }
         .grid-item.wrong {
-            background-color: rgba(255, 255, 255, 0.3);
+            background-color: rgba(255, 255, 255, 0.3); /* Brighter white with 30% transparency */
         }
         @keyframes flash {
             0%, 100% { background-color: #FF69B4; }
@@ -88,7 +88,7 @@
             margin-top: 40px;
         }
         #link-container {
-            font-size: 16px;
+            font-size: 16px; /* Pienennetty fonttikoko */
             color: gray;
             display: flex;
             justify-content: center;
@@ -97,11 +97,11 @@
         #hint-button, #change-game-button {
             margin: 0 10px;
             cursor: pointer;
-            color: white;
+            color: white; /* Valkoinen teksti */
         }
         #timer {
             margin: 0 10px;
-            color: white;
+            color: white; /* Valkoinen teksti */
         }
         #end-message, #restart-message {
             font-size: 18px;
@@ -110,25 +110,20 @@
             color: gray;
         }
         a {
-            color: white;
+            color: white; /* Changed from pink to white */
             text-decoration: none;
         }
         a:hover {
             text-decoration: underline;
         }
-        #image-container {
-            display: none;
-            margin-top: 20px;
-        }
-        #image-container img {
-            width: 300px;
-        }
     </style>
 </head>
 <body>
-    <div id="puzzle"></div>
+    <div id="puzzle">
+        <!-- Puzzle items will be generated here -->
+    </div>
     <div id="found-word"></div>
-    <div id="image-container"></div>
+    <div id="target-word-container"></div>
     <div id="message-container">
         <div id="link-container">
             <div id="hint-button">ANNA VINKKI</div>
@@ -146,11 +141,10 @@
         const restartMessageElement = document.getElementById('restart-message');
         const timerElement = document.getElementById('timer');
         const hintButton = document.getElementById('hint-button');
-        const imageContainer = document.getElementById('image-container');
         let wrongClicks = 0;
         let timerInterval;
         let wordPositions = [];
-        let hintCount = 0;
+        let hintCount = 0; // Vihjeiden laskuri
 
         hintButton.addEventListener('click', giveHint);
 
@@ -164,9 +158,9 @@
         }
 
         async function createGrid() {
-            const word = (await fetchWord()).toUpperCase();
-            wordPositions = [];
-            
+            const word = (await fetchWord());
+            wordPositions = []; // Reset word positions
+
             let grid = [];
             for (let i = 0; i < 6; i++) {
                 grid[i] = [];
@@ -180,7 +174,7 @@
 
             let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
             let positions = [{ x: startX, y: startY }];
-            grid[startY][startX] = word.charAt(0);
+            grid[startY][startX] = word.charAt(0).toUpperCase();
 
             for (let i = 1; i < word.length; i++) {
                 let lastPos = positions[positions.length - 1];
@@ -196,11 +190,11 @@
                 let newX = lastPos.x + dir[0];
                 let newY = lastPos.y + dir[1];
 
-                grid[newY][newX] = word.charAt(i);
+                grid[newY][newX] = word.charAt(i).toUpperCase();
                 positions.push({ x: newX, y: newY });
             }
 
-            wordPositions = positions;
+            wordPositions = positions; // Save word positions for hint
             return { grid, word, positions, startX, startY };
         }
 
@@ -209,9 +203,9 @@
             foundWordElement.innerHTML = '';
             endMessageElement.innerHTML = '';
             restartMessageElement.innerHTML = '';
-            hintCount = 0;
-            hintButton.style.color = 'white';
-            hintButton.style.cursor = 'pointer';
+            hintCount = 0; // Nollaa vihjeiden laskuri
+            hintButton.style.color = 'white'; // Reset hint button color
+            hintButton.style.cursor = 'pointer'; // Reset hint button cursor
             const { grid, word, positions, startX, startY } = await createGrid();
             let foundLetters = 0;
 
@@ -223,11 +217,12 @@
                     cell.dataset.letter = letter;
                     cell.dataset.row = rowIndex;
                     cell.dataset.col = colIndex;
-                    cell.addEventListener('click', () => handleCellClick(cell, word, positions));
+                    cell.addEventListener('click', () => handleCellClick(cell, word.toUpperCase(), positions));
                     gridElement.appendChild(cell);
                 });
             });
 
+            // Merkitään ensimmäinen kirjain valituksi ja tehdään siitä pinkki
             const firstCell = [...gridElement.children].find(cell => 
                 parseInt(cell.dataset.row) === startY && parseInt(cell.dataset.col) === startX
             );
@@ -250,20 +245,20 @@
             const row = parseInt(cell.dataset.row);
             const col = parseInt(cell.dataset.col);
 
-            if (isAdjacent(lastPos, { x: col, y: row }) && letter === word[currentIndex]) {
+            if (isAdjacent(lastPos, { x: col, y: row }) && letter === word[currentIndex].toUpperCase()) {
                 cell.classList.add('clicked');
                 if (currentIndex + 1 === word.length) {
                     animateFoundWord(word);
                     setTimeout(() => {
-                        displayImage(word);
-                    }, 600);
+                        setTimeout(showImage, 1000, word); // Näytä kuva 1 sekunnin kuluttua
+                    }, 600); // Viive animaation sallimiseksi
                 }
             } else {
                 cell.classList.add('wrong');
                 wrongClicks++;
                 setTimeout(() => {
                     cell.classList.remove('wrong');
-                }, 300);
+                }, 300); // Lyhennä harmaan laatan välähdysaikaa
             }
         }
 
@@ -286,7 +281,7 @@
                     foundWordElement.appendChild(letterSpan);
                 });
                 foundWordElement.style.visibility = 'visible';
-            }, 600);
+            }, 600); // Vastaavuus flash-animaation kestoon
         }
 
         function startTimer(word) {
@@ -315,6 +310,7 @@
             if (hintCount >= 3) {
                 return;
             }
+            // Etsi seuraava löytämätön kirjain
             const currentIndex = [...gridElement.children].filter(c => c.classList.contains('clicked')).length;
             const nextPos = wordPositions[currentIndex];
 
@@ -338,27 +334,16 @@
             return letters[Math.floor(Math.random() * letters.length)];
         }
 
-        async function displayImage(word) {
-            const response = await fetch('../titsmap.csv');
-            const text = await response.text();
-            const rows = text.split('\n').map(row => row.trim()).filter(row => row.length > 0);
-            const wordMapping = rows.reduce((map, row) => {
-                const [key, value] = row.split(',');
-                map[key.trim()] = value.trim();
-                return map;
-            }, {});
-
-            const imageName = wordMapping[word] || word;
-            const imagePath = `../titpics/${imageName}.png`;
-
-            const img = document.createElement('img');
-            img.src = imagePath;
-            imageContainer.innerHTML = '';
-            imageContainer.appendChild(img);
-            imageContainer.style.display = 'block';
+        function showImage(word) {
+            document.body.innerHTML = '<div style="background-color: black; width: 100%; height: 100vh;"></div>';
+            const imageElement = document.createElement('img');
+            imageElement.src = `../titpics/${word.charAt(0).toUpperCase() + word.slice(1)}.png`;
+            imageElement.style.width = '300px';
+            imageElement.style.display = 'block';
+            imageElement.style.margin = 'auto';
+            document.body.appendChild(imageElement);
 
             setTimeout(() => {
-                imageContainer.style.display = 'none';
                 initGame();
             }, 3000);
         }
@@ -367,3 +352,4 @@
     </script>
 </body>
 </html>
+
