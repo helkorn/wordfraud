@@ -3,66 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index Page</title>
+    <title>WomanBoobs</title>
     <style>
         body {
+            background-color: black;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
             font-family: Arial, sans-serif;
-            color: #FF69B4; /* Pinkin ja lilan väri */
         }
-        .link-text {
-            color: #FF69B4; /* Pinkin ja lilan väri */
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .link-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .link {
+            font-size: 18px;
+            color: #FF82B2;
             text-decoration: none;
+            margin: 0 10px;
         }
-        #typewriter {
-            width: 400px;
-            font-family: 'fontTW', monospace;
-            border-right: 2px solid;
-            white-space: nowrap;
-            overflow: hidden;
-            animation: typing 4s steps(60, end), blink-caret .75s step-end infinite;
+        .link:hover {
+            text-decoration: underline;
         }
-        @keyframes typing {
-            from { width: 0; }
-            to { width: 400px; }
+        #header-img {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
         }
-        @keyframes blink-caret {
-            from, to { border-color: transparent; }
-            50% { border-color: black; }
+        .entry-link {
+            font-size: 18px;
+            color: #8FC1E3; /* Vaaleansininen */
+            font-weight: bold;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .entry-link:hover {
+            color: #C0C0C0; /* Harmaa */
+            text-decoration: underline;
         }
     </style>
-    <link rel="stylesheet" href="path/to/your/font/fontTW.ttf">
 </head>
 <body>
-    <div>
-        <img src="boobs/boobs_entry.png" alt="Entry Image" width="600">
+    <div class="container">
+        <img id="header-img" src="https://timosalonen.github.io/wordfraud/boobs/boobs_entry.png" alt="WomanBoobs Header">
+        <div class="link-container">
+            <a href="womanboobs.html" class="entry-link">Entry</a> 
+            <a href="boobs/boobsgate.html" class="link">Boobsgate</a>
+            <a href="boobs/boobsbuzz.html" class="link">Boobsbuzz</a>
+            <a href="boobs/titpics.html" class="link">Titpics</a>
+            <a href="boobs/boobspals.html" class="link">Boobspals</a>
+        </div>
     </div>
-    <div>
-        <a href="boobs/boobsbuzz.html" class="link-text">Pelataan, pelataan, pelataan!</a>
-    </div>
-    <div id="typewriter"></div>
-    <div>
-        <img src="boobs/Womanboobs.png" alt="Woman Boobs">
-        <img src="boobs/Roosa nauha.svg" alt="Roosa Nauha">
-    </div>
-
-    <script>
-        const text = "Eräältä pohjoisen korpimetsän radiokanavalta kuului tissikuvaajan kutsu. Ammattikuvaaja ikuisti radioaseman naiset työnsä äärellä päällään T-paita ja siinä rintojensa lempinimi.\n\nToiselle se oli humoristinen ja toiselle arkipäivää, mutta kaikki niitä rakastavat: Rinnat, daisarit ja tuutit, eli suomeksi: Tissit! Tässä tissisanapelissä löydetään sinulle oikea rintojen lempinimi, onnea peliin! Tissit mainittu.\n\nRoosa nauha on maailmanlaajuinen kampanja rintasyöpätietoisuuden puolesta.";
-        let index = 0;
-        const typewriter = document.getElementById('typewriter');
-
-        function type() {
-            if (index < text.length) {
-                typewriter.innerHTML += text.charAt(index);
-                index++;
-                setTimeout(type, 50);
-            } else {
-                setTimeout(() => {
-                    window.location.href = "boobs/boobsbuzz.html";
-                }, 2000);
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", type);
-    </script>
 </body>
 </html>
+
