@@ -157,6 +157,18 @@
             return filteredWords[Math.floor(Math.random() * filteredWords.length)];
         }
 
+        async function fetchWordDetails(word) {
+            const response = await fetch('../titsmap.csv');
+            const text = await response.text();
+            const rows = text.split('\n').map(row => row.split(',').map(cell => cell.trim()));
+            const header = rows[0];
+            const wordIndex = header.indexOf('word');
+            const xIndex = header.indexOf('x');
+            const yIndex = header.indexOf('y');
+            const wordDetails = rows.find(row => row[wordIndex] && row[wordIndex].toLowerCase() === word.toLowerCase());
+            return wordDetails ? { word: wordDetails[wordIndex], x: wordDetails[xIndex], y: wordDetails[yIndex] } : null;
+        }
+
         async function createGrid() {
             const word = (await fetchWord());
             wordPositions = []; // Reset word positions
@@ -250,7 +262,7 @@
                 if (currentIndex + 1 === word.length) {
                     animateFoundWord(word);
                     setTimeout(() => {
-                        setTimeout(() => initGame(), 1000); // 1 sekunnin tauko ennen uuden pelin aloittamista
+                        setTimeout(() => initGame(), 4000); // 4 sekunnin tauko ennen uuden pelin aloittamista
                     }, 600); // Viive animaation sallimiseksi
                 }
             } else {
@@ -266,7 +278,8 @@
             return (Math.abs(pos1.x - pos2.x) + Math.abs(pos1.y - pos2.y)) === 1;
         }
 
-        function animateFoundWord(word) {
+        async function animateFoundWord(word) {
+            const wordDetails = await fetchWordDetails(word);
             const clickedCells = [...gridElement.children].filter(cell => cell.classList.contains('clicked'));
             clickedCells.forEach(cell => {
                 cell.classList.add('flash');
@@ -281,6 +294,10 @@
                     foundWordElement.appendChild(letterSpan);
                 });
                 foundWordElement.style.visibility = 'visible';
+
+                setTimeout(() => {
+                    window.location.href = `../titpic.html?word=${wordDetails.word}&x=${wordDetails.x}&y=${wordDetails.y}`;
+                }, 600); // Viive flash-animaation kestoon
             }, 600); // Vastaavuus flash-animaation kestoon
         }
 
