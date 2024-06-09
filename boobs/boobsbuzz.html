@@ -117,6 +117,96 @@
         a:hover {
             text-decoration: underline;
         }
+        .image-page {
+            background-color: white;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 60px;
+            position: relative;
+        }
+        .image-container {
+            width: 400px;
+            height: 400px;
+            border: 2px solid silver;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: url('dark_gray_border_pattern.png') 200px center repeat-y, white;
+        }
+        .blur-background {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .blur-background img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(20px);
+        }
+        .zoom-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 2s, filter 0.5s;
+        }
+        @keyframes zoomIn {
+            0% {
+                transform: translate(-50%, -50%) scale(1) rotate(0deg);
+            }
+            70% {
+                transform: translate(-50%, -50%) scale(2.2) rotate(1deg);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(2) rotate(1deg);
+            }
+        }
+        @keyframes flash {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+        .links-inside {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .links-inside a, .links-inside div {
+            font-size: 14px;
+            color: black;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+        .links-inside div {
+            cursor: pointer;
+        }
+        .found-word-message {
+            margin-top: 20px;
+            font-size: 20px;
+            color: black;
+        }
     </style>
 </head>
 <body>
@@ -342,22 +432,45 @@
 
         function showImage(word) {
             document.body.innerHTML = `
-                <div style="background-color: white; width: 100%; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 60px; position: relative;">
-                    <div style="width: 400px; height: 400px; border: 2px solid silver; position: relative; display: flex; align-items: center; justify-content: center; background: url('dark_gray_border_pattern.png') 200px center repeat-y, white;">
-                        <div style="position: absolute; width: 100%; height: 100%; overflow: hidden;">
-                            <img src="../titpics/${word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()}.png" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; object-fit: cover; filter: blur(20px);">
+                <div class="image-page">
+                    <div class="image-container">
+                        <div class="blur-background">
+                            <img src="../titpics/${word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()}.png">
                         </div>
-                        <img src="../titpics/${word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()}.png" style="max-width: 100%; max-height: 100%; position: relative; z-index: 1;">
+                        <img id="mainImage" class="zoom-image" src="../titpics/${word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()}.png">
+                        <div id="flashEffect" style="display: none; position: absolute; width: 100%; height: 100%; background: black;"></div>
+                        <div class="links-inside">
+                            <a href="titpics.html">OSTA TÄMÄ PAITA</a>
+                            <div onclick="window.location.href='boobsbuzz.html'">UUSI PELI</div>
+                        </div>
                     </div>
-                    <div style="width: 400px; display: flex; justify-content: flex-end; margin-top: 20px;">
-                        <a href="titpics.html" style="font-size: 14px; color: black; text-decoration: none; margin-right: 10px;">OSTA TÄMÄ PAITA</a>
-                        <div style="font-size: 14px; color: black; cursor: pointer;" onclick="window.location.href='boobsbuzz.html'">UUSI PELI</div>
-                    </div>
+                    <div class="found-word-message">LÖYSIT SANAN: ${word.toUpperCase()}</div>
                 </div>
             `;
+
+            const mainImage = document.getElementById('mainImage');
+            const flashEffect = document.getElementById('flashEffect');
+
+            // Start zoom animation
+            setTimeout(() => {
+                mainImage.style.animation = 'zoomIn 3s forwards';
+            }, 1000); // Start after 1 second
+
+            // Flash effect after zoom
+            setTimeout(() => {
+                flashEffect.style.display = 'block';
+                flashEffect.style.animation = 'flash 0.2s';
+            }, 4000); // Flash after 4 seconds
+
+            // Hide flash effect and finalize image position
+            setTimeout(() => {
+                flashEffect.style.display = 'none';
+                mainImage.style.filter = 'brightness(1)';
+            }, 4200); // End flash after 4.2 seconds
         }
 
         initGame();
     </script>
 </body>
 </html>
+
