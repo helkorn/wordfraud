@@ -143,6 +143,10 @@
             return filteredWords[Math.floor(Math.random() * filteredWords.length)];
         }
 
+        function getRandomStartingPoint() {
+            return Math.floor(Math.random() * 4) + 1; // Generates a number between 1 and 4
+        }
+
         async function createGrid() {
             const word = (await fetchWord()).toUpperCase();
 
@@ -154,11 +158,8 @@
                 }
             }
 
-            let startX, startY;
-            do {
-                startX = Math.floor(Math.random() * 4) + 1; // Ensures it's not in the first or last column
-                startY = Math.floor(Math.random() * 4) + 1; // Ensures it's not in the first or last row
-            } while (startX === 0 || startX === 5 || startY === 0 || startY === 5); // Re-checks to ensure not at the edge
+            let startX = getRandomStartingPoint();
+            let startY = getRandomStartingPoint();
 
             let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
             let positions = [{ x: startX, y: startY }];
