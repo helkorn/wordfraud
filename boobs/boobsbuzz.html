@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fi">
 <head>
     <meta charset="UTF-8">
@@ -151,6 +152,7 @@
         let wordPositions = [];
         let hintCount = 0;
         let niinkovittuTimeout;
+        const originalLetters = [];
 
         hintButton.addEventListener('click', giveHint);
 
@@ -166,12 +168,15 @@
         async function createGrid() {
             const word = (await fetchWord());
             wordPositions = []; // Reset word positions
+            originalLetters.length = 0; // Reset original letters
 
             let grid = [];
             for (let i = 0; i < 6; i++) {
                 grid[i] = [];
                 for (let j = 0; j < 6; j++) {
-                    grid[i][j] = getRandomLetter();
+                    const letter = getRandomLetter();
+                    grid[i][j] = letter;
+                    originalLetters.push({ row: i, col: j, letter: letter }); // Save original letters
                 }
             }
 
@@ -210,6 +215,8 @@
             endMessageElement.innerHTML = '';
             restartMessageElement.innerHTML = '';
             hintCount = 0; // Reset hint count
+            hintButton.style.color = 'white'; // Reset hint button color
+            hintButton.style.pointerEvents = 'auto'; // Enable hint button
             const { grid, word, positions, startX, startY } = await createGrid();
             let foundLetters = 0;
 
@@ -336,6 +343,8 @@
                 }
             } else {
                 showNiinkoVittu();
+                hintButton.style.color = 'darkgray'; // Change hint button color to dark gray
+                hintButton.style.pointerEvents = 'none'; // Disable hint button
             }
         }
 
@@ -362,11 +371,12 @@
                     for (let col = 0; col < 6; col++) {
                         const cell = gridElement.querySelector(`.grid-item[data-row="${row}"][data-col="${col}"]`);
                         if (!cell.classList.contains('clicked')) {
-                            animateCellToLetter(cell, getRandomLetter());
+                            const originalLetter = originalLetters.find(l => l.row === row && l.col === col).letter;
+                            animateCellToLetter(cell, originalLetter);
                         }
                     }
                 }
-            }, 2000);
+            }, 4000); // Näkyy 4 sekunnin ajan
         }
 
         function animateCellToLetter(cell, letter) {
