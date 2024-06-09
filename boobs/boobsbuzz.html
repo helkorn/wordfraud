@@ -27,12 +27,12 @@
         }
         .grid-item {
             width: 100%;
-            padding-top: 100%; /* 1:1 Aspect Ratio */
+            padding-top: 100%;
             position: relative;
             background-color: black;
             cursor: pointer;
             transition: background-color 0.5s, transform 1s;
-            border-radius: 4px; /* Slightly rounded corners */
+            border-radius: 4px;
             animation: drop 2s ease-in-out forwards;
         }
         .grid-item span {
@@ -45,10 +45,10 @@
             transition: color 0.5s;
         }
         .grid-item.clicked {
-            background-color: #FF69B4; /* Lightened pink */
+            background-color: #FF69B4;
         }
         .grid-item.wrong {
-            background-color: rgba(255, 255, 255, 0.1); /* White with 10% transparency */
+            background-color: rgba(255, 255, 255, 0.1);
         }
         @keyframes flash {
             0%, 100% { background-color: #FF69B4; }
@@ -108,7 +108,7 @@
             color: gray;
         }
         a {
-            color: white; /* Changed from pink to white */
+            color: white;
             text-decoration: none;
         }
         a:hover {
@@ -117,9 +117,7 @@
     </style>
 </head>
 <body>
-    <div id="puzzle">
-        <!-- Puzzle items will be generated here -->
-    </div>
+    <div id="puzzle"></div>
     <div id="found-word"></div>
     <div id="message-container">
         <div id="start-message">ETSI LEMPINIMI RINNOILLE&nbsp;&nbsp;<span id="timer">00:30</span></div>
@@ -149,24 +147,54 @@
         }
 
         async function createGrid() {
-            const word = (await fetchWord());
+            const word = (await fetchWord()).toUpperCase();
+            let grid = Array(6).fill(null).map(() => Array(6).fill(null));
 
-            let grid = [];
-            for (let i = 0; i < 6; i++) {
-                grid[i] = [];
-                for (let j = 0; j < 6; j++) {
-                    grid[i][j] = getRandomLetter();
+            let startX, startY;
+            do {
+                startX = Math.floor(Math.random() * 6);
+                startY = Math.floor(Math.random() * 6);
+            } while (!isValidStart(startX, startY, word.length));
+
+            let positions = [{ x: startX, y: startY }];
+            grid[startY][startX] = word.charAt(0);
+
+            for (let i = 1; i < word.length; i++) {
+                let lastPos = positions[positions.length - 1];
+                let nextPos = getNextPosition(lastPos, positions, word.length - i);
+
+                if (!nextPos) {
+                    return createGrid(); // If no valid position found, restart
+                }
+
+                grid[nextPos.y][nextPos.x] = word.charAt(i);
+                positions.push(nextPos);
+            }
+
+            return { grid, word, positions };
+        }
+
+        function isValidStart(x, y, length) {
+            return (x + length <= 6) || (y + length <= 6) || (x - length >= -1) || (y - length >= -1);
+        }
+
+        function getNextPosition(lastPos, positions, remainingLength) {
+            const directions = [
+                { x: 0, y: 1 }, { x: 1, y: 0 }, { x: 0, y: -1 }, { x: -1, y: 0 },
+                { x: 1, y: 1 }, { x: 1, y: -1 }, { x: -1, y: 1 }, { x: -1, y: -1 }
+            ];
+
+            for (let dir of directions) {
+                let newX = lastPos.x + dir.x;
+                let newY = lastPos.y + dir.y;
+
+                if (newX >= 0 && newX < 6 && newY >= 0 && newY < 6 &&
+                    !positions.some(pos => pos.x === newX && pos.y === newY)) {
+                    return { x: newX, y: newY };
                 }
             }
 
-            let startX = Math.floor(Math.random() * (6 - word.length));
-            let startY = Math.floor(Math.random() * 6);
-
-            for (let i = 0; i < word.length; i++) {
-                grid[startY][startX + i] = word.charAt(i).toUpperCase();
-            }
-
-            return { grid, word, positions: word.split('').map((_, idx) => ({ x: startX + idx, y: startY })) };
+            return null;
         }
 
         async function initGame() {
@@ -182,53 +210,42 @@
                 row.forEach((letter, colIndex) => {
                     const cell = document.createElement('div');
                     cell.classList.add('grid-item');
-                    cell.innerHTML = `<span>${letter}</span>`;
-                    cell.dataset.letter = letter;
+                    if (letter) {
+                        cell.innerHTML = `<span>${letter}</span>`;
+                    }
                     cell.dataset.row = rowIndex;
                     cell.dataset.col = colIndex;
-                    cell.addEventListener('click', () => handleCellClick(cell, word.toUpperCase(), positions));
+                    cell.addEventListener('click', () => handleCellClick(cell, word, positions));
                     setTimeout(() => gridElement.appendChild(cell), rowIndex * 100 + colIndex * 100);
                 });
             });
 
             setTimeout(() => {
-                const firstLetterElement = [...gridElement.children].find(cell => cell.dataset.letter === word.charAt(0).toUpperCase());
+                const firstLetterElement = gridElement.children[positions[0].y * 6 + positions[0].x];
                 firstLetterElement.classList.add('clicked');
                 firstLetterElement.dataset.found = true;
                 foundLetters++;
                 lastClickedCell = firstLetterElement;
                 startTimer(word);
-
-                // Aloita kirjainten värjäys
-                for (let i = 1; i < word.length; i++) {
-                    setTimeout(() => {
-                        const letterElement = [...gridElement.children].find(cell => cell.dataset.letter === word.charAt(i).toUpperCase() && !cell.classList.contains('clicked'));
-                        if (letterElement) {
-                            letterElement.classList.add('clicked');
-                        }
-                    }, i * 5000);
-                }
             }, 2000);
         }
 
         function handleCellClick(cell, word, positions) {
-            const letter = cell.dataset.letter;
-            const currentIndex = [...gridElement.children].filter(c => c.classList.contains('clicked')).length;
+            const row = parseInt(cell.dataset.row);
+            const col = parseInt(cell.dataset.col);
+            const letter = cell.textContent;
+            const currentIndex = positions.findIndex(pos => pos.x === col && pos.y === row);
 
-            if (cell.classList.contains('clicked')) {
+            if (cell.classList.contains('clicked') || currentIndex === -1) {
                 return;
             }
 
             const lastPos = positions[currentIndex - 1];
-            const row = parseInt(cell.dataset.row);
-            const col = parseInt(cell.dataset.col);
-
-            if (isAdjacent(lastPos, { x: col, y: row }) && letter === word[currentIndex].toUpperCase()) {
+            if (isAdjacent(lastPos, { x: col, y: row }) && letter === word.charAt(currentIndex)) {
                 cell.classList.add('clicked');
-                lastClickedCell = cell;
-                if (currentIndex + 1 === word.length) {
+                if (currentIndex === word.length - 1) {
                     animateFoundWord(word);
-                    setTimeout(() => showAnswer(word), 600); // Delay to allow animation
+                    setTimeout(() => showAnswer(word), 600);
                 }
             } else {
                 cell.classList.add('wrong');
@@ -253,67 +270,38 @@
             });
 
             setTimeout(() => {
-                clickedCells.forEach((cell, index) => {
+                clickedCells.forEach(cell => {
                     cell.classList.add('move-up');
                     const letterSpan = document.createElement('span');
-                    letterSpan.textContent = cell.dataset.letter;
+                    letterSpan.textContent = cell.textContent;
                     foundWordElement.appendChild(letterSpan);
                 });
                 foundWordElement.style.visibility = 'visible';
-            }, 600); // Match the duration of the flash animation
+            }, 600);
         }
 
         function showHelpMessage(word) {
             helpShown = true;
             const helpText = document.createElement('div');
-            helpText.style = "animation: fadein 1s; font-size: 14px; color: #808080; font-family: 'booboo', Arial, sans-serif; margin-top: 10px;";
-            helpText.textContent = `Apua: Sana on "${word}"`;
+            helpText.textContent = `Etsi sana: ${word}`;
+            helpText.style = "animation: fadein 1s; font-size: 14px; color: #808080; margin-top: 10px;";
             document.body.appendChild(helpText);
         }
 
         function showAnswer(word) {
-            const formattedWord = word;
             startMessageElement.style.display = 'none';
-            endMessageElement.innerHTML = `SINULLE OIKEAT RINNAT OVAT <span style="color: lightgrey;">${formattedWord}</span>`;
+            endMessageElement.innerHTML = `Löysit sanan: <span style="color: lightgrey;">${word}</span>`;
             endMessageElement.style.opacity = 1;
 
             setTimeout(() => {
                 endMessageElement.style.opacity = 0;
                 restartMessageElement.innerHTML = '';
                 restartMessageElement.style.opacity = 1;
-            }, 1500); // 1.5 seconds delay before showing the titpics
-
-            setTimeout(() => showTitpics(formattedWord), 1500); // Show titpics after 1.5 seconds
-        }
-
-        function showTitpics(word) {
-            gridElement.innerHTML = ''; // Clear the grid
-            foundWordElement.innerHTML = ''; // Clear the found word element
-            endMessageElement.innerHTML = ''; // Clear the end message element
-            restartMessageElement.innerHTML = ''; // Clear the restart message element
-            startMessageElement.style.display = 'none';
-
-            const formattedWord = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-            const img = document.createElement('img');
-            img.src = `https://timosalonen.github.io/wordfraud/titpics/${formattedWord}.png`;
-            img.alt = formattedWord;
-            img.style.width = '400px';
-            img.style.height = '400px';
-            img.style.transition = 'transform 5s';
-            img.style.transform = 'scale(1)';
-
-            console.log('Appending image:', img.src); // Debugging log
-
-            document.body.appendChild(img);
+            }, 1500);
 
             setTimeout(() => {
-                img.style.transform = 'scale(2)';
-            }, 10); // Trigger the zoom effect
-
-            setTimeout(() => {
-                document.body.removeChild(img); // Remove the image after 5 seconds
-                initGame(); // Restart the game
-            }, 5000); // 5 seconds delay before restarting the game
+                initGame();
+            }, 1500);
         }
 
         function startTimer(word) {
@@ -337,25 +325,6 @@
                 initGame();
             }, 500);
         }
-
-        function getRandomLetter() {
-            const letters = Object.keys(letterFrequency);
-            const totalWeight = letters.reduce((sum, letter) => sum + (11 - letterFrequency[letter]), 0);
-            let rand = Math.random() * totalWeight;
-            for (const letter of letters) {
-                rand -= (11 - letterFrequency[letter]);
-                if (rand <= 0) return letter;
-            }
-        }
-
-        const letterFrequency = {
-            'A': 1, 'B': 4, 'C': 8, 'D': 2, 'E': 1,
-            'F': 8, 'G': 4, 'H': 4, 'I': 1, 'J': 4,
-            'K': 2, 'L': 2, 'M': 2, 'N': 1, 'O': 2,
-            'P': 4, 'Q': 10, 'R': 1, 'S': 1, 'T': 1,
-            'U': 3, 'V': 4, 'W': 10, 'X': 10, 'Y': 4,
-            'Z': 10, 'Å': 4, 'Ä': 2, 'Ö': 7
-        };
 
         initGame();
     </script>
