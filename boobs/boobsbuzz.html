@@ -33,13 +33,12 @@
             cursor: pointer;
             transition: background-color 0.5s;
             border-radius: 4px; /* Slightly rounded corners */
-            overflow: hidden; /* To hide the letters when they move */
         }
         .grid-item span {
             position: absolute;
-            top: -100%;
+            top: 50%;
             left: 50%;
-            transform: translate(-50%, 0);
+            transform: translate(-50%, -50%);
             text-transform: uppercase;
             font-size: 20px;
             transition: color 0.5s;
@@ -64,12 +63,12 @@
         .flash-grid {
             animation: flashGrid 0.5s 1;
         }
-        @keyframes moveDown {
-            0% { top: -100%; }
-            100% { top: 50%; }
+        @keyframes moveUp {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(0, -50px); }
         }
-        .move-down {
-            animation: moveDown 10s linear forwards;
+        .move-up {
+            animation: moveUp 1s forwards;
         }
         #found-word {
             position: absolute;
@@ -205,9 +204,6 @@
                     cell.dataset.col = colIndex;
                     cell.addEventListener('click', () => handleCellClick(cell, word.toUpperCase(), positions));
                     gridElement.appendChild(cell);
-                    setTimeout(() => {
-                        cell.querySelector('span').classList.add('move-down');
-                    }, Math.random() * 10000);
                 });
             });
 
@@ -362,3 +358,5 @@
     </script>
 </body>
 </html>
+
+
