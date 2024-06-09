@@ -77,6 +77,10 @@
         .spread-out {
             animation: spreadOut 3s forwards; /* Animaatioaikaa pidennetty 3 sekuntiin */
         }
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
         #found-word {
             position: absolute;
             top: -50px;
@@ -126,8 +130,14 @@
         #end-image {
             display: none;
             width: 300px;
+            height: 300px;
             border: 2px solid silver;
-            margin-top: 20px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: fadeIn 3s forwards; /* Kuva liukuu näkyviin mustasta */
+            opacity: 0; /* Aluksi näkymätön */
         }
     </style>
 </head>
@@ -141,7 +151,7 @@
     <div id="message-container">
         <div id="link-container">
             <div id="hint-button">ANNA VINKKI</div>
-            <div id="change-game-button"><a href="melonit.html">VAIHDA PELIÄ</a></div>
+            <div id="change-game-button"><a href="../wordporn.html">VAIHDA PELIÄ</a></div>
             <div id="timer">00:30</div>
         </div>
         <div id="end-message"></div>
@@ -316,6 +326,7 @@
             const imagePath = `../titpics/${formattedWord}.png`;
             endImageElement.src = imagePath;
             endImageElement.style.display = 'block';
+            gridElement.style.display = 'none'; // Piilota peliruutu
         }
 
         function startTimer(word) {
