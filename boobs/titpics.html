@@ -72,42 +72,6 @@
             border: none;
             cursor: pointer;
         }
-        .text-box {
-            width: 300px;
-            margin-top: 20px;
-            border: 1px solid silver;
-            padding: 10px;
-            text-align: center;
-        }
-        .writing-text {
-            display: inline-block;
-        }
-        .image-footer {
-            display: flex;
-            align-items: center;
-            margin-top: 20px;
-        }
-        .image-footer img {
-            margin-right: 10px;
-        }
-        .link-text {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .link-text:hover {
-            text-decoration: underline;
-        }
-        .link-dots {
-            color: white;
-            font-weight: bold;
-            animation: blink 1s steps(1, end) infinite;
-        }
-        @keyframes blink {
-            50% {
-                opacity: 0;
-            }
-        }
     </style>
 </head>
 <body>
@@ -115,14 +79,6 @@
         <div class="image-box">
             <img id="rotating-image" src="" alt="T-shirt Image">
             <button class="button">Osta tämä paita</button>
-        </div>
-        <div class="text-box" id="typing-text"></div>
-        <div class="image-footer">
-            <img src="Womanboobs.jpg" alt="WomanBoobs" width="50">
-            <img src="Roosa nauha.svg" alt="Roosa Nauha" width="50">
-        </div>
-        <div>
-            <a href="boobsbuzz.html" class="link-text">Selvitä oma rintojesi lempinimi ja avaa tissinimipeli<span class="link-dots">...</span></a>
         </div>
     </div>
 
@@ -151,14 +107,6 @@
         }
 
         setInterval(loadNextImage, 5000); // Change image every 5 seconds
-
-        // Display text without typing effect
-        const text = `Eräältä pohjoisen korpimetsän radiokanavalta kuului tissikuvaajan kutsu. Ammattikuvaaja ikuisti radioaseman naiset työnsä äärellä päällään T-paita ja siinä omien rintojensa lempinimi. 
-
-Jollekin hauska, toiselle arkipäivää, mutta kaikki niitä rakastavat: Rinnat, daisarit ja tuutit, eli suomeksi: Tissit!
-
-Roosa nauha on maailmanlaajuinen kampanja rintasyöpätietoisuuden puolesta. Tässä voit tilata paidan omien rintojesi lempinimellä, ja tuet kamppailua rintasyöpää vastaan.`;
-        document.getElementById('typing-text').innerText = text;
     </script>
 </body>
 </html>
