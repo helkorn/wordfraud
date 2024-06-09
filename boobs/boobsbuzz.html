@@ -109,6 +109,24 @@
         a:hover {
             text-decoration: underline;
         }
+        #image-container {
+            width: 600px;
+            height: 600px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: black;
+            margin-top: 20px;
+        }
+        #titpic {
+            max-width: 100%;
+            max-height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s;
+            position: absolute;
+        }
     </style>
 </head>
 <body>
@@ -121,6 +139,9 @@
         <div id="end-message"></div>
         <div id="restart-message"></div>
     </div>
+    <div id="image-container">
+        <img id="titpic" src="" alt="">
+    </div>
 
     <script>
         const gridElement = document.getElementById('puzzle');
@@ -129,6 +150,8 @@
         const restartMessageElement = document.getElementById('restart-message');
         const startMessageElement = document.getElementById('start-message');
         const timerElement = document.getElementById('timer');
+        const imageContainer = document.getElementById('image-container');
+        const titpicElement = document.getElementById('titpic');
         let helpShown = false;
         let wrongClicks = 0;
         let timerInterval;
@@ -298,22 +321,27 @@
             startMessageElement.style.display = 'none';
 
             const formattedWord = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-            const img = document.createElement('img');
-            img.src = `https://timosalonen.github.io/wordfraud/titpics/${formattedWord}.png`;
-            img.alt = formattedWord;
-            img.style.maxWidth = '100%';
-            img.id = 'titpic';
-
-            document.body.appendChild(img);
+            titpicElement.src = `https://timosalonen.github.io/wordfraud/titpics/${formattedWord}.png`;
+            titpicElement.alt = formattedWord;
 
             setTimeout(() => {
-                zoomImage(img);
-            }, 500);
+                titpicElement.style.opacity = 1;
+                zoomImage(titpicElement);
+            }, 250);
 
             setTimeout(() => {
-                document.body.removeChild(img); // Remove the image after 5 seconds
+                fadeOutImage();
+            }, 7250); // 7 seconds delay before fading out the image
+
+            setTimeout(() => {
+                titpicElement.style.opacity = 0; // Fade out the image quickly
                 initGame(); // Restart the game
-            }, 5500); // 5.5 seconds delay before restarting the game
+            }, 7500); // 7.5 seconds delay before restarting the game
+        }
+
+        function fadeOutImage() {
+            titpicElement.style.transition = 'opacity 0.5s';
+            titpicElement.style.opacity = 0;
         }
 
         function startTimer(word) {
@@ -362,12 +390,12 @@
             const zoomInterval = setInterval(() => {
                 scale += 0.01;
                 img.style.transform = `scale(${scale})`;
-                img.style.transition = 'transform 5s';
+                img.style.transition = 'transform 7s';
             }, 50);
 
             setTimeout(() => {
                 clearInterval(zoomInterval);
-            }, 5000);
+            }, 7000);
         }
 
         initGame();
