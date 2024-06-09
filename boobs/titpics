@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WomanBoobs</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .link-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .link {
+            font-size: 18px;
+            color: #FF82B2;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .link:hover {
+            text-decoration: underline;
+        }
+        #header-img {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+        }
+        .entry-link {
+            font-size: 18px;
+            color: #8FC1E3; /* Vaaleansininen */
+            font-weight: bold;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .entry-link:hover {
+            color: #C0C0C0; /* Harmaa */
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img id="header-img" src="https://timosalonen.github.io/wordfraud/boobs/boobs_entry.png" alt="WomanBoobs Header">
+        <div class="link-container">
+            <a href="index.html" class="entry-link">Entry</a> 
+            <a href="boobs/boobsbuzz.html" class="link">Boobsbuzz</a>
+            <a href="boobs/melonit.html" class="link">Melonit</a>
+            <a href="boobs/titpics.html" class="link">Titpics</a>
+            <a href="wordporn.html" class="link">WordPorn</a>
+        </div>
+    </div>
+</body>
+</html>
+
