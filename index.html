@@ -2,71 +2,59 @@
 <html lang="fi">
 <head>
     <meta charset="UTF-8">
-    <title>Boobs Intro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index Page</title>
     <style>
         body {
-            background-color: black;
-            color: white;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: Arial, sans-serif;
+            color: #FF69B4; /* Pinkin ja lilan väri */
         }
-        .content {
-            text-align: center;
-            margin-top: 50px;
+        .link-text {
+            color: #FF69B4; /* Pinkin ja lilan väri */
+            text-decoration: none;
         }
-        .link {
-            color: pink;
-            font-size: 24px;
-            margin-top: 20px;
-            display: block;
-        }
-        .typewriter {
-            border: 4px solid white;
-            display: inline-block;
-            padding: 10px;
+        #typewriter {
+            width: 400px;
             font-family: 'fontTW', monospace;
-            color: darkgray;
-            background-color: white;
+            border-right: 2px solid;
+            white-space: nowrap;
+            overflow: hidden;
+            animation: typing 4s steps(60, end), blink-caret .75s step-end infinite;
         }
-        #boobsEntry {
-            display: block;
-            margin: 20px auto;
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 400px; }
         }
-        #finalImages {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 20px;
-        }
-        #finalImages img {
-            margin: 0 10px;
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: black; }
         }
     </style>
-    <link href="fonts/fontTW.ttf" rel="stylesheet">
+    <link rel="stylesheet" href="path/to/your/font/fontTW.ttf">
 </head>
 <body>
-    <div class="content">
-        <img id="boobsEntry" src="boobs/boobs_entry.png" alt="Boobs Entry">
-        <a href="boobs/boobsbuzz.html" class="link">Ohita intro</a>
-        <div class="typewriter" id="typewriter">
-            <span id="text"></span>
-        </div>
-        <div id="finalImages">
-            <img src="boobs/Womanboobs.png" alt="Woman Boobs">
-            <img src="boobs/Roosa nauha.svg" alt="Roosa Nauha" height="200">
-        </div>
+    <div>
+        <img src="boobs/boobs_entry.png" alt="Entry Image" width="600">
     </div>
+    <div>
+        <a href="boobs/boobsbuzz.html" class="link-text">Pelataan, pelataan, pelataan!</a>
+    </div>
+    <div id="typewriter"></div>
+    <div>
+        <img src="boobs/Womanboobs.png" alt="Woman Boobs">
+        <img src="boobs/Roosa nauha.svg" alt="Roosa Nauha">
+    </div>
+
     <script>
-        const text = "Eräältä pohjoisen korpimetsän radiokanavalta kuului tissikuvaajan kutsu. Ammattikuvaaja ikuisti radioaseman naiset työnsä äärellä päällään T-paita ja siinä rintojensa lempinimi.\n\n" +
-                     "Toiselle se oli humoristinen ja toiselle arkipäivää, mutta kaikki niitä rakastavat: Rinnat, daisarit ja tuutit, eli suomeksi: Tissit! Tässä tissisanapelissä löydetään sinulle oikea rintojen lempinimi, onnea peliin! Tissit mainittu.\n\n" +
-                     "Roosa nauha on maailmanlaajuinen kampanja rintasyöpätietoisuuden puolesta.";
-
+        const text = "Eräältä pohjoisen korpimetsän radiokanavalta kuului tissikuvaajan kutsu. Ammattikuvaaja ikuisti radioaseman naiset työnsä äärellä päällään T-paita ja siinä rintojensa lempinimi.\n\nToiselle se oli humoristinen ja toiselle arkipäivää, mutta kaikki niitä rakastavat: Rinnat, daisarit ja tuutit, eli suomeksi: Tissit! Tässä tissisanapelissä löydetään sinulle oikea rintojen lempinimi, onnea peliin! Tissit mainittu.\n\nRoosa nauha on maailmanlaajuinen kampanja rintasyöpätietoisuuden puolesta.";
         let index = 0;
+        const typewriter = document.getElementById('typewriter');
 
-        function typeWriter() {
+        function type() {
             if (index < text.length) {
-                document.getElementById("text").innerHTML += text.charAt(index);
+                typewriter.innerHTML += text.charAt(index);
                 index++;
-                setTimeout(typeWriter, 50);
+                setTimeout(type, 50);
             } else {
                 setTimeout(() => {
                     window.location.href = "boobs/boobsbuzz.html";
@@ -74,7 +62,7 @@
             }
         }
 
-        window.onload = typeWriter;
+        document.addEventListener("DOMContentLoaded", type);
     </script>
 </body>
 </html>
