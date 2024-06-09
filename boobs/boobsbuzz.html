@@ -214,12 +214,6 @@
                 });
             });
 
-            const firstLetterElement = [...gridElement.children].find(cell => cell.dataset.letter === word.charAt(0));
-            firstLetterElement.classList.add('clicked');
-            firstLetterElement.dataset.found = true;
-            foundLetters++;
-            lastClickedCell = firstLetterElement;
-
             startTimer(word);
         }
 
@@ -237,6 +231,9 @@
 
             if (isAdjacent(lastPos, { x: col, y: row }) && letter === word[currentIndex]) {
                 cell.classList.add('clicked');
+                if (currentIndex + 1 === 1) {
+                    cell.style.backgroundColor = '#FF69B4'; // Color the second letter pink
+                }
                 lastClickedCell = cell;
                 if (currentIndex + 1 === word.length) {
                     animateFoundWord(word);
