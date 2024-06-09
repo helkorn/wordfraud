@@ -61,13 +61,21 @@
         const grid = document.getElementById('grid');
         const message = document.getElementById('message');
         const timerElement = document.getElementById('timer');
-        const words = ['TISSIT', 'PULLAT', 'MELONIT', 'KUPIT', 'PUOLUKAT', 'LUUMUT']; // Example words, replace with CSV data
-        const randomWord = words[Math.floor(Math.random() * words.length)];
+        let words = [];
+        let randomWord;
         let timeLeft = 30;
         let wordIndex = 0;
         let interval;
 
+        fetch('melonit.csv')
+            .then(response => response.text())
+            .then(data => {
+                words = data.split('\n').map(row => row.trim()).filter(row => row.length > 0);
+                startGame();
+            });
+
         function startGame() {
+            randomWord = words[Math.floor(Math.random() * words.length)].toUpperCase();
             createGrid();
             placeWord(randomWord);
             interval = setInterval(updateTimer, 1000);
@@ -149,8 +157,6 @@
         function resetGame() {
             location.reload();
         }
-
-        startGame();
     </script>
 </body>
 </html>
