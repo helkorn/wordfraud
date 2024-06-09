@@ -40,11 +40,6 @@
         .link:hover {
             text-decoration: underline;
         }
-        #header-img {
-            width: 100%;
-            max-width: 600px;
-            height: auto;
-        }
         .entry-link {
             font-size: 18px;
             color: #8FC1E3; /* Vaaleansininen */
@@ -56,19 +51,125 @@
             color: #C0C0C0; /* Harmaa */
             text-decoration: underline;
         }
+        .image-box {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            border: 2px solid silver;
+            overflow: hidden;
+        }
+        .image-box img {
+            position: absolute;
+            transition: transform 5s ease-in-out;
+        }
+        .button {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            padding: 10px 20px;
+            background-color: #FF82B2;
+            color: black;
+            border: none;
+            cursor: pointer;
+        }
+        .text-box {
+            width: 300px;
+            margin-top: 20px;
+            border: 1px solid silver;
+            padding: 10px;
+            text-align: center;
+        }
+        .writing-text {
+            display: inline-block;
+        }
+        .image-footer {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .image-footer img {
+            margin-right: 10px;
+        }
+        .link-text {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .link-text:hover {
+            text-decoration: underline;
+        }
+        .link-dots {
+            color: white;
+            font-weight: bold;
+            animation: blink 1s steps(1, end) infinite;
+        }
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <img id="header-img" src="https://timosalonen.github.io/wordfraud/boobs/boobs_entry.png" alt="WomanBoobs Header">
-        <div class="link-container">
-            <a href="index.html" class="entry-link">Entry</a> 
-            <a href="boobs/boobsbuzz.html" class="link">Boobsbuzz</a>
-            <a href="boobs/melonit.html" class="link">Melonit</a>
-            <a href="boobs/titpics.html" class="link">Titpics</a>
-            <a href="wordporn.html" class="link">WordPorn</a>
+        <div class="image-box">
+            <img id="rotating-image" src="" alt="T-shirt Image">
+            <button class="button">Osta tämä paita</button>
+        </div>
+        <div class="text-box" id="typing-text"></div>
+        <div class="image-footer">
+            <img src="Womanboobs.jpg" alt="WomanBoobs" width="50">
+            <img src="Roosa nauha.svg" alt="Roosa Nauha" width="50">
+        </div>
+        <div>
+            <a href="boobsbuzz.html" class="link-text">Selvitä oma rintojesi lempinimi ja avaa tissinimipeli<span class="link-dots">...</span></a>
         </div>
     </div>
+
+    <script>
+        const images = [
+            // List of image file names and coordinates from titpic-map.csv
+            // Example: { src: 'image1.jpg', x: 100, y: 100 },
+        ];
+        
+        let currentIndex = 0;
+
+        function loadNextImage() {
+            const image = images[currentIndex];
+            const imgElement = document.getElementById('rotating-image');
+            imgElement.src = image.src;
+            imgElement.style.left = `${150 - image.x}px`; // Centering logic
+            imgElement.style.top = `${150 - image.y}px`;  // Centering logic
+            
+            if (currentIndex % 2 === 0) {
+                imgElement.style.transform = 'scale(1.2)';
+            } else {
+                imgElement.style.transform = 'scale(0.8)';
+            }
+
+            currentIndex = (currentIndex + 1) % images.length;
+        }
+
+        setInterval(loadNextImage, 5000); // Change image every 5 seconds
+
+        // Typing effect
+        const text = `Eräältä pohjoisen korpimetsän radiokanavalta kuului tissikuvaajan kutsu. Ammattikuvaaja ikuisti radioaseman naiset työnsä äärellä päällään T-paita ja siinä omien rintojensa lempinimi. 
+
+Jollekin hauska, toiselle arkipäivää, mutta kaikki niitä rakastavat: Rinnat, daisarit ja tuutit, eli suomeksi: Tissit!
+
+Roosa nauha on maailmanlaajuinen kampanja rintasyöpätietoisuuden puolesta. Tässä voit tilata paidan omien rintojesi lempinimellä, ja tuet kamppailua rintasyöpää vastaan.`;
+        let index = 0;
+
+        function typeText() {
+            const typingTextElement = document.getElementById('typing-text');
+            typingTextElement.innerHTML += text[index];
+            index++;
+            if (index < text.length) {
+                setTimeout(typeText, 50); // Adjust typing speed here
+            }
+        }
+
+        typeText();
+    </script>
 </body>
 </html>
-
