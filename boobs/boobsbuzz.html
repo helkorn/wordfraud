@@ -42,10 +42,9 @@
             text-transform: uppercase;
             font-size: 20px;
             transition: color 0.5s;
-            color: #FFB6C1; /* Light pink */
         }
         .grid-item.clicked {
-            background-color: #FF69B4; /* Pink */
+            background-color: #FF69B4; /* Lightened pink */
         }
         .grid-item.wrong {
             background-color: rgba(255, 255, 255, 0.1); /* White with 10% transparency */
@@ -117,6 +116,7 @@
         <!-- Puzzle items will be generated here -->
     </div>
     <div id="found-word"></div>
+    <div id="target-word-container"></div>
     <div id="message-container">
         <div id="start-message">ETSI LEMPINIMI RINNOILLE&nbsp;&nbsp;<span id="timer">00:30</span></div>
         <div id="end-message"></div>
@@ -130,6 +130,7 @@
         const restartMessageElement = document.getElementById('restart-message');
         const startMessageElement = document.getElementById('start-message');
         const timerElement = document.getElementById('timer');
+        const targetWordContainer = document.getElementById('target-word-container');
         let helpShown = false;
         let wrongClicks = 0;
         let timerInterval;
@@ -192,8 +193,12 @@
             endMessageElement.innerHTML = '';
             restartMessageElement.innerHTML = '';
             startMessageElement.style.display = 'block';
+            targetWordContainer.innerHTML = '';
+
             const { grid, word, positions } = await createGrid();
             let foundLetters = 0;
+
+            targetWordContainer.textContent = `Haettava sana: ${word}`;
 
             grid.forEach((row, rowIndex) => {
                 row.forEach((letter, colIndex) => {
@@ -353,3 +358,4 @@
     </script>
 </body>
 </html>
+
