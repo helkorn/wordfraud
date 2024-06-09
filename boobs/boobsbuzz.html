@@ -42,6 +42,7 @@
             text-transform: uppercase;
             font-size: 20px;
             transition: color 0.5s;
+            color: #FFB6C1; /* Light pink color for all letters initially */
         }
         .grid-item.clicked {
             background-color: #FF69B4; /* Lightened pink */
@@ -154,11 +155,10 @@
                 }
             }
 
-            let startX, startY;
-            do {
-                startX = Math.floor(Math.random() * 4) + 1; // Ensures it's not in the first or last column
-                startY = Math.floor(Math.random() * 4) + 1; // Ensures it's not in the first or last row
-            } while (startX === 0 || startX === 5 || startY === 0 || startY === 5); // Re-checks to ensure not at the edge
+            let startPositions = [8, 9, 10, 11, 14, 15, 16, 17, 20, 21, 22, 23, 26, 27, 28, 29];
+            let startPos = startPositions[Math.floor(Math.random() * startPositions.length)];
+            let startX = startPos % 6;
+            let startY = Math.floor(startPos / 6);
 
             let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
             let positions = [{ x: startX, y: startY }];
@@ -169,7 +169,7 @@
                 let possibleDirections = directions.filter(dir => {
                     let newX = lastPos.x + dir[0];
                     let newY = lastPos.y + dir[1];
-                    return newX > 0 && newX < 5 && newY > 0 && newY < 5 && !positions.some(pos => pos.x === newX && pos.y === newY);
+                    return newX >= 0 && newX < 6 && newY >= 0 && newY < 6 && !positions.some(pos => pos.x === newX && pos.y === newY);
                 });
 
                 if (possibleDirections.length === 0) break;
@@ -206,13 +206,6 @@
                     gridElement.appendChild(cell);
                 });
             });
-
-            // Change here: find and mark the second letter instead of the first
-            const secondLetterElement = [...gridElement.children].find(cell => cell.dataset.letter === word.charAt(1).toUpperCase());
-            secondLetterElement.classList.add('clicked');
-            secondLetterElement.dataset.found = true;
-            foundLetters++;
-            lastClickedCell = secondLetterElement;
 
             startTimer(word);
         }
@@ -359,3 +352,4 @@
     </script>
 </body>
 </html>
+
