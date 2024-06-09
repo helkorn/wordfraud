@@ -116,22 +116,16 @@
         a:hover {
             text-decoration: underline;
         }
-        .niinko-vittu-container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            font-size: 24px;
-            color: #FF69B4;
+        #image-container {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            position: relative;
         }
-        .niinko-vittu-container span {
-            display: inline-block;
-            opacity: 0;
-            transition: opacity 0.3s, transform 0.3s;
-        }
-        .niinko-vittu-container.visible span {
-            opacity: 1;
+        #zoom-image {
+            width: 100%;
+            height: auto;
+            transition: transform 4s ease-in-out;
         }
     </style>
 </head>
@@ -150,8 +144,9 @@
         <div id="end-message"></div>
         <div id="restart-message"></div>
     </div>
-
-    <div class="niinko-vittu-container" id="niinko-vittu"></div>
+    <div id="image-container">
+        <img id="zoom-image" src="" alt="Zoom Image">
+    </div>
 
     <script>
         const gridElement = document.getElementById('puzzle');
@@ -160,7 +155,8 @@
         const restartMessageElement = document.getElementById('restart-message');
         const timerElement = document.getElementById('timer');
         const hintButton = document.getElementById('hint-button');
-        const niinkoVittuElement = document.getElementById('niinko-vittu');
+        const imageContainer = document.getElementById('image-container');
+        const zoomImage = document.getElementById('zoom-image');
         let wrongClicks = 0;
         let timerInterval;
         let wordPositions = [];
@@ -268,10 +264,7 @@
             if (isAdjacent(lastPos, { x: col, y: row }) && letter === word[currentIndex].toUpperCase()) {
                 cell.classList.add('clicked');
                 if (currentIndex + 1 === word.length) {
-                    animateFoundWord(word);
-                    setTimeout(() => {
-                        setTimeout(() => initGame(), 2000); // 2 sekunnin tauko ennen uuden pelin aloittamista
-                    }, 600); // Viive animaation sallimiseksi
+                    showImageAndZoom(word);
                 }
             } else {
                 cell.classList.add('wrong');
@@ -284,24 +277,6 @@
 
         function isAdjacent(pos1, pos2) {
             return (Math.abs(pos1.x - pos2.x) + Math.abs(pos1.y - pos2.y)) === 1;
-        }
-
-        function animateFoundWord(word) {
-            const clickedCells = [...gridElement.children].filter(cell => cell.classList.contains('clicked'));
-            clickedCells.forEach(cell => {
-                cell.classList.add('flash');
-            });
-
-            setTimeout(() => {
-                clickedCells.forEach((cell, index) => {
-                    cell.classList.add('move-up');
-                    cell.style.setProperty('--index', index);
-                    const letterSpan = document.createElement('span');
-                    letterSpan.textContent = cell.dataset.letter;
-                    foundWordElement.appendChild(letterSpan);
-                });
-                foundWordElement.style.visibility = 'visible';
-            }, 600); // Vastaavuus flash-animaation kestoon
         }
 
         function startTimer(word) {
@@ -328,7 +303,6 @@
 
         function giveHint() {
             if (hintCount >= 3) {
-                showNiinkoVittuAnimation();
                 return;
             }
             // Etsi seuraava löytämätön kirjain
@@ -355,30 +329,34 @@
             return letters[Math.floor(Math.random() * letters.length)];
         }
 
-        function showNiinkoVittuAnimation() {
-            const text = 'NIINKÖ VITTU';
-            const randomizeText = () => {
-                const randomLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖ';
-                niinkoVittuElement.innerHTML = '';
-                for (let i = 0; i < text.length; i++) {
-                    const span = document.createElement('span');
-                    span.textContent = randomLetters[Math.floor(Math.random() * randomLetters.length)];
-                    niinkoVittuElement.appendChild(span);
-                }
-            };
+        async function showImageAndZoom(word) {
+            // Tyhjennä ruutu
+            document.body.innerHTML = '';
 
-            niinkoVittuElement.innerHTML = '';
-            for (let i = 0; i < text.length; i++) {
-                const span = document.createElement('span');
-                span.textContent = text[i];
-                niinkoVittuElement.appendChild(span);
+            // Lataa kuvaa vastaavat tiedot
+            const response = await fetch('../titsmap.csv');
+            const text = await response.text();
+            const lines = text.split('\n').map(line => line.split(','));
+            const imageInfo = lines.find(line => line[0].toLowerCase() === word.toLowerCase());
+
+            if (imageInfo) {
+                const imageName = imageInfo[0];
+                const xCoord = parseFloat(imageInfo[1]);
+                const yCoord = parseFloat(imageInfo[2]);
+
+                // Aseta kuva
+                zoomImage.src = `../titpics/${imageName}.png`;
+                imageContainer.style.display = 'flex';
+
+                // Zoomaa kuvaan
+                zoomImage.style.transform = `scale(2) translate(${xCoord}px, ${yCoord}px)`;
+
+                // Odota 4 sekuntia ja aloita peli uudelleen
+                setTimeout(() => {
+                    imageContainer.style.display = 'none';
+                    initGame();
+                }, 4000);
             }
-            niinkoVittuElement.classList.add('visible');
-
-            setTimeout(() => {
-                niinkoVittuElement.classList.remove('visible');
-                randomizeText();
-            }, 3000);
         }
 
         initGame();
