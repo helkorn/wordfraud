@@ -99,6 +99,13 @@
             cursor: pointer;
             color: white;
         }
+        #change-game-button a {
+            text-decoration: none;
+            color: white;
+        }
+        #change-game-button a:hover {
+            text-decoration: none;
+        }
         #timer {
             margin: 0 10px;
             color: white;
@@ -119,7 +126,7 @@
     <div id="found-word"></div>
     <div id="message-container">
         <div id="link-container">
-            <div id="hint-button">ANNA VINKKI</div>
+            <div id="hint-button" onclick="giveHint()">ANNA VINKKI</div>
             <div id="change-game-button"><a href="../wordporn.html">VAIHDA PELIÄ</a></div>
             <div id="timer">00:30</div>
         </div>
@@ -191,7 +198,7 @@
             foundWordElement.innerHTML = '';
             messageContainer.innerHTML = `
                 <div id="link-container">
-                    <div id="hint-button">ANNA VINKKI</div>
+                    <div id="hint-button" onclick="giveHint()">ANNA VINKKI</div>
                     <div id="change-game-button"><a href="../wordporn.html">VAIHDA PELIÄ</a></div>
                     <div id="timer">00:30</div>
                 </div>
@@ -239,10 +246,13 @@
             if (isAdjacent(lastPos, { x: col, y: row }) && letter === word[currentIndex].toUpperCase()) {
                 cell.classList.add('clicked');
                 if (currentIndex + 1 === word.length) {
-                    animateFoundWord(word);
+                    showFoundWord(word);
                     setTimeout(() => {
-                        showImage(word);
-                    }, 1000);
+                        animateFoundWord(word);
+                        setTimeout(() => {
+                            showImage(word);
+                        }, 1000);
+                    }, 500);
                 }
             } else {
                 cell.classList.add('wrong');
@@ -251,6 +261,11 @@
                     cell.classList.remove('wrong');
                 }, 300);
             }
+        }
+
+        function showFoundWord(word) {
+            const linkContainer = document.getElementById('link-container');
+            linkContainer.innerHTML = `<div>LÖYSIT SANAN: ${word.toUpperCase()}</div>`;
         }
 
         function isAdjacent(pos1, pos2) {
@@ -338,7 +353,6 @@
                         <a href="titpics.html" style="font-size: 14px; color: black; text-decoration: none; margin-right: 10px;">OSTA TÄMÄ PAITA</a>
                         <div style="font-size: 14px; color: black; cursor: pointer;" onclick="window.location.href='boobsbuzz.html'">UUSI PELI</div>
                     </div>
-                    <div style="margin-top: 20px; font-size: 20px; color: black;">LÖYSIT SANAN: ${word.toUpperCase()}</div>
                 </div>
             `;
         }
