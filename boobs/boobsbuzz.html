@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="fi">
 <head>
     <meta charset="UTF-8">
@@ -350,6 +350,7 @@
         function animateNiinkoVittu() {
             const message = "NIINKÖVITTU";
             let messageIndex = 0;
+            const currentLetters = [];
 
             if (niinkovittuTimeout) {
                 clearTimeout(niinkovittuTimeout);
@@ -359,6 +360,7 @@
                 for (let col = 0; col < 6; col++) {
                     const cell = gridElement.querySelector(`.grid-item[data-row="${row}"][data-col="${col}"]`);
                     if (!cell.classList.contains('clicked') && messageIndex < message.length) {
+                        currentLetters.push({ row: row, col: col, letter: cell.textContent });
                         animateCellToLetter(cell, message[messageIndex]);
                         messageIndex++;
                     }
@@ -366,15 +368,10 @@
             }
 
             niinkovittuTimeout = setTimeout(() => {
-                for (let row = 0; row < 6; row++) {
-                    for (let col = 0; col < 6; col++) {
-                        const cell = gridElement.querySelector(`.grid-item[data-row="${row}"][data-col="${col}"]`);
-                        if (!cell.classList.contains('clicked')) {
-                            const originalLetter = originalLetters.find(l => l.row === row && l.col === col).letter;
-                            animateCellToLetter(cell, originalLetter);
-                        }
-                    }
-                }
+                currentLetters.forEach(({ row, col, letter }) => {
+                    const cell = gridElement.querySelector(`.grid-item[data-row="${row}"][data-col="${col}"]`);
+                    animateCellToLetter(cell, letter);
+                });
             }, 4000); // Näkyy 4 sekunnin ajan
         }
 
