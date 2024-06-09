@@ -87,10 +87,6 @@
             text-align: center;
             margin-top: 40px;
         }
-        #start-message {
-            font-size: 18px;
-            color: gray;
-        }
         #timer {
             font-size: 18px;
             color: gray;
@@ -109,45 +105,25 @@
         a:hover {
             text-decoration: underline;
         }
-        #change-game-button {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            padding: 10px 20px;
-            background-color: #FF69B4;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        #change-game-button:hover {
-            background-color: #FF1493;
-        }
     </style>
 </head>
 <body>
-    <div>
-        <img src="Womanboobs.png" alt="Woman Boobs" height="100px">
-        <img src="Roosanauha.svg" alt="Roosa Nauha" height="100px">
-    </div>
-    <div id="title">
-        <div>Tissinimipeli on auki!</div>
-    </div>
     <div id="puzzle">
         <!-- Puzzle items will be generated here -->
     </div>
     <div id="found-word"></div>
     <div id="target-word-container"></div>
-
-    <button id="change-game-button" onclick="window.location.href='melonit.html'">Vaihda peli</button>
+    <div id="message-container">
+        <div id="timer">00:30</div>
+        <div id="end-message"></div>
+        <div id="restart-message"></div>
+    </div>
 
     <script>
         const gridElement = document.getElementById('puzzle');
         const foundWordElement = document.getElementById('found-word');
         const endMessageElement = document.getElementById('end-message');
         const restartMessageElement = document.getElementById('restart-message');
-        const startMessageElement = document.getElementById('start-message');
         const timerElement = document.getElementById('timer');
         const targetWordContainer = document.getElementById('target-word-container');
         let helpShown = false;
@@ -208,13 +184,10 @@
             foundWordElement.innerHTML = '';
             endMessageElement.innerHTML = '';
             restartMessageElement.innerHTML = '';
-            startMessageElement.style.display = 'block';
             targetWordContainer.innerHTML = '';
 
             const { grid, word, positions, startX, startY } = await createGrid();
             let foundLetters = 0;
-
-            targetWordContainer.textContent = `Haettava sana: ${word}`;
 
             grid.forEach((row, rowIndex) => {
                 row.forEach((letter, colIndex) => {
@@ -258,7 +231,7 @@
                 lastClickedCell = cell;
                 if (currentIndex + 1 === word.length) {
                     animateFoundWord(word);
-                    setTimeout(() => showAnswer(word), 600); // Delay to allow animation
+                    setTimeout(() => initGame(), 600); // Delay to allow animation
                 }
             } else {
                 cell.classList.add('wrong');
@@ -298,44 +271,6 @@
             const helpText = document.createElement('div');
             helpText.style = "animation: fadein 1s; font-size: 14px; color: #808080; font-family: 'booboo', Arial, sans-serif; margin-top: 10px;";
             document.body.appendChild(helpText);
-        }
-
-        function showAnswer(word) {
-            const formattedWord = word;
-            startMessageElement.style.display = 'none';
-            endMessageElement.innerHTML = `SINULLE OIKEAT RINNAT OVAT <span style="color: lightgrey;">${formattedWord}</span>`;
-            endMessageElement.style.opacity = 1;
-
-            setTimeout(() => {
-                endMessageElement.style.opacity = 0;
-                restartMessageElement.innerHTML = '';
-                restartMessageElement.style.opacity = 1;
-            }, 3000); // 3 seconds delay before showing the titpics
-
-            setTimeout(() => showTitpics(formattedWord), 3000); // Show titpics after 3 seconds
-        }
-
-        function showTitpics(word) {
-            gridElement.innerHTML = ''; // Clear the grid
-            foundWordElement.innerHTML = ''; // Clear the found word element
-            endMessageElement.innerHTML = ''; // Clear the end message element
-            restartMessageElement.innerHTML = ''; // Clear the restart message element
-            startMessageElement.style.display = 'none';
-
-            const formattedWord = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-            const img = document.createElement('img');
-            img.src = `https://timosalonen.github.io/wordfraud/titpics/${formattedWord}.png`;
-            img.alt = formattedWord;
-            img.style.maxWidth = '100%';
-
-            console.log('Appending image:', img.src); // Debugging log
-
-            document.body.appendChild(img);
-
-            setTimeout(() => {
-                document.body.removeChild(img); // Remove the image after 5 seconds
-                initGame(); // Restart the game
-            }, 5000); // 5 seconds delay before restarting the game
         }
 
         function startTimer(word) {
