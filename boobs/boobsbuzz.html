@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html lang="fi">
 <head>
     <meta charset="UTF-8">
@@ -151,8 +150,8 @@
         let timerInterval;
         let wordPositions = [];
         let hintCount = 0;
+        let originalLetters = [];
         let niinkovittuTimeout;
-        const originalLetters = [];
 
         hintButton.addEventListener('click', giveHint);
 
@@ -168,7 +167,7 @@
         async function createGrid() {
             const word = (await fetchWord());
             wordPositions = []; // Reset word positions
-            originalLetters.length = 0; // Reset original letters
+            originalLetters = []; // Reset original letters
 
             let grid = [];
             for (let i = 0; i < 6; i++) {
@@ -342,13 +341,13 @@
                     nextCell.dataset.found = true;
                 }
             } else {
-                showNiinkoVittu();
                 hintButton.style.color = 'darkgray'; // Change hint button color to dark gray
                 hintButton.style.pointerEvents = 'none'; // Disable hint button
+                animateNiinkoVittu();
             }
         }
 
-        function showNiinkoVittu() {
+        function animateNiinkoVittu() {
             const message = "NIINKÖVITTU";
             let messageIndex = 0;
 
@@ -400,3 +399,4 @@
     </script>
 </body>
 </html>
+
