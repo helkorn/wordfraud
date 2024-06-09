@@ -1,250 +1,140 @@
 <!DOCTYPE html>
 <html lang="fi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Melonit</title>
-<style>
-  body {
-    background-color: black;
-    color: white;
-    font-family: Arial, sans-serif;
-    text-align: center;
-  }
-  #grid {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    grid-gap: 5px;
-    justify-content: center;
-    margin: 20px auto;
-  }
-  .cell {
-    width: 50px;
-    height: 50px;
-    background-color: black;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    cursor: pointer;
-    border-radius: 5px;
-  }
-  .cell.pink {
-    background-color: pink;
-    color: black;
-  }
-  .cell.wrong {
-    background-color: lightgrey;
-    color: black;
-  }
-  #message {
-    color: grey;
-    margin-top: 20px;
-  }
-  #timer {
-    color: grey;
-  }
-  #imageBox {
-    display: none;
-    margin: 20px auto;
-    border: 2px solid silver;
-    width: 400px;
-    height: 400px;
-    overflow: hidden;
-  }
-  #imageBox img {
-    width: 100%;
-    height: auto;
-    position: relative;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-</style>
+    <meta charset="UTF-8">
+    <title>Melonit</title>
+    <style>
+        body {
+            background-color: #333;
+            color: #ccc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(6, 50px);
+            grid-gap: 5px;
+            margin-bottom: 20px;
+        }
+        .grid div {
+            width: 50px;
+            height: 50px;
+            background-color: black;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 1.5em;
+        }
+        .grid div.pink {
+            background-color: pink;
+        }
+        .grid div.wrong {
+            background-color: #555;
+        }
+        .instruction {
+            font-size: 1.2em;
+            color: grey;
+        }
+        .end-text {
+            display: none;
+            font-size: 1.5em;
+            color: grey;
+        }
+    </style>
 </head>
 <body>
-<h1>Melonit</h1>
-<div id="grid"></div>
-<div id="message">
-  ETSI LEMPINIMI RINNOILLE <span id="timer">00:30</span>
-</div>
-<div id="imageBox">
-  <img id="resultImage" src="" alt="Result Image">
-</div>
+    <div class="grid">
+        <!-- 6x6 grid letters will be generated here -->
+    </div>
+    <div class="instruction">ETSI LEMPINIMI RINNOILLE</div>
+    <div class="end-text"></div>
+    <script>
+        const words = [
+            "ajovalot", "avokadot", "bazookat", "bon-bonit", "burritot", "daisarit",
+            "etuessu", "etuvalot", "hinkit", "kannut", "kellukkeet", "ketunnokat",
+            "manboobs", "meijerit", "melonit", "nuuskapussit", "roiskeläpät", "tissit", "tonkat"
+        ];
 
-<script>
-  const words = [
-    "ajovalot", "avokadot", "bazookat", "bon-bonit", "burritot", "daisarit",
-    "etuessu", "etuvalot", "hinkit", "kannut", "kellukkeet", "ketunnokat",
-    "manboobs", "meijerit", "melonit", "nuuskapussit", "roiskeläpät", "tissit", "tonkat"
-  ];
+        let grid = document.querySelector('.grid');
+        let instruction = document.querySelector('.instruction');
+        let endText = document.querySelector('.end-text');
+        let selectedWord = words[Math.floor(Math.random() * words.length)];
+        let letters = [];
+        let correctPath = [];
 
-  const gridElement = document.getElementById('grid');
-  const timerElement = document.getElementById('timer');
-  const messageElement = document.getElementById('message');
-  const imageBoxElement = document.getElementById('imageBox');
-  const resultImageElement = document.getElementById('resultImage');
-
-  let timer = 30;
-  let currentWord = '';
-  let currentPath = [];
-  let highlightedIndex = 0;
-
-  function initializeGrid() {
-    gridElement.innerHTML = '';
-    for (let i = 0; i < 36; i++) {
-      const cell = document.createElement('div');
-      cell.classList.add('cell');
-      cell.textContent = getRandomLetter();
-      cell.addEventListener('click', () => handleCellClick(i));
-      gridElement.appendChild(cell);
-    }
-  }
-
-  function getRandomLetter() {
-    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    return letters.charAt(Math.floor(Math.random() * letters.length));
-  }
-
-  function placeWord() {
-    currentWord = words[Math.floor(Math.random() * words.length)].toUpperCase();
-    let placed = false;
-
-    while (!placed) {
-      let startIndex = Math.floor(Math.random() * 36);
-      if (isValidStart(startIndex)) {
-        let path = getPath(startIndex);
-        if (path) {
-          currentPath = path;
-          placePath(path);
-          placed = true;
+        function createGrid() {
+            for (let i = 0; i < 36; i++) {
+                let div = document.createElement('div');
+                div.textContent = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+                grid.appendChild(div);
+                letters.push(div);
+            }
+            placeWord();
         }
-      }
-    }
-  }
 
-  function isValidStart(index) {
-    const row = Math.floor(index / 6);
-    const col = index % 6;
-    return row > 0 && row < 5 && col > 0 && col < 5;
-  }
+        function placeWord() {
+            // Choose a random starting point and direction, ensuring it doesn't start at the edges
+            // This is a simple version, actual implementation should ensure the path doesn't exceed grid limits
+            let startPos = Math.floor(Math.random() * 24) + 6; // avoids the first and last row/column
+            let direction = Math.floor(Math.random() * 4); // 0: right, 1: down, 2: left, 3: up
+            let x = startPos % 6;
+            let y = Math.floor(startPos / 6);
+            for (let char of selectedWord) {
+                if (x < 0 || x >= 6 || y < 0 || y >= 6) {
+                    placeWord();
+                    return;
+                }
+                let index = y * 6 + x;
+                correctPath.push(index);
+                letters[index].textContent = char;
+                if (direction === 0) x++;
+                else if (direction === 1) y++;
+                else if (direction === 2) x--;
+                else if (direction === 3) y--;
+            }
+            highlightNextLetter();
+        }
 
-  function getPath(startIndex) {
-    let path = [startIndex];
-    let directions = ['right', 'left', 'down', 'up'];
-    let currentIndex = startIndex;
-    let wordIndex = 1;
+        function highlightNextLetter() {
+            if (correctPath.length > 0) {
+                letters[correctPath.shift()].classList.add('pink');
+                setTimeout(highlightNextLetter, 10000);
+            }
+        }
 
-    while (wordIndex < currentWord.length) {
-      let direction = directions[Math.floor(Math.random() * directions.length)];
-      let nextIndex = getNextIndex(currentIndex, direction);
-      if (nextIndex !== null && !path.includes(nextIndex)) {
-        path.push(nextIndex);
-        currentIndex = nextIndex;
-        wordIndex++;
-      } else {
-        return null;
-      }
-    }
+        function handleClick(e) {
+            if (e.target.classList.contains('pink')) {
+                e.target.classList.remove('pink');
+                e.target.classList.add('correct');
+                if (correctPath.length === 0) {
+                    endGame();
+                }
+            } else {
+                e.target.classList.add('wrong');
+                setTimeout(() => e.target.classList.remove('wrong'), 500);
+            }
+        }
 
-    return path;
-  }
+        function endGame() {
+            instruction.style.display = 'none';
+            endText.textContent = `SINULLE OIKEAT RINNAT OVAT ${selectedWord.toUpperCase()}`;
+            endText.style.display = 'block';
+            setTimeout(() => {
+                document.body.innerHTML = '<div style="color: grey; font-size: 2em;">END GAME</div>';
+                setTimeout(() => location.reload(), 2000);
+            }, 3000);
+        }
 
-  function getNextIndex(index, direction) {
-    const row = Math.floor(index / 6);
-    const col = index % 6;
-    switch (direction) {
-      case 'right':
-        if (col < 5) return index + 1;
-        break;
-      case 'left':
-        if (col > 0) return index - 1;
-        break;
-      case 'down':
-        if (row < 5) return index + 6;
-        break;
-      case 'up':
-        if (row > 0) return index - 6;
-        break;
-    }
-    return null;
-  }
-
-  function placePath(path) {
-    path.forEach((index, i) => {
-      const cell = gridElement.children[index];
-      cell.textContent = currentWord[i];
-    });
-  }
-
-  function handleCellClick(index) {
-    if (currentPath[highlightedIndex] === index) {
-      gridElement.children[index].classList.add('pink');
-      highlightedIndex++;
-      if (highlightedIndex === currentPath.length) {
-        endGame();
-      }
-    } else {
-      gridElement.children[index].classList.add('wrong');
-      setTimeout(() => {
-        gridElement.children[index].classList.remove('wrong');
-      }, 300);
-    }
-  }
-
-  function endGame() {
-    currentPath.forEach(index => {
-      const cell = gridElement.children[index];
-      cell.classList.remove('pink');
-      cell.classList.add('flash');
-    });
-    setTimeout(() => {
-      messageElement.textContent = `SINULLE OIKEAT RINNAT OVAT ${currentWord}`;
-      setTimeout(() => {
-        showImage();
-      }, 3000);
-    }, 600);
-  }
-
-  function showImage() {
-    const imageName = currentWord.toLowerCase() + '.png';
-    resultImageElement.src = 'titpics/' + imageName;
-    imageBoxElement.style.display = 'block';
-    setTimeout(() => {
-      imageBoxElement.classList.add('zoom');
-      setTimeout(() => {
-        startGame();
-      }, 4000);
-    }, 300);
-  }
-
-  function startGame() {
-    timer = 30;
-    highlightedIndex = 0;
-    currentPath = [];
-    messageElement.innerHTML = `ETSI LEMPINIMI RINNOILLE <span id="timer">00:30</span>`;
-    imageBoxElement.style.display = 'none';
-    initializeGrid();
-    placeWord();
-    startTimer();
-  }
-
-  function startTimer() {
-    const interval = setInterval(() => {
-      timer--;
-      timerElement.textContent = `00:${timer < 10 ? '0' : ''}${timer}`;
-      if (timer === 0) {
-        clearInterval(interval);
-        gridElement.innerHTML = '';
-        setTimeout(() => {
-          startGame();
-        }, 1000);
-      }
-    }, 1000);
-  }
-
-  startGame();
-</script>
+        grid.addEventListener('click', handleClick);
+        createGrid();
+    </script>
 </body>
 </html>
