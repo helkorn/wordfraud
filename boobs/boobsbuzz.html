@@ -159,35 +159,14 @@
                 }
             }
 
-            let startX, startY;
-            do {
-                startX = Math.floor(Math.random() * 4) + 1; // Ensures it's not in the first or last column
-                startY = Math.floor(Math.random() * 4) + 1; // Ensures it's not in the first or last row
-            } while (startX === 0 || startX === 5 || startY === 0 || startY === 5); // Re-checks to ensure not at the edge
+            let startX = Math.floor(Math.random() * (6 - word.length));
+            let startY = Math.floor(Math.random() * 6);
 
-            let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
-            let positions = [{ x: startX, y: startY }];
-            grid[startY][startX] = word.charAt(0).toUpperCase();
-
-            for (let i = 1; i < word.length; i++) {
-                let lastPos = positions[positions.length - 1];
-                let possibleDirections = directions.filter(dir => {
-                    let newX = lastPos.x + dir[0];
-                    let newY = lastPos.y + dir[1];
-                    return newX > 0 && newX < 5 && newY > 0 && newY < 5 && !positions.some(pos => pos.x === newX && pos.y === newY);
-                });
-
-                if (possibleDirections.length === 0) break;
-
-                let dir = possibleDirections[Math.floor(Math.random() * possibleDirections.length)];
-                let newX = lastPos.x + dir[0];
-                let newY = lastPos.y + dir[1];
-
-                grid[newY][newX] = word.charAt(i).toUpperCase();
-                positions.push({ x: newX, y: newY });
+            for (let i = 0; i < word.length; i++) {
+                grid[startY][startX + i] = word.charAt(i).toUpperCase();
             }
 
-            return { grid, word, positions };
+            return { grid, word, positions: word.split('').map((_, idx) => ({ x: startX + idx, y: startY })) };
         }
 
         async function initGame() {
@@ -219,7 +198,17 @@
                 foundLetters++;
                 lastClickedCell = firstLetterElement;
                 startTimer(word);
-            }, 2000); // Ensure the first letter is highlighted after 2 seconds
+
+                // Aloita kirjainten värjäys
+                for (let i = 1; i < word.length; i++) {
+                    setTimeout(() => {
+                        const letterElement = [...gridElement.children].find(cell => cell.dataset.letter === word.charAt(i).toUpperCase() && !cell.classList.contains('clicked'));
+                        if (letterElement) {
+                            letterElement.classList.add('clicked');
+                        }
+                    }, i * 5000);
+                }
+            }, 2000);
         }
 
         function handleCellClick(cell, word, positions) {
@@ -278,6 +267,7 @@
             helpShown = true;
             const helpText = document.createElement('div');
             helpText.style = "animation: fadein 1s; font-size: 14px; color: #808080; font-family: 'booboo', Arial, sans-serif; margin-top: 10px;";
+            helpText.textContent = `Apua: Sana on "${word}"`;
             document.body.appendChild(helpText);
         }
 
@@ -371,3 +361,4 @@
     </script>
 </body>
 </html>
+
