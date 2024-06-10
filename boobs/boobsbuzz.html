@@ -219,7 +219,7 @@
         hintButton.addEventListener('click', giveHint);
 
         async function fetchWord() {
-            const response = await fetch('../melonit.csv');
+            const response = await fetch('../boobmaps.csv');
             const text = await response.text();
             const words = text.split('\n').map(word => word.trim()).filter(word => word.length > 0);
             return words[Math.floor(Math.random() * words.length)];
@@ -237,7 +237,7 @@
         }
 
         async function createGrid() {
-            const word = (await fetchWord()).replace(/-/g, '').replace(/\s/g, '').toLowerCase();
+            const word = (await fetchWord());
             wordPositions = [];
 
             let grid = [];
@@ -449,4 +449,3 @@
     </script>
 </body>
 </html>
-
