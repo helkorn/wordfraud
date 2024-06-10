@@ -129,7 +129,8 @@
             position: relative;
         }
         .image-container {
-            width: 400px;
+            width: 100%;
+            max-width: 400px;
             height: 400px;
             border: 2px solid silver;
             position: relative;
@@ -179,16 +180,17 @@
             }
         }
         .links-container {
-            width: 400px;
+            width: 100%;
+            max-width: 400px;
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
             margin-top: 20px;
+            padding: 0 10px;
         }
         .links-container a, .links-container div {
             font-size: 14px;
             color: black;
             text-decoration: none;
-            margin-right: 10px;
         }
         .links-container div {
             cursor: pointer;
@@ -197,7 +199,7 @@
             position: absolute;
             top: 0;
             bottom: 0;
-            width: 200px;
+            width: 100px;
             background-color: #333;
         }
         .left-border {
@@ -283,16 +285,21 @@
         }
 
         function chooseBestDirection(currentPos, possibleDirections, grid) {
-            let maxEmptyCount = -1;
+            let maxScore = -1;
             let bestDirection = null;
+            const gridSize = 6;
+            const center = { x: (gridSize - 1) / 2, y: (gridSize - 1) / 2 };
 
             for (let dir of possibleDirections) {
                 let newX = currentPos.x + dir[0];
                 let newY = currentPos.y + dir[1];
                 let emptyCount = countEmptySpaces(newX, newY, grid);
+                let distanceToCenter = Math.abs(newX - center.x) + Math.abs(newY - center.y);
 
-                if (emptyCount > maxEmptyCount) {
-                    maxEmptyCount = emptyCount;
+                let score = emptyCount - distanceToCenter; // Prefer empty spaces and proximity to center
+
+                if (score > maxScore) {
+                    maxScore = score;
                     bestDirection = dir;
                 }
             }
