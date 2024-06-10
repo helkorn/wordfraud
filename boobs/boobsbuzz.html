@@ -162,16 +162,16 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 2s, filter 0.75s;
+            transition: transform 6s, filter 1.5s;
         }
         @keyframes zoomIn {
             0% {
                 transform: translate(-50%, -50%) scale(1) rotate(0deg);
                 filter: blur(0);
             }
-            95% {
+            70% {
                 transform: translate(-50%, -50%) scale(1.25) rotate(1deg);
-                filter: blur(3px);
+                filter: blur(5px);
             }
             100% {
                 transform: translate(-50%, -50%) scale(1.05) rotate(0deg);
@@ -448,6 +448,12 @@
                 mainImage.style.animation = 'zoomIn 9s forwards';
             }, 1000); // Start after 1 second
         }
+
+        initGame();
+    </script>
+</body>
+</html>
+
 
         initGame();
     </script>
