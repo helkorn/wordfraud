@@ -93,6 +93,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-wrap: wrap;
         }
         #hint-button, #change-game-button {
             margin: 0 10px;
@@ -129,8 +130,9 @@
             position: relative;
         }
         .image-container {
-            width: 400px;
-            height: 400px;
+            width: 80%;
+            max-width: 400px;
+            height: auto;
             border: 2px solid silver;
             position: relative;
             overflow: hidden;
@@ -179,16 +181,21 @@
             }
         }
         .links-container {
-            width: 400px;
+            width: 100%;
+            max-width: 400px;
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
             margin-top: 20px;
+            padding: 0 10px;
+            box-sizing: border-box;
         }
         .links-container a, .links-container div {
             font-size: 14px;
             color: black;
             text-decoration: none;
             margin-right: 10px;
+            flex: 1;
+            text-align: center;
         }
         .links-container div {
             cursor: pointer;
@@ -197,7 +204,7 @@
             position: absolute;
             top: 0;
             bottom: 0;
-            width: 200px;
+            width: 100px;
             background-color: #333;
         }
         .left-border {
@@ -453,4 +460,3 @@
     </script>
 </body>
 </html>
-
