@@ -235,9 +235,14 @@
         hintButton.addEventListener('click', giveHint);
 
         async function fetchWord() {
-            const response = await fetch('../melonit.csv');
+            const response = await fetch('boobs/titsmap.csv');
             const text = await response.text();
-            const words = text.split('\n').map(word => word.trim()).filter(word => word.length > 0);
+            const lines = text.split('\n').slice(1); // Skip header
+            const words = lines.map(line => {
+                const [imagePath] = line.split(',');
+                const word = imagePath.split('/').pop().split('.')[0]; // Extract word from image path
+                return word.trim();
+            }).filter(word => word.length > 0);
             return words[Math.floor(Math.random() * words.length)];
         }
 
@@ -270,7 +275,7 @@
 
                 if (possibleDirections.length === 0) break;
 
-                let dir = chooseBestDirection(lastPos, possibleDirections, grid);
+                let dir = possibleDirections[Math.floor(Math.random() * possibleDirections.length)];
                 let newX = lastPos.x + dir[0];
                 let newY = lastPos.y + dir[1];
 
@@ -280,45 +285,6 @@
 
             wordPositions = positions;
             return { grid, word, positions, startX, startY };
-        }
-
-        function chooseBestDirection(currentPos, possibleDirections, grid) {
-            let maxScore = -1;
-            let bestDirection = null;
-            const gridSize = 6;
-            const center = { x: (gridSize - 1) / 2, y: (gridSize - 1) / 2 };
-
-            for (let dir of possibleDirections) {
-                let newX = currentPos.x + dir[0];
-                let newY = currentPos.y + dir[1];
-                let emptyCount = countEmptySpaces(newX, newY, grid);
-                let distanceToCenter = Math.abs(newX - center.x) + Math.abs(newY - center.y);
-
-                let score = emptyCount - distanceToCenter; // Prefer empty spaces and proximity to center
-
-                if (score > maxScore) {
-                    maxScore = score;
-                    bestDirection = dir;
-                }
-            }
-
-            return bestDirection;
-        }
-
-        function countEmptySpaces(x, y, grid) {
-            let count = 0;
-            let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
-
-            for (let dir of directions) {
-                let newX = x + dir[0];
-                let newY = y + dir[1];
-
-                if (newX >= 0 && newX < 6 && newY >= 0 && newY < 6 && !grid[newY][newX]) {
-                    count++;
-                }
-            }
-
-            return count;
         }
 
         async function initGame() {
