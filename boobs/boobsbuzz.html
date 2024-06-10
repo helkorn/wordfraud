@@ -129,8 +129,7 @@
             position: relative;
         }
         .image-container {
-            width: 100%;
-            max-width: 400px;
+            width: 400px;
             height: 400px;
             border: 2px solid silver;
             position: relative;
@@ -180,17 +179,16 @@
             }
         }
         .links-container {
-            width: 100%;
-            max-width: 400px;
+            width: 400px;
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             margin-top: 20px;
-            padding: 0 10px;
         }
         .links-container a, .links-container div {
             font-size: 14px;
             color: black;
             text-decoration: none;
+            margin-right: 10px;
         }
         .links-container div {
             cursor: pointer;
@@ -199,7 +197,7 @@
             position: absolute;
             top: 0;
             bottom: 0;
-            width: 100px;
+            width: 200px;
             background-color: #333;
         }
         .left-border {
@@ -272,7 +270,7 @@
 
                 if (possibleDirections.length === 0) break;
 
-                let dir = chooseBestDirection(lastPos, possibleDirections, grid);
+                let dir = possibleDirections[Math.floor(Math.random() * possibleDirections.length)];
                 let newX = lastPos.x + dir[0];
                 let newY = lastPos.y + dir[1];
 
@@ -282,45 +280,6 @@
 
             wordPositions = positions;
             return { grid, word, positions, startX, startY };
-        }
-
-        function chooseBestDirection(currentPos, possibleDirections, grid) {
-            let maxScore = -1;
-            let bestDirection = null;
-            const gridSize = 6;
-            const center = { x: (gridSize - 1) / 2, y: (gridSize - 1) / 2 };
-
-            for (let dir of possibleDirections) {
-                let newX = currentPos.x + dir[0];
-                let newY = currentPos.y + dir[1];
-                let emptyCount = countEmptySpaces(newX, newY, grid);
-                let distanceToCenter = Math.abs(newX - center.x) + Math.abs(newY - center.y);
-
-                let score = emptyCount - distanceToCenter; // Prefer empty spaces and proximity to center
-
-                if (score > maxScore) {
-                    maxScore = score;
-                    bestDirection = dir;
-                }
-            }
-
-            return bestDirection;
-        }
-
-        function countEmptySpaces(x, y, grid) {
-            let count = 0;
-            let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
-
-            for (let dir of directions) {
-                let newX = x + dir[0];
-                let newY = y + dir[1];
-
-                if (newX >= 0 && newX < 6 && newY >= 0 && newY < 6 && !grid[newY][newX]) {
-                    count++;
-                }
-            }
-
-            return count;
         }
 
         async function initGame() {
@@ -494,4 +453,3 @@
     </script>
 </body>
 </html>
-
