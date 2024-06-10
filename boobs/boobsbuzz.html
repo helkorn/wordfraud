@@ -270,7 +270,7 @@
 
                 if (possibleDirections.length === 0) break;
 
-                let dir = possibleDirections[Math.floor(Math.random() * possibleDirections.length)];
+                let dir = chooseBestDirection(lastPos, possibleDirections, grid);
                 let newX = lastPos.x + dir[0];
                 let newY = lastPos.y + dir[1];
 
@@ -280,6 +280,45 @@
 
             wordPositions = positions;
             return { grid, word, positions, startX, startY };
+        }
+
+        function chooseBestDirection(currentPos, possibleDirections, grid) {
+            let maxScore = -1;
+            let bestDirection = null;
+            const gridSize = 6;
+            const center = { x: (gridSize - 1) / 2, y: (gridSize - 1) / 2 };
+
+            for (let dir of possibleDirections) {
+                let newX = currentPos.x + dir[0];
+                let newY = currentPos.y + dir[1];
+                let emptyCount = countEmptySpaces(newX, newY, grid);
+                let distanceToCenter = Math.abs(newX - center.x) + Math.abs(newY - center.y);
+
+                let score = emptyCount - distanceToCenter; // Prefer empty spaces and proximity to center
+
+                if (score > maxScore) {
+                    maxScore = score;
+                    bestDirection = dir;
+                }
+            }
+
+            return bestDirection;
+        }
+
+        function countEmptySpaces(x, y, grid) {
+            let count = 0;
+            let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+
+            for (let dir of directions) {
+                let newX = x + dir[0];
+                let newY = y + dir[1];
+
+                if (newX >= 0 && newX < 6 && newY >= 0 && newY < 6 && !grid[newY][newX]) {
+                    count++;
+                }
+            }
+
+            return count;
         }
 
         async function initGame() {
@@ -424,15 +463,16 @@
         }
 
         function showImage(word) {
+            const sanitizedWord = word.replace(/\s+/g, ''); // Remove spaces from the word
             document.body.innerHTML = `
                 <div class="image-page">
                     <div class="gray-borders left-border"></div>
                     <div class="gray-borders right-border"></div>
                     <div class="image-container">
                         <div class="blur-background">
-                            <img src="../titpics/${word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()}.png">
+                            <img src="../titpics/${sanitizedWord}.png">
                         </div>
-                        <img id="mainImage" class="zoom-image" src="../titpics/${word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()}.png">
+                        <img id="mainImage" class="zoom-image" src="../titpics/${sanitizedWord}.png">
                     </div>
                     <div class="links-container">
                         <a href="titpics.html">OSTA TÄMÄ PAITA</a>
@@ -453,3 +493,4 @@
     </script>
 </body>
 </html>
+
