@@ -162,16 +162,16 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 2s, filter 0.75s;
+            transition: transform 6s, filter 1.5s;
         }
         @keyframes zoomIn {
             0% {
                 transform: translate(-50%, -50%) scale(1) rotate(0deg);
                 filter: blur(0);
             }
-            95% {
+            70% {
                 transform: translate(-50%, -50%) scale(1.25) rotate(1deg);
-                filter: blur(3px);
+                filter: blur(5px);
             }
             100% {
                 transform: translate(-50%, -50%) scale(1.05) rotate(0deg);
@@ -237,7 +237,7 @@
         async function fetchWord() {
             const response = await fetch('../melonit.csv');
             const text = await response.text();
-            const words = text.split('\n').map(word => word.trim()).filter(word => word.length > 0);
+            const words = text.split('\n').map(word => word.trim()).filter(word => word.length > 0 && word.length <= 11);
             return words[Math.floor(Math.random() * words.length)];
         }
 
@@ -453,4 +453,3 @@
     </script>
 </body>
 </html>
-
