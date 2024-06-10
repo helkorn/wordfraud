@@ -164,18 +164,18 @@
             object-fit: cover;
             transition: transform 2.5s, filter 1s;
         }
-        @keyframes zoomIn {
-            0% {
+        @keyframes zoomInOut {
+            0%, 100% {
                 transform: translate(-50%, -50%) scale(1) rotate(0deg);
                 filter: blur(0);
             }
-            85% {
-                transform: translate(-50%, -50%) scale(1.25) rotate(1deg);
-                filter: blur(3px);
+            40%, 80% {
+                transform: translate(-50%, -50%) scale(1.2) rotate(1deg);
+                filter: blur(2px);
             }
-            100% {
-                transform: translate(-50%, -50%) scale(1.05) rotate(0deg);
-                filter: blur(0);
+            60% {
+                transform: translate(-50%, -50%) scale(1.1) rotate(-1deg);
+                filter: blur(1px);
             }
         }
         .links-container {
@@ -445,7 +445,7 @@
 
             // Start zoom animation
             setTimeout(() => {
-                mainImage.style.animation = 'zoomIn 9s forwards';
+                mainImage.style.animation = 'zoomInOut 9s infinite';
             }, 1000); // Start after 1 second
         }
 
@@ -453,3 +453,4 @@
     </script>
 </body>
 </html>
+
