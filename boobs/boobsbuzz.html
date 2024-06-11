@@ -131,7 +131,6 @@
         .image-container {
             width: 400px;
             height: 400px;
-            
             position: relative;
             overflow: hidden;
             display: flex;
@@ -467,25 +466,5 @@
 
         initGame();
     </script>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        let purchaseLink = document.querySelector(".links-container a[href='titpics.html']");
-        let newGameLink = document.querySelector(".links-container div[onclick*='boobsbuzz.html']");
-
-        let timer = setTimeout(function() {
-            window.location.href = "https://timosalonen.github.io/wordfraud/boobs/boobsbuzz.html";
-        }, 5000);
-
-        purchaseLink.addEventListener("click", function() {
-            clearTimeout(timer);
-        });
-
-        newGameLink.addEventListener("click", function() {
-            clearTimeout(timer);
-        });
-    });
-</script>
 </body>
 </html>
-
