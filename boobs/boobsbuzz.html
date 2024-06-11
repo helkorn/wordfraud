@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="fi">
 <head>
     <meta charset="UTF-8">
@@ -131,7 +131,6 @@
         .image-container {
             width: 400px;
             height: 400px;
-            
             position: relative;
             overflow: hidden;
             display: flex;
@@ -450,10 +449,6 @@
                         </div>
                         <img id="mainImage" class="zoom-image" src="../titpics/${word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()}.png" style="transform: translate(-${percentX}%, -${percentY}%);">
                     </div>
-                    <div class="links-container">
-                        
-                        
-                    </div>
                 </div>
             `;
 
@@ -462,16 +457,14 @@
             // Start zoom animation
             setTimeout(() => {
                 mainImage.style.animation = 'zoomIn 9s forwards';
+                setTimeout(() => {
+                    window.location.href = "https://timosalonen.github.io/wordfraud/boobs/boobsbuzz.html";
+                }, 2000);
             }, 1000); // Start after 1 second
         }
 
         initGame();
     </script>
-
-<script>
-    setTimeout(function() {
-        window.location.href = "https://timosalonen.github.io/wordfraud/boobs/boobsbuzz.html";
-    }, 3000);
-</script>
 </body>
 </html>
+
