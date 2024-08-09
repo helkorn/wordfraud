@@ -231,7 +231,7 @@
         const superThreshold = 75;
         const suomenkielisetKirjaimet = 'abcdefghijklmnopqrstuvwxyzåäö';
 
-        Papa.parse('https://raw.githubusercontent.com/timosalonen/wordfraud/main/wordfraudFI.csv', {
+        Papa.parse('https://raw.githubusercontent.com/helkorn/wordfraud/main/wordfraudFI.csv', {
             download: true,
             complete: function(results) {
                 results.data.flat().map(word => word.trim()).filter(Boolean).forEach(word => {
